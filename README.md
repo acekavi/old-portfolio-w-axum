@@ -1,15 +1,15 @@
 # My Personal Portfolio Website
 
 ## Backend
-  ->  Axum
-  ->  Tokio
-  ->  httpc
-  ->  postgresql
-  ->  AWS
+  ->  Axum \n
+  ->  Tokio \n
+  ->  httpc \n
+  ->  postgresql \n
+  ->  AWS \n
 
 ## Frontend
-  -> Angular
-  -> React
-  -> Yew
-  -> Tailwind
-  -> GSAP
+  -> Angular \n
+  -> React \n
+  -> Yew \n
+  -> Tailwind \n
+  -> GSAP \n
