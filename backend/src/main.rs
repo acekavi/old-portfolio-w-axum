@@ -7,9 +7,7 @@ use serde::Deserialize;
 #[tokio::main]
 async fn main() {
     let routes_hello = Router::new()
-        .route("/hello", get(handler_hello))
-        .route("/hello/:name", get(handler_name)
-    );
+        .merge(routes_hello());
 
     // region: --- Start Server ---
     let address = SocketAddr::from(([127, 0, 0, 1], 3000));
@@ -21,7 +19,13 @@ async fn main() {
     // endregion: --- Start Server ---
 }
 
-// region: --- Hello Handler ---
+// region: --- Routes Hello ---
+fn routes_hello() -> Router {
+    Router::new()
+        .route("/hello", get(handler_hello))
+        .route("/hello/:name", get(handler_name)
+    )
+}
 #[derive(Debug, Deserialize)]
 struct HelloParams {
     name: Option<String>,
