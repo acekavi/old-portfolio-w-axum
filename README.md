@@ -18,6 +18,11 @@ My Personal Portfolio Website
 
 ## Roadmap
 
+-   Todo
+
+    -   [ ]     Hook static file storage to AWS s3
+    -   [ ]     Hook login credential checker to a database and hash the passwords
+
 ### Backend
 
 - API Endpoints for
