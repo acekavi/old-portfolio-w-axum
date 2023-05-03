@@ -1,14 +1,20 @@
 #![allow(unused)] // For only the start
 
+pub use self::error::{Error, Result};
+
 use std::net::SocketAddr;
 use axum::{Router, response::{Html, IntoResponse}, routing::{get, get_service}, extract::{Query, Path}};
 use serde::Deserialize;
 use tower_http::services::ServeDir;
 
+mod error;
+mod web;
+
 #[tokio::main]
 async fn main() {
     let all_routes = Router::new()
         .merge(routes_hello())
+        .merge(web::routes_login::routes())
         .fallback_service(routes_static());
 
     // region: --- Start Server ---
@@ -54,3 +60,9 @@ fn routes_static() -> Router {
 }
 
 // endregion: --- Static Routes ---
+
+// region: --- Login ---
+
+
+
+// endregion: --- Login ---
