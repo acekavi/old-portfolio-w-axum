@@ -1,20 +1,30 @@
 #![allow(unused)] // For only the start
 
+use crate::model::ModelController;
+
 pub use self::error::{Error, Result};
 
 use std::net::SocketAddr;
-use axum::{Router, response::{Html, IntoResponse}, routing::{get, get_service}, extract::{Query, Path}};
+use axum::{Router, response::{Html, IntoResponse, Response}, routing::{get, get_service}, extract::{Query, Path}, middleware};
 use serde::Deserialize;
+use tower_cookies::CookieManagerLayer;
 use tower_http::services::ServeDir;
 
 mod error;
+mod model;
 mod web;
 
 #[tokio::main]
-async fn main() {
+async fn main() -> Result<()> {
+    // Initialize the ModelController
+    let mc = ModelController::new()?;
+
     let all_routes = Router::new()
         .merge(routes_hello())
         .merge(web::routes_login::routes())
+        .nest("/api", web::routes_ticket::routes(mc.clone()))
+        .layer(middleware::map_response(main_response_mapper))
+        .layer(CookieManagerLayer::new())
         .fallback_service(routes_static());
 
     // region: --- Start Server ---
@@ -25,6 +35,8 @@ async fn main() {
         .await
         .unwrap();
     // endregion: --- Start Server ---
+
+    Ok(())
 }
 
 // region: --- Routes Hello ---
@@ -54,15 +66,17 @@ async fn handler_name(Path(name): Path<String>) -> impl IntoResponse {
 }
 // endregion: --- Handler ---
 
+// region: --- custom response mappepr ---
+async fn main_response_mapper(res: Response) -> Response {
+    // println!("--> {:<12} - Main Response Mapper", "RES_MAPPER");
+
+    println!();
+    res
+}
+// endregion: --- custom response mappepr ---
+
 // region: --- Static Routes ---
 fn routes_static() -> Router {
     Router::new().nest_service("/static", get_service(ServeDir::new("./static")))
 }
-
 // endregion: --- Static Routes ---
-
-// region: --- Login ---
-
-
-
-// endregion: --- Login ---

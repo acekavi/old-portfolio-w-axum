@@ -1,6 +1,7 @@
 #![allow(unused)] // For only the start
 
 use anyhow::Result;
+use serde_json::json;
 
 #[tokio::test]
 async fn quick_dev() -> httpc_test::Result<()> {
@@ -19,5 +20,15 @@ async fn quick_dev() -> httpc_test::Result<()> {
   let res = hc.do_post("/api/login", login_payload).await?.print().await?;
   // endregion: --- Login API ---
 
+  hc.do_post("/api/ticket", json!({
+    "title": "Ticket 1",
+  }),
+  ).await?.print().await?;
+
+  hc.do_patch("/api/ticket/0", json!({
+    "title": "Ticket AAA",
+  })).await?.print().await?;
+
+  hc.do_get("/api/ticket").await?.print().await?;
   Ok(())
 }
