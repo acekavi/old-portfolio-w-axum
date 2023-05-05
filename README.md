@@ -10,12 +10,6 @@ My Personal Portfolio Website
 
 **Server:** Axum, Tokio, httpc-test, postgresql, AWS
 
-## Todo
-
-  [ ]     Hook statics to AWS s3
-  [ ]     Hook login credential checker to database and hash the passwords
-
-
 ## Roadmap
 
 -   Todo
