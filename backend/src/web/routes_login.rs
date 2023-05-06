@@ -18,7 +18,7 @@ async fn api_login(cookies: Cookies, payload: Json<LoginParams>) -> Result<Json<
   }
 
   // Todo: Generate a JWT token and return it
-  cookies.add(Cookie::new(web::AUTH_TOKEN, "user-1.exp.sign"));
+  cookies.add(Cookie::new(web::AUTH_TOKEN, "user-1.expires.signature"));
 
   // region: --- Return success body ---
 

@@ -9,7 +9,7 @@ use crate::Result;
 pub fn routes(mc : ModelController) -> Router {
   Router::new()
       .route("/ticket", post(create_ticket).get(list_tickets))
-      .route("/ticket/:id", get(get_ticket).put(update_ticket).delete(delete_ticket))
+      .route("/ticket/:id", get(get_ticket).post(update_ticket).delete(delete_ticket))
       .with_state(mc)
 }
 // endregion: --- Routes ---

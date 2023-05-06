@@ -25,7 +25,7 @@ async fn quick_dev() -> httpc_test::Result<()> {
   }),
   ).await?.print().await?;
 
-  hc.do_patch("/api/ticket/0", json!({
+  hc.do_post("/api/ticket/0", json!({
     "title": "Ticket AAA",
   })).await?.print().await?;
 
