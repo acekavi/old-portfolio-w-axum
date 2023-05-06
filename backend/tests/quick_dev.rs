@@ -29,6 +29,8 @@ async fn quick_dev() -> httpc_test::Result<()> {
     "title": "Ticket AAA",
   })).await?.print().await?;
 
+  hc.do_get("/api/ticket/3").await?.print().await?;
+
   hc.do_get("/api/ticket").await?.print().await?;
   Ok(())
 }

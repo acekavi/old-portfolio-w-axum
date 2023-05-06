@@ -56,17 +56,19 @@ impl ModelController {
     Ok(tickets)
   }
 
-  pub async fn get(&self, id: u32) -> Result<Ticket>{
+  pub async fn get(&self, id: u32) -> Result<Option<Ticket>>{
     let store = self.tickets_store.lock().unwrap();
 
-    let ticket = store.get(id as usize)
-      .unwrap()
-      .clone();
-
-    ticket.ok_or(Error::TicketGetFailIDNotFound { id })
+    let ticket = store.get(id as usize);
+    
+    if ticket.is_some(){
+      return Ok(ticket.unwrap().clone());
+    } else {
+      return Err(Error::TicketGetFailIDNotFound{ id });
+    }
   }
 
-  pub async fn update(&self, id: u32, ticket_fc: TicketToCreate) -> Result<Ticket>{
+  pub async fn update(&self, id: u32, ticket_fc: TicketToCreate) -> Result<Option<Ticket>>{
     let mut store = self.tickets_store.lock().unwrap();
 
     let new_ticket = Ticket {
@@ -75,15 +77,15 @@ impl ModelController {
     };
     let ticket= store.get_mut(id as usize).and_then(|ticket| ticket.replace(new_ticket));
 
-    ticket.ok_or(Error::TicketUpdateFailIDNotFound{ id })
+    Ok(Some(ticket.ok_or(Error::TicketUpdateFailIDNotFound{ id })?))
   }
 
-  pub async fn delete(&self, id: u32) -> Result<Ticket>{
+  pub async fn delete(&self, id: u32) -> Result<Option<Ticket>>{
     let mut store: std::sync::MutexGuard<Vec<Option<Ticket>>> = self.tickets_store.lock().unwrap();
 
     let ticket= store.get_mut(id as usize).and_then(|ticket: &mut Option<Ticket>| ticket.take());
 
-    ticket.ok_or(Error::TicketDeleteFailIDNotFound { id })
+    Ok(Some(ticket.ok_or(Error::TicketDeleteFailIDNotFound{ id })?))
   }
 
 }

@@ -43,7 +43,7 @@ async fn list_tickets (
 async fn get_ticket (
   State(mc): State<ModelController>,
   Path(id): Path<u32>
-) -> Result<Json<Ticket>> {
+) -> Result<Json<Option<Ticket>>> {
   println!("--> {:<12} - get_ticket", "HANDLER");
   let ticket= mc.get(id).await?;
   
@@ -56,7 +56,7 @@ async fn update_ticket (
   State(mc): State<ModelController>,
   Path(id): Path<u32>,
   Json(ticket_fc): Json<TicketToCreate>
-) -> Result<Json<Ticket>> {
+) -> Result<Json<Option<Ticket>>> {
   println!("--> {:<12} - update_ticket", "HANDLER");
   let ticket = mc.update(id, ticket_fc).await?;
   
@@ -68,9 +68,9 @@ async fn update_ticket (
 async fn delete_ticket (
   State(mc): State<ModelController>,
   Path(id): Path<u32>
-) -> Result<Json<Ticket>> {
+) -> Result<Json<Option<Ticket>>> {
   println!("--> {:<12} - delete_ticket", "HANDLER");
-  let ticket: Ticket = mc.delete(id).await?;
+  let ticket = mc.delete(id).await?;
   
   Ok(Json(ticket))
 }

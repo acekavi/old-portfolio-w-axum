@@ -19,10 +19,13 @@ async fn main() -> Result<()> {
     // Initialize the ModelController
     let mc = ModelController::new()?;
 
+    let routes_api = web::routes_ticket::routes(mc.clone())
+                            .route_layer(middleware::from_fn(web::mw_auth::mw_require_auth));
+
     let all_routes = Router::new()
         .merge(routes_hello())
         .merge(web::routes_login::routes())
-        .nest("/api", web::routes_ticket::routes(mc.clone()))
+        .nest("/api", routes_api)
         .layer(middleware::map_response(main_response_mapper))
         .layer(CookieManagerLayer::new())
         .fallback_service(routes_static());
