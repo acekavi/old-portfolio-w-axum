@@ -2,6 +2,7 @@ use axum::routing::{post, get, put, delete};
 use axum::{Json, Router};
 use axum::extract::{State, Path};
 
+use crate::ctx::Ctx;
 use crate::model::{ModelController, TicketToCreate, Ticket};
 use crate::Result;
 
@@ -19,11 +20,12 @@ pub fn routes(mc : ModelController) -> Router {
 // region: create ticket
 async fn create_ticket (
   State(mc): State<ModelController>,
+  ctx : Ctx,
   Json(ticket_fc): Json<TicketToCreate>
 ) -> Result<Json<Ticket>> {
   println!("--> {:<12} - create_ticket", "HANDLER");
 
-  let ticket: Ticket = mc.create(ticket_fc).await?;
+  let ticket: Ticket = mc.create(ctx, ticket_fc).await?;
   Ok(Json(ticket))
 }
 // endregion: create ticket
@@ -54,11 +56,12 @@ async fn get_ticket (
 // region: update ticket
 async fn update_ticket (
   State(mc): State<ModelController>,
+  ctx : Ctx,
   Path(id): Path<u32>,
   Json(ticket_fc): Json<TicketToCreate>
 ) -> Result<Json<Option<Ticket>>> {
   println!("--> {:<12} - update_ticket", "HANDLER");
-  let ticket = mc.update(id, ticket_fc).await?;
+  let ticket = mc.update(id, ticket_fc, ctx).await?;
   
   Ok(Json(ticket))
 }
