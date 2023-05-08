@@ -27,6 +27,7 @@ jobs:
         run: cargo install cargo-watch
 
       - name: Run cargo watch
+        working-directory : backend/
         run: cargo watch -x check
         
   backend:
