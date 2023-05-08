@@ -10,7 +10,7 @@ async fn quick_dev() -> httpc_test::Result<()> {
   // hc.do_get("/hello?name=Avishka").await?.print().await?; // Query params check
   // hc.do_get("/hello/Kavinda").await?.print().await?; // Path params check
   // hc.do_get("/static/test.html").await?.print().await?;  // Static files check
-
+  
   hc.do_post("/api/ticket", json!({
     "title": "Ticket 2",
   }),

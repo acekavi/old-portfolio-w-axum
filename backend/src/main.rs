@@ -5,10 +5,12 @@ use crate::model::ModelController;
 pub use self::error::{Error, Result};
 
 use std::net::SocketAddr;
-use axum::{Router, response::{Html, IntoResponse, Response}, routing::{get, get_service}, extract::{Query, Path}, middleware};
+use axum::{Router, response::{Html, IntoResponse, Response}, routing::{get, get_service}, extract::{Query, Path}, middleware, Json};
 use serde::Deserialize;
+use serde_json::json;
 use tower_cookies::CookieManagerLayer;
 use tower_http::services::ServeDir;
+use uuid::Uuid;
 
 mod ctx;
 mod error;
@@ -21,13 +23,14 @@ async fn main() -> Result<()> {
     let mc = ModelController::new()?;
 
     let routes_api = web::routes_ticket::routes(mc.clone())
-                            .route_layer(middleware::from_fn(web::mw_auth::mw_require_auth));
+        .route_layer(middleware::from_fn(web::mw_auth::mw_require_auth));
 
     let all_routes = Router::new()
         .merge(routes_hello())
         .merge(web::routes_login::routes())
         .nest("/api", routes_api)
         .layer(middleware::map_response(main_response_mapper))
+        .layer(middleware::from_fn_with_state(mc.clone(), web::mw_auth::mw_ctx_resolver,))
         .layer(CookieManagerLayer::new())
         .fallback_service(routes_static());
 
@@ -73,9 +76,31 @@ async fn handler_name(Path(name): Path<String>) -> impl IntoResponse {
 // region: --- custom response mappepr ---
 async fn main_response_mapper(res: Response) -> Response {
     // println!("--> {:<12} - Main Response Mapper", "RES_MAPPER");
+    let uuid = Uuid::new_v4();
 
-    println!();
-    res
+    // Get the eventual response error
+    let service_error = res.extensions().get::<Error>();
+    let client_service_error = service_error.map(|e| e.client_status_and_client_error());
+    
+    // If client error, build new response
+    let error_response = client_service_error.as_ref().map(|(status_code, client_error)| {
+        let client_error_body = json!({
+            "error": {
+                "type": client_error.as_ref(),
+                "req_uuid": uuid.to_string(),
+            }
+        });
+
+        println!("--> {:<12} - Client Error - {client_error_body}", "ERROR");
+
+        // Build new reference from the client_error_body
+        (*status_code, Json(client_error_body)).into_response()
+    });
+    
+    // -- Todo: Build and log the server log line
+    println!("--> {:<12} - {uuid} - Error: {service_error:?}", "SERVER LOG");
+
+    error_response.unwrap_or(res)
 }
 // endregion: --- custom response mappepr ---
 
