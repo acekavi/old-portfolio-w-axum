@@ -11,27 +11,24 @@ env:
       
 jobs:
   cargo_watch:
-      runs-on: ubuntu-latest
-      steps:
-      - name: Checkout repository
-        uses: actions/checkout@v2
+    timeout-minutes: 15
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
 
-      - name: Install Rust
-        uses: actions-rs/toolchain@v1
-        with:
-          profile: minimal
-          toolchain: stable
-          override: true
+    - name: Install Rust
+      uses: actions-rs/toolchain@v1
+      with:
+        profile: minimal
+        toolchain: stable
+        override: true
 
-      - name: Install cargo-watch
-        run: cargo install cargo-watch
-
-      - name: Run cargo watch
-        working-directory : backend/
-        run: cargo watch -x check
+    - name: Install cargo-watch
+      run: cargo install cargo-watch
         
   backend:
-    timeout-minutes: 120
+    timeout-minutes: 15
     runs-on: ubuntu-latest
     needs: [cargo_watch]
     steps:
@@ -41,7 +38,7 @@ jobs:
       run: cargo watch -q -c -w src/ -x run
       
   client_side:
-    timeout-minutes: 120
+    timeout-minutes: 5
     runs-on: ubuntu-latest
     needs: [backend]
     steps:
