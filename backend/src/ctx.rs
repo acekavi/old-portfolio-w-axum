@@ -1,6 +1,6 @@
 #[derive(Clone, Debug)]
 pub struct Ctx{
-  user_id: u32,
+  pub user_id: u32,
 }
 
 // Constructor
