@@ -28,8 +28,8 @@ jobs:
       
     - name: Build
       working-directory : backend/
-      run: cargo run
-      
-    - name: Test
+      run: cargo build
+
+    - name: Tests
       working-directory : backend/
-      run: cargo watch -q -c -w tests/ -x "test -q quick_dev -- --nocapture"
+      run: cargo test
