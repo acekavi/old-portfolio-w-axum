@@ -1,14 +1,13 @@
-use axum::{body::Bytes, Json, response::IntoResponse};
-use hyper::StatusCode;
+use axum::{response::IntoResponse, Json};
+use hyper::{body::Bytes, StatusCode};
 use serde::{Serialize, Deserialize};
-
 
 #[derive(Serialize, Deserialize)]
 pub struct Input {
-  pub  message: String,
+  pub message: String,
 }
 
-pub async fn post_handler(Json(input): Json<Input>) -> impl IntoResponse {
+pub async fn test_handler(Json(input): Json<Input>) -> impl IntoResponse {
   let response = format!("Received message: {}", input.message);
   (StatusCode::OK, Bytes::from(response))
 }

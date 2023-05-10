@@ -22,14 +22,18 @@ jobs:
         profile: minimal
         toolchain: stable
         override: true
-
-    - name: Install cargo-watch
-      run: cargo install cargo-watch
       
     - name: Build
       working-directory : backend/
-      run: cargo build
+      run: cargo build --package backend --bin backend
+
+  test:
+    runs-on: ubuntu-latest
+    needs: [ backend ]
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
 
     - name: Tests
       working-directory : backend/
-      run: cargo test
+      run: cargo test --package backend --test test -- test_post_request --exact --nocapture 

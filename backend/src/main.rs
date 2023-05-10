@@ -1,12 +1,10 @@
-use axum::{
-    Router,
-};
-use backend::post_handler;
+use axum::Router;
+use backend::test_handler;
 use std::net::SocketAddr;
 
 #[tokio::main]
 async fn main() {
-    let app = Router::new().route("/post", axum::routing::post(post_handler));
+    let app = Router::new().route("/post", axum::routing::post(test_handler));
 
     let addr = SocketAddr::from(([127, 0, 0, 1], 3000));
     axum::Server::bind(&addr)
@@ -14,3 +12,4 @@ async fn main() {
         .await
         .unwrap();
 }
+
