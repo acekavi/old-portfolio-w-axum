@@ -3,7 +3,7 @@
 
 My Personal Portfolio Website
 
-Test Cases : [![Rust](https://github.com/acekavi/acekavi.me/actions/workflows/rust.yml/badge.svg?branch=master)](https://github.com/acekavi/acekavi.me/actions/workflows/rust.yml)
+[![Test Cases](https://github.com/acekavi/acekavi.me/actions/workflows/rust.yml/badge.svg?branch=master)](https://github.com/acekavi/acekavi.me/actions/workflows/rust.yml)]
 
 ## Tech Stack
 
