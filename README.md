@@ -51,10 +51,7 @@ My Personal Portfolio Website
 
 To run this project, you will need to add the following environment variables to your .env file
 
-`API_KEY`
-
-`ANOTHER_API_KEY`
-
+`DATABASE_URL`
 
 ## Run Locally
 
@@ -89,6 +86,11 @@ Start the client
   cargo watch -q -c -w tests/ -x "test -q quick_dev -- --nocapture"
 ```
 
+Connect to the database
+
+```bash
+  sudo -i -u postgres psql -h localhost -p 5432 -U admin -d testdb
+```
 
 ## Feedback
 

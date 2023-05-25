@@ -1,0 +1,65 @@
+pub async fn create(&self, payload: UserCreatePayload) -> Result<User, sqlx::Error>{
+        let user = sqlx::query_as::<_, User>(
+            r#"
+                INSERT INTO users (username, password, email)
+                VALUES ($1, $2, $3)
+                RETURNING id, username, password, email, first_name, last_name, is_active, is_superuser
+            "#,
+        )
+        .bind(payload.username)
+        .bind(payload.password)
+        .bind(payload.email)
+        .fetch_one(&self.pool)
+        .await?;
+
+        Ok(user)
+    }
+
+    pub async fn get_all(&self) -> Result<Vec<User>, sqlx::Error>{
+        let users = sqlx::query_as::<_, User>(
+            r#"
+                SELECT id, username, password, email, first_name, last_name, is_active, is_superuser
+                FROM users
+            "#,
+        )
+        .fetch_all(&self.pool)
+        .await?;
+
+        Ok(users)
+    }
+
+    pub async fn get_by_id(&self, id: i32) -> Result<User, sqlx::Error>{
+        let user = sqlx::query_as::<_, User>(
+            r#"
+                SELECT id, username, password, email, first_name, last_name, is_active, is_superuser
+                FROM users
+                WHERE id = $1
+            "#,
+        )
+        .bind(id)
+        .fetch_one(&self.pool)
+        .await?;
+
+        Ok(user)
+    }
+
+    pub async fn update(&self, id: i32, payload: UserUpdatePayload) -> Result<User, sqlx::Error>{
+        let user = sqlx::query_as::<_, User>(
+            r#"
+                UPDATE users
+                SET username = $1, password = $2, email = $3, first_name = $4, last_name = $5
+                WHERE id = $6
+                RETURNING id, username, password, email, first_name, last_name, is_active, is_superuser
+            "#,
+        )
+        .bind(payload.username)
+        .bind(payload.password)
+        .bind(payload.email)
+        .bind(payload.first_name)
+        .bind(payload.last_name)
+        .bind(id)
+        .fetch_one(&self.pool)
+        .await?;
+
+        Ok(user)
+    }
