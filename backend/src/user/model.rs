@@ -1,18 +1,30 @@
 use serde::{Serialize, Deserialize};
-use sqlx::{PgPool, FromRow};
+use sqlx::{FromRow, types::{chrono::{DateTime, Utc}}, PgPool};
+use uuid::Uuid;
+
+use super::error::{Result, Error};
 
 // region: User model
 #[derive(Debug, Clone, Serialize, FromRow)]
-#[sqlx(rename_all = "camelCase")]
+// #[sqlx(rename_all = "camelCase")]
 pub struct User{
-    pub id: i32,
+    #[serde(skip_serializing)]
+    pub id: Uuid,
     pub username: String,
     pub password: String,
     pub email: String,
-    pub first_name: String,
-    pub last_name: String,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub first_name: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub last_name: Option<String>,
+    #[serde(skip_serializing)]
     pub is_active: bool,
+    #[serde(skip_serializing)]
     pub is_superuser: bool,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub created_at: Option<DateTime<Utc>>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub updated_at: Option<DateTime<Utc>>,
 }
 // endregion: User model
 
@@ -38,36 +50,44 @@ pub struct UserUpdatePayload{
 
 // region: User Model Controller
 #[derive(Clone)]
-pub struct ModelController{
-    pub pool: PgPool,
+pub struct ModalController{
+    db_pool: PgPool,
 }
 
-impl ModelController{
+impl ModalController{
     /// Creates a new [`ModelController`].
-    pub fn new(pool: PgPool) -> Self{
-        Self{pool}
+    pub fn new(db_pool: PgPool) -> Self {
+        Self { db_pool }
     }
 }
 
 // CRUD Implementation
-impl ModelController {
-    pub async fn register(&self, payload: UserCreatePayload) -> Result<User, sqlx::Error>{
-        let hashed_password = bcrypt::hash(payload.password, bcrypt::DEFAULT_COST)?;
+impl ModalController {
+    pub async fn create(&self, payload: UserCreatePayload) -> Result<User>{
+        let hashed_password = bcrypt::hash(payload.password, bcrypt::DEFAULT_COST).unwrap();
 
-        let user = sqlx::query_as::<_, User>(
+        let query_result = sqlx::query_as::<_, User>(
             r#"
-                INSERT INTO users (username, password, email)
-                VALUES ($1, $2, $3)
-                RETURNING id, username, password, email, first_name, last_name, is_active, is_superuser
+                INSERT INTO users (username, password, email, created_at, updated_at)
+                VALUES ($1, $2, $3, $4, $5)
+                RETURNING id, username, password, email, first_name, last_name, is_active, is_superuser, created_at, updated_at
             "#,
         )
         .bind(payload.username)
         .bind(hashed_password)
         .bind(payload.email)
-        .fetch_one(&self.pool)
-        .await?;
+        .bind(Utc::now())
+        .bind(Utc::now())
+        .fetch_one(&self.db_pool)
+        .await;
 
-        Ok(user)
+        match query_result {
+            Ok(user) => Ok(user),
+            Err(e) => {
+                println!("--> {:<12} - {:?}", "ERROR", e);
+                Err(Error::InternalServerError)
+            }
+        }
     }
 }
 

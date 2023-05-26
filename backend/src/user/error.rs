@@ -6,9 +6,9 @@ pub type Result<T> = core::result::Result<T, Error>;
 
 #[derive(Debug)]
 pub enum Error {
-  AlreadyExists,
-  NotFound,
-  WrongPassword,
+//   AlreadyExists,
+//   NotFound,
+//   WrongPassword,
   InternalServerError,
 }
 
@@ -16,9 +16,9 @@ pub enum Error {
 impl std::fmt::Display for Error {
     fn fmt(&self, f: &mut std::fmt::Formatter) -> core::result::Result<(), std::fmt::Error> {
         match self {
-        Error::AlreadyExists => write!(f, "User already exists!"),
-        Error::NotFound => write!(f, "No user found!"),
-        Error::WrongPassword => write!(f, "Recheck password!"),
+        // Error::AlreadyExists => write!(f, "User already exists!"),
+        // Error::NotFound => write!(f, "No user found!"),
+        // Error::WrongPassword => write!(f, "Recheck password!"),
         Error::InternalServerError => write!(f, "Internal server error!"),
         }
     }

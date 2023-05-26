@@ -14,6 +14,7 @@ pub fn set_env() {
         "postgresql://{}:{}@{}:{}/{}",
         db_username, db_password, db_host, db_port, db_name
     );
+    // postgresql://admin:admin123@127.0.0.1:5432/testdb
 
     env::set_var("DATABASE_URL", db_url);
 }
