@@ -31,46 +31,48 @@ impl UserController {
             return Err(Error::MissingFields);
         }
 
-        let hashed_password = bcrypt::hash(payload.password, bcrypt::DEFAULT_COST).unwrap();
-
-        let user_exist = sqlx::query!(
+        let user = sqlx::query_as::<_, User>(
             r#"
-                SELECT EXISTS(SELECT 1 FROM users WHERE username = $1 OR email = $2)
+                SELECT id, username, password, email, first_name, last_name, is_active, is_superuser, created_at, updated_at
+                FROM users
+                WHERE username = $1 OR email = $2
             "#,
-            payload.username,
-            payload.email
         )
-        .fetch_one(&self.app_state.get_db_conn())
+        .bind(&payload.username)
+        .bind(&payload.email)
+        .fetch_optional(&self.app_state.get_db_conn())
         .await
         .map_err(|e| {
             println!("--> {:<12} : DB - {:?}", "ERROR", e);
             Error::InternalServerErr
         })?;
 
-        if user_exist.exists.unwrap() {
-            return Err(Error::AlreadyExists);
-        };
+        if let Some(_user) = user {
+            Err(Error::AlreadyExists)
+        } else {
+            let hashed_password = bcrypt::hash(payload.password, bcrypt::DEFAULT_COST).unwrap();
 
-        let query_result = sqlx::query_as::<_, User>(
-            r#"
-                INSERT INTO users (username, password, email, created_at, updated_at)
-                VALUES ($1, $2, $3, $4, $5)
-                RETURNING id, username, password, email, first_name, last_name, is_active, is_superuser, created_at, updated_at
-            "#,
-        )
-        .bind(payload.username)
-        .bind(hashed_password)
-        .bind(payload.email)
-        .bind(Utc::now())
-        .bind(Utc::now())
-        .fetch_one(&self.app_state.get_db_conn())
-        .await;
+            let query_result = sqlx::query_as::<_, User>(
+                r#"
+                    INSERT INTO users (username, password, email, created_at, updated_at)
+                    VALUES ($1, $2, $3, $4, $5)
+                    RETURNING id, username, password, email, first_name, last_name, is_active, is_superuser, created_at, updated_at
+                "#,
+            )
+            .bind(payload.username)
+            .bind(hashed_password)
+            .bind(payload.email)
+            .bind(Utc::now())
+            .bind(Utc::now())
+            .fetch_one(&self.app_state.get_db_conn())
+            .await;
 
-        match query_result {
-            Ok(user) => Ok(user),
-            Err(e) => {
-                println!("--> {:<12} : DB - {:?}", "ERROR", e);
-                Err(Error::InternalServerErr)
+            match query_result {
+                Ok(user) => Ok(user),
+                Err(e) => {
+                    println!("--> {:<12} : DB - {:?}", "ERROR", e);
+                    Err(Error::InternalServerErr)
+                }
             }
         }
     }
@@ -96,8 +98,6 @@ impl UserController {
         })?;
 
         if let Some(user) = user {
-            //if user exits then:
-
             let valid = verify(payload.password, &user.password);
             if !valid.unwrap() {
                 return Err(Error::WrongCredentials);
