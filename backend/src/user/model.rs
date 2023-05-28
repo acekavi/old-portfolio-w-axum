@@ -1,69 +1,28 @@
-use serde::{Serialize, Deserialize};
-use sqlx::{FromRow, types::{chrono::{DateTime, Utc}}, PgPool};
-use uuid::Uuid;
+use chrono::Utc;
 
-use super::error::{Result, Error};
+use crate::utils::states::AppState;
 
-// region: User model
-#[derive(Debug, Clone, Serialize, FromRow)]
-// #[sqlx(rename_all = "camelCase")]
-pub struct User{
-    #[serde(skip_serializing)]
-    pub id: Uuid,
-    pub username: String,
-    pub password: String,
-    pub email: String,
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub first_name: Option<String>,
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub last_name: Option<String>,
-    #[serde(skip_serializing)]
-    pub is_active: bool,
-    #[serde(skip_serializing)]
-    pub is_superuser: bool,
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub created_at: Option<DateTime<Utc>>,
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub updated_at: Option<DateTime<Utc>>,
-}
-// endregion: User model
-
-// region: User Create payload
-#[derive(Deserialize)]
-pub struct UserCreatePayload{
-    pub username: String,
-    pub password: String,
-    pub email: String,
-}
-// endregion: User Create payload
-
-// region: User Update payload
-#[derive(Deserialize)]
-pub struct UserUpdatePayload{
-    pub username: String,
-    pub password: String,
-    pub email: String,
-    pub first_name: String,
-    pub last_name: String,
-}
-// endregion: User Update payload
+use super::{
+    error::{Error, Result},
+    schema::{User, UserCreatePayload},
+};
 
 // region: User Model Controller
 #[derive(Clone)]
-pub struct ModalController{
-    db_pool: PgPool,
+pub struct UserController {
+    app_state: AppState,
 }
 
-impl ModalController{
-    /// Creates a new [`ModelController`].
-    pub fn new(db_pool: PgPool) -> Self {
-        Self { db_pool }
+impl UserController {
+    pub fn new(app_state: &AppState) -> Self {
+        UserController {
+            app_state: app_state.clone(),
+        }
     }
 }
-
 // CRUD Implementation
-impl ModalController {
-    pub async fn create(&self, payload: UserCreatePayload) -> Result<User>{
+impl UserController {
+    pub async fn create(&self, payload: UserCreatePayload) -> Result<User> {
         let hashed_password = bcrypt::hash(payload.password, bcrypt::DEFAULT_COST).unwrap();
 
         let query_result = sqlx::query_as::<_, User>(
@@ -78,7 +37,7 @@ impl ModalController {
         .bind(payload.email)
         .bind(Utc::now())
         .bind(Utc::now())
-        .fetch_one(&self.db_pool)
+        .fetch_one(&self.app_state.get_db_conn())
         .await;
 
         match query_result {

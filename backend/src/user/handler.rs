@@ -1,51 +1,31 @@
-use axum::Router;
-use axum::extract::FromRef;
+use crate::utils::states::AppState;
+
+use super::error::Result;
+use super::model::UserController;
+use super::schema::{User, UserCreatePayload};
+
 use axum::routing::post;
+use axum::Router;
 use axum::{extract::State, Json};
-use sqlx::postgres::PgPoolOptions;
-use super::model::{UserCreatePayload, User, ModalController};
-use super::error::{Result};
 
-// region: routes
-#[derive(Clone, FromRef)]
-struct AppState {
-    user_controller: ModalController
-}
+pub async fn user_routes(app_state: &AppState) -> Router {
+    let user_controller = UserController::new(app_state);
 
-impl AppState {
-    pub fn new(user_controller: ModalController) -> Self {
-        Self {
-            user_controller,
-        }
-    }
-}
-
-pub async fn user_routes() -> Router {
-    let database_url = std::env::var("DATABASE_URL").expect("DATABASE_URL must be set");
-
-    let db_pool = PgPoolOptions::new()
-    .max_connections(10)
-    .connect(&database_url)
-    .await.unwrap();
-
-    let user_controller = ModalController::new(db_pool.clone());
-    let app_state = AppState::new(user_controller);
-
-    axum::Router::new()
+    Router::new()
         .route("/register", post(create_user))
-        .with_state(app_state)
+        .with_state(user_controller)
 }
 // endregion: routes
 
 // region: crud handlers
 // region: create
 async fn create_user(
-    State(state): State<AppState>,
+    State(state): State<UserController>,
     Json(payload): Json<UserCreatePayload>,
 ) -> Result<Json<User>> {
     println!("--> {:<12} - CREATE USER", "HANDLER");
 
-    let user = state.user_controller.create(payload).await?;
+    let user = state.create(payload).await?;
     Ok(Json(user))
 }
 // endregion: create
