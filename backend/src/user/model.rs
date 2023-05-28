@@ -1,10 +1,14 @@
+use bcrypt::verify;
 use chrono::Utc;
+use jsonwebtoken::{encode, Header};
+use tower_cookies::{Cookie, Cookies};
 
-use crate::utils::states::AppState;
+use crate::utils::{states::AppState, token::get_timestamp_8h};
 
 use super::{
     error::{Error, Result},
-    schema::{User, UserCreatePayload},
+    schema::{Claims, User, UserCreatePayload, UserLoginPayload},
+    AUTH_TOKEN,
 };
 
 // region: User Model Controller
@@ -23,7 +27,29 @@ impl UserController {
 // CRUD Implementation
 impl UserController {
     pub async fn create(&self, payload: UserCreatePayload) -> Result<User> {
+        if payload.username.is_empty() || payload.email.is_empty() || payload.password.is_empty() {
+            return Err(Error::MissingFields);
+        }
+
         let hashed_password = bcrypt::hash(payload.password, bcrypt::DEFAULT_COST).unwrap();
+
+        let user_exist = sqlx::query!(
+            r#"
+                SELECT EXISTS(SELECT 1 FROM users WHERE username = $1 OR email = $2)
+            "#,
+            payload.username,
+            payload.email
+        )
+        .fetch_one(&self.app_state.get_db_conn())
+        .await
+        .map_err(|e| {
+            println!("--> {:<12} : DB - {:?}", "ERROR", e);
+            Error::InternalServerErr
+        })?;
+
+        if user_exist.exists.unwrap() {
+            return Err(Error::AlreadyExists);
+        };
 
         let query_result = sqlx::query_as::<_, User>(
             r#"
@@ -43,10 +69,57 @@ impl UserController {
         match query_result {
             Ok(user) => Ok(user),
             Err(e) => {
-                println!("--> {:<12} - {:?}", "ERROR", e);
-                Err(Error::InternalServerError)
+                println!("--> {:<12} : DB - {:?}", "ERROR", e);
+                Err(Error::InternalServerErr)
             }
         }
+    }
+
+    pub async fn login(&self, cookies: Cookies, payload: UserLoginPayload) -> Result<User> {
+        if payload.username.is_empty() || payload.password.is_empty() {
+            return Err(Error::MissingFields);
+        }
+
+        let user = sqlx::query_as::<_, User>(
+            r#"
+                SELECT id, username, password, email, first_name, last_name, is_active, is_superuser, created_at, updated_at
+                FROM users
+                WHERE username = $1 OR email = $1
+            "#,
+        )
+        .bind(payload.username)
+        .fetch_optional(&self.app_state.get_db_conn())
+        .await
+        .map_err(|e| {
+            println!("--> {:<12} : DB - {:?}", "ERROR", e);
+            Error::InternalServerErr
+        })?;
+
+        if let Some(user) = user {
+            //if user exits then:
+
+            let valid = verify(payload.password, &user.password);
+            if !valid.unwrap() {
+                return Err(Error::WrongCredentials);
+            } else {
+                let claims = Claims {
+                    email: user.email.to_owned(),
+                    exp: get_timestamp_8h(),
+                };
+
+                let token = encode(
+                    &Header::default(),
+                    &claims,
+                    &self.app_state.get_encoding_key(),
+                )
+                .map_err(|_| Error::TokenCreationFailed)?;
+                cookies.add(Cookie::new(AUTH_TOKEN, token));
+                // todo!("complete the token validation and return the user model");
+                return Ok(user);
+            }
+        }
+        // user does not exist
+        Err(Error::WrongCredentials)
     }
 }
 

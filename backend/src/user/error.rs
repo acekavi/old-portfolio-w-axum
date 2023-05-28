@@ -5,31 +5,37 @@ pub type Result<T> = core::result::Result<T, Error>;
 
 #[derive(Debug)]
 pub enum Error {
-    //   AlreadyExists,
+    AlreadyExists,
+    MissingFields,
+    InvalidToken,
+    WrongCredentials,
+    TokenCreationFailed,
     //   NotFound,
     //   WrongPassword,
-    InternalServerError,
+    InternalServerErr,
 }
-
-// region: error boilerplate
-impl std::fmt::Display for Error {
-    fn fmt(&self, f: &mut std::fmt::Formatter) -> core::result::Result<(), std::fmt::Error> {
-        match self {
-            // Error::AlreadyExists => write!(f, "User already exists!"),
-            // Error::NotFound => write!(f, "No user found!"),
-            // Error::WrongPassword => write!(f, "Recheck password!"),
-            Error::InternalServerError => write!(f, "Internal server error!"),
-        }
-    }
-}
-
-impl std::error::Error for Error {}
-// endregion: error boilerplate
 
 impl IntoResponse for Error {
     fn into_response(self) -> Response {
-        println!("--> {:<12} - {self:?}", "INTO - RES");
+        // Server Error
+        println!("--> {:<12} : USER - {self:?}", "ERROR");
 
-        (StatusCode::INTERNAL_SERVER_ERROR, "UNHANDLED_SERVER_ERROR").into_response()
+        // Client Error
+        let err = match self {
+            Error::AlreadyExists => "USERNAME_OR_EMAIL_ALREADY_EXISTS",
+            Error::MissingFields => "FILL_ALL_FIELDS",
+            Error::InvalidToken => "INVALID_TOKEN",
+            Error::WrongCredentials => "CREDENTIALS_DO_NOT_MATCH_ANY_USER",
+            Error::TokenCreationFailed => "FAILED_TO_CREATE_TOKEN",
+            // Error::NotFound => (StatusCode::NOT_FOUND, "NOT_FOUND"),
+            // Error::WrongPassword => (StatusCode::UNAUTHORIZED, "WRONG_PASSWORD"),
+            Error::InternalServerErr => "UNHANDLED_SERVER_ERROR",
+        };
+
+        (
+            StatusCode::INTERNAL_SERVER_ERROR,
+            serde_json::json!({ "error": err }).to_string(),
+        )
+            .into_response()
     }
 }

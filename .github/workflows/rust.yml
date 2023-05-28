@@ -25,8 +25,18 @@ jobs:
       
     - name: Build
       working-directory : backend/
-      run: cargo build --package backend --bin backend
+      run: cargo build --verbose
 
     - name: Tests
       working-directory : backend/
-      run: cargo test --package backend --test test -- test_post_request --exact --nocapture 
+      run: cargo test --verbose
+    
+    - name: Clippy
+      working-directory : backend/
+      run: cargo clippy --verbose -- -D warnings
+
+    - name: Audit
+      working-directory : backend/
+      run: |
+        cargo install cargo-audit 
+        cargo audit

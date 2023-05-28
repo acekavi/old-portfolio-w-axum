@@ -10,4 +10,5 @@ pub fn set_env() {
     let _db_port = env::var("DB_PORT").expect("DB_PORT must be set.");
     let _db_name = env::var("DB_NAME").expect("DB_NAME must be set.");
     let _db_url = env::var("DATABASE_URL").expect("DATABASE_URL must be set.");
+    let _jwt_secret = env::var("JWT_SECRET").expect("JWT_SECRET must be set.");
 }
