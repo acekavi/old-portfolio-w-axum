@@ -12,6 +12,7 @@ use uuid::Uuid;
 pub struct User {
     pub id: Uuid,
     pub username: String,
+    #[serde(skip_serializing)]
     pub password: String,
     pub email: String,
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -58,7 +59,7 @@ pub struct UserUpdatePayload {
 // region: Claims
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Claims {
-    pub email: String,
+    pub username: String,
     pub exp: i64,
 }
 // endregion: Claims

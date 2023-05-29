@@ -1,14 +1,12 @@
 use bcrypt::verify;
 use chrono::Utc;
-use jsonwebtoken::{encode, Header};
-use tower_cookies::{Cookie, Cookies};
+use uuid::Uuid;
 
-use crate::utils::{states::AppState, token::get_timestamp_8h};
+use crate::utils::states::AppState;
 
 use super::{
     error::{Error, Result},
-    schema::{Claims, User, UserCreatePayload, UserLoginPayload},
-    AUTH_TOKEN,
+    schema::{User, UserCreatePayload, UserLoginPayload},
 };
 
 // region: User Model Controller
@@ -44,7 +42,7 @@ impl UserController {
         .await
         .map_err(|e| {
             println!("--> {:<12} : DB - {:?}", "ERROR", e);
-            Error::InternalServerErr
+            Error::InternalServerFailure
         })?;
 
         if let Some(_user) = user {
@@ -71,13 +69,13 @@ impl UserController {
                 Ok(user) => Ok(user),
                 Err(e) => {
                     println!("--> {:<12} : DB - {:?}", "ERROR", e);
-                    Err(Error::InternalServerErr)
+                    Err(Error::InternalServerFailure)
                 }
             }
         }
     }
 
-    pub async fn login(&self, cookies: Cookies, payload: UserLoginPayload) -> Result<User> {
+    pub async fn login(&self, payload: UserLoginPayload) -> Result<User> {
         if payload.username.is_empty() || payload.password.is_empty() {
             return Err(Error::MissingFields);
         }
@@ -94,33 +92,75 @@ impl UserController {
         .await
         .map_err(|e| {
             println!("--> {:<12} : DB - {:?}", "ERROR", e);
-            Error::InternalServerErr
+            Error::InvalidQuery(e)
         })?;
 
         if let Some(user) = user {
             let valid = verify(payload.password, &user.password);
-            if !valid.unwrap() {
-                return Err(Error::WrongCredentials);
-            } else {
-                let claims = Claims {
-                    email: user.email.to_owned(),
-                    exp: get_timestamp_8h(),
-                };
-
-                let token = encode(
-                    &Header::default(),
-                    &claims,
-                    &self.app_state.get_encoding_key(),
-                )
-                .map_err(|_| Error::TokenCreationFailed)?;
-                cookies.add(Cookie::new(AUTH_TOKEN, token));
-                // todo!("complete the token validation and return the user model");
-                return Ok(user);
+            match valid {
+                Ok(valid) => {
+                    if !valid {
+                        return Err(Error::WrongCredentials);
+                    } else {
+                        return Ok(user);
+                    }
+                }
+                Err(e) => {
+                    println!("--> {:<12} : LOGIN BCRYPT - {:?}", "ERROR", e);
+                    return Err(Error::WrongCredentials);
+                }
             }
         }
         // user does not exist
         Err(Error::WrongCredentials)
     }
-}
 
+    pub async fn get_user(&self, user_id: Uuid, username: String) -> Result<User> {
+        let user = sqlx::query_as::<_, User>(
+            r#"
+                SELECT id, username, password, email, first_name, last_name, is_active, is_superuser, created_at, updated_at
+                FROM users
+                WHERE id = $1 AND username = $2
+            "#,
+        )
+        .bind(user_id)
+        .bind(username)
+        .fetch_optional(&self.app_state.get_db_conn())
+        .await
+        .map_err(|e| {
+            println!("--> {:<12} : DB - {:?}", "ERROR", e);
+            Error::InternalServerFailure
+        })?;
+
+        if let Some(user) = user {
+            return Ok(user);
+        }
+        // user does not exist
+        Err(Error::WrongCredentials)
+    }
+
+    pub async fn update_user(&self, user_id: Uuid, username: String) -> Result<User> {
+        let user = sqlx::query_as::<_, User>(
+            r#"
+                SELECT id, username, password, email, first_name, last_name, is_active, is_superuser, created_at, updated_at
+                FROM users
+                WHERE id = $1 AND username = $2
+            "#,
+        )
+        .bind(user_id)
+        .bind(username)
+        .fetch_optional(&self.app_state.get_db_conn())
+        .await
+        .map_err(|e| {
+            println!("--> {:<12} : DB - {:?}", "ERROR", e);
+            Error::InternalServerFailure
+        })?;
+
+        if let Some(user) = user {
+            return Ok(user);
+        }
+        // user does not exist
+        Err(Error::WrongCredentials)
+    }
+}
 // endregion: Users Model Controller

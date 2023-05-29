@@ -10,9 +10,9 @@ pub enum Error {
     InvalidToken,
     WrongCredentials,
     TokenCreationFailed,
-    //   NotFound,
-    //   WrongPassword,
-    InternalServerErr,
+    TokenExpired,
+    InvalidQuery(sqlx::Error),
+    InternalServerFailure,
 }
 
 impl IntoResponse for Error {
@@ -22,14 +22,14 @@ impl IntoResponse for Error {
 
         // Client Error
         let err = match self {
-            Error::AlreadyExists => "USERNAME_OR_EMAIL_ALREADY_EXISTS",
-            Error::MissingFields => "FILL_ALL_FIELDS",
+            Error::AlreadyExists => "USERNAME_OR_EMAIL_ALREADY_TAKEN",
+            Error::MissingFields => "FILL_ALL_THE_FIELDS",
             Error::InvalidToken => "INVALID_TOKEN",
             Error::WrongCredentials => "CREDENTIALS_DO_NOT_MATCH_ANY_USER",
             Error::TokenCreationFailed => "FAILED_TO_CREATE_TOKEN",
-            // Error::NotFound => (StatusCode::NOT_FOUND, "NOT_FOUND"),
-            // Error::WrongPassword => (StatusCode::UNAUTHORIZED, "WRONG_PASSWORD"),
-            Error::InternalServerErr => "UNHANDLED_SERVER_ERROR",
+            Error::TokenExpired => "TOKEN_EXPIRED",
+            Error::InternalServerFailure => "UNHANDLED_SERVER_ERROR",
+            Error::InvalidQuery(..) => "DATABASE_ERROR",
         };
 
         (

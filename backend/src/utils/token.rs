@@ -3,10 +3,16 @@ use axum::{async_trait, extract::FromRequestParts};
 use chrono::{Duration, Utc};
 use hyper::header::AUTHORIZATION;
 
-use jsonwebtoken::{decode, Validation};
+use jsonwebtoken::{decode, encode, Header, Validation};
 
 use crate::user::error::{Error, Result};
 use crate::user::schema::{Claims, Keys};
+
+fn get_keys() -> Keys {
+    let jwt_secret = std::env::var("JWT_SECRET").expect("JWT_SECRET must be set");
+    let keys = Keys::new(jwt_secret.as_bytes());
+    keys
+}
 
 // 8 hours timestamp before jwt expiration
 pub fn get_timestamp_8h() -> i64 {
@@ -25,19 +31,34 @@ where
     type Rejection = Error;
 
     async fn from_request_parts(parts: &mut Parts, _state: &B) -> Result<Self> {
-        let jwt_secret = std::env::var("JWT_SECRET").expect("JWT_SECRET must be set");
-        let keys = Keys::new(jwt_secret.as_bytes());
-
         let auth_token = parts
             .headers
             .get(AUTHORIZATION)
             .ok_or(Error::InvalidToken)?;
         let data = decode::<Claims>(
             auth_token.to_str().unwrap(),
-            &keys.decode_key,
+            &get_keys().decode_key,
             &Validation::default(),
         )
         .map_err(|_| Error::InvalidToken)?;
+
+        if data.claims.exp < Utc::now().timestamp() {
+            return Err(Error::TokenExpired);
+        }
+
         Ok(data.claims)
     }
+}
+
+// generate_token is used in the login handler
+pub fn generate_token(username: String) -> Result<String> {
+    let claims = Claims {
+        username,
+        exp: get_timestamp_8h(),
+    };
+
+    let token = encode(&Header::default(), &claims, &get_keys().encode_key)
+        .map_err(|_| Error::TokenCreationFailed)?;
+
+    Ok(token)
 }
