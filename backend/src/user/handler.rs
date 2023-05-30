@@ -1,17 +1,20 @@
 use crate::utils::states::AppState;
 use crate::utils::token::generate_token;
 
-use super::error::{Error, Result};
+use super::error::Result;
 use super::model::UserController;
-use super::schema::{Claims, User, UserCreatePayload, UserLoginPayload};
+use super::schema::{
+    Claims, CustomMessage, User, UserCreatePayload, UserLoginPayload, UserUpdatePayload,
+};
 
 use axum::extract::Path;
-use axum::response::IntoResponse;
-use axum::routing::{get, post};
+use axum::response::{IntoResponse, Response};
+use axum::routing::{delete, get, patch, post};
 use axum::Router;
 use axum::{extract::State, Json};
 
-use serde_json::json;
+use hyper::{HeaderMap, StatusCode};
+
 use tower_cookies::Cookies;
 use uuid::Uuid;
 
@@ -23,7 +26,9 @@ pub async fn user_routes(app_state: &AppState) -> Router {
         .route("/register", post(register))
         .route("/login", post(login))
         .route("/:user_id", get(get_user))
+        .route("/:user_id", patch(update))
         .route("/logout", get(logout))
+        .route("/:user_id", delete(delete_user))
         .with_state(user_controller)
 }
 // endregion: routes
@@ -46,53 +51,23 @@ pub async fn login(
     _cookies: Cookies,
     State(state): State<UserController>,
     Json(payload): Json<UserLoginPayload>,
-) -> impl IntoResponse {
-    let user = state.login(payload).await;
-    match user {
-        Ok(user) => {
-            println!("--> {:<12} : LOGIN USER", "HANDLER");
+) -> Result<Response> {
+    println!("--> {:<12} : LOGIN USER", "HANDLER");
+    let user = state.login(payload).await?;
+    let username = user.username.clone();
 
-            let username = user.username.clone();
-            let token = generate_token(username)
-                .map_err(|e| match e {
-                    Error::InternalServerFailure => Error::InternalServerFailure,
-                    _ => Error::TokenCreationFailed,
-                })
-                .unwrap();
+    let token = generate_token(username);
 
-            axum::http::Response::builder()
-                .status(axum::http::StatusCode::OK)
-                .header("content-type", "application/json")
-                .header(
-                    axum::http::header::AUTHORIZATION,
-                    axum::http::HeaderValue::from_str(&token).unwrap(),
-                )
-                .body(serde_json::to_string(&user).unwrap())
-                .unwrap()
+    match token {
+        Ok(token) => {
+            let mut headers = HeaderMap::new();
+            headers.insert(
+                axum::http::header::AUTHORIZATION,
+                axum::http::HeaderValue::from_str(&token).unwrap(),
+            );
+            Ok((StatusCode::OK, headers, Json(user)).into_response())
         }
-        Err(e) => {
-            println!("--> {:<12} : LOGIN USER - {:?}", "ERROR", e);
-
-            axum::http::Response::builder()
-                .status(axum::http::StatusCode::UNAUTHORIZED)
-                .header("content-type", "application/json")
-                .body(
-                    json!({
-                        "Error":
-                            format!(
-                                "{:?}",
-                                match e {
-                                    Error::InvalidQuery(_) => Error::InternalServerFailure,
-                                    _ => {
-                                        e
-                                    }
-                                }
-                            )
-                    })
-                    .to_string(),
-                )
-                .unwrap()
-        }
+        Err(error) => Ok(error.into_response()),
     }
 }
 // endregion: login
@@ -111,16 +86,49 @@ pub async fn get_user(
 // endregion: get user
 
 // region: logout user
-pub async fn logout() -> impl IntoResponse {
+pub async fn logout(_clamis: Claims) -> Result<Response> {
     // Create an axum response with the JSON body and headers
     println!("--> {:<12} : LOG OUT USER", "HANDLER");
 
-    axum::http::Response::builder()
-        .status(axum::http::StatusCode::OK)
-        .header("content-type", "application/json")
-        .body(serde_json::to_string(&"Logged out successfully").unwrap())
-        .unwrap()
+    let mut headers = HeaderMap::new();
+    headers.remove(axum::http::header::AUTHORIZATION);
+
+    let message = CustomMessage {
+        message: "User has been logged out successfully".to_string(),
+    };
+
+    Ok((StatusCode::OK, headers, Json(message)).into_response())
 }
 // endregion: logout user
+
+// region: update user
+async fn update(
+    State(state): State<UserController>,
+    Path(user_id): Path<Uuid>,
+    clamis: Claims,
+    Json(payload): Json<UserUpdatePayload>,
+) -> Result<Json<User>> {
+    let user = state.update(payload, user_id, clamis.username).await?;
+    println!("--> {:<12} : UPDATE USER", "HANDLER");
+
+    Ok(Json(user))
+}
+// endregion: update user
+
+// region: delete user
+async fn delete_user(
+    Path(user_id): Path<Uuid>,
+    clamis: Claims,
+    State(state): State<UserController>,
+) -> Result<Json<CustomMessage>> {
+    let result = state.delete(user_id, clamis.username).await?;
+    println!("--> {:<12} : DELETE USER", "HANDLER");
+
+    Ok(Json(result))
+}
+// endregion: delete user
+
+// todo!: add change password
+// todo!: add reset password
 
 // endregion: crud handlers

@@ -1,35 +1,31 @@
 use axum::response::{IntoResponse, Response};
 use hyper::StatusCode;
 
-pub type Result<T> = core::result::Result<T, Error>;
+pub type Result<T> = core::result::Result<T, UserError>;
 
 #[derive(Debug)]
-pub enum Error {
+pub enum UserError {
     AlreadyExists,
     MissingFields,
-    InvalidToken,
     WrongCredentials,
-    TokenCreationFailed,
-    TokenExpired,
     InvalidQuery(sqlx::Error),
-    InternalServerFailure,
+    InvalidHash(bcrypt::BcryptError),
+    _InternalServerFailure,
 }
 
-impl IntoResponse for Error {
+impl IntoResponse for UserError {
     fn into_response(self) -> Response {
         // Server Error
         println!("--> {:<12} : USER - {self:?}", "ERROR");
 
         // Client Error
         let err = match self {
-            Error::AlreadyExists => "USERNAME_OR_EMAIL_ALREADY_TAKEN",
-            Error::MissingFields => "FILL_ALL_THE_FIELDS",
-            Error::InvalidToken => "INVALID_TOKEN",
-            Error::WrongCredentials => "CREDENTIALS_DO_NOT_MATCH_ANY_USER",
-            Error::TokenCreationFailed => "FAILED_TO_CREATE_TOKEN",
-            Error::TokenExpired => "TOKEN_EXPIRED",
-            Error::InternalServerFailure => "UNHANDLED_SERVER_ERROR",
-            Error::InvalidQuery(..) => "DATABASE_ERROR",
+            UserError::AlreadyExists => "USERNAME_OR_EMAIL_ALREADY_TAKEN",
+            UserError::MissingFields => "FILL_ALL_THE_FIELDS",
+            UserError::WrongCredentials => "CREDENTIALS_DO_NOT_MATCH_ANY_USER",
+            UserError::InvalidQuery(..) => "DATABASE_ERROR",
+            UserError::InvalidHash(..) => "HASH_ERROR",
+            UserError::_InternalServerFailure => "UNHANDLED_SERVER_ERROR",
         };
 
         (

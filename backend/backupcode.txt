@@ -63,3 +63,55 @@ pub async fn create(&self, payload: UserCreatePayload) -> Result<User, sqlx::Err
 
         Ok(user)
     }
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+impl IntoResponse {
+    let user = state.login(payload).await;
+    match user {
+        Ok(user) => {
+            println!("--> {:<12} : LOGIN USER", "HANDLER");
+
+            let username = user.username.clone();
+            let token = generate_token(username)
+                .map_err(|e| match e {
+                    Error::InternalServerFailure => Error::InternalServerFailure,
+                    _ => Error::TokenCreationFailed,
+                })
+                .unwrap();
+
+            axum::http::Response::builder()
+                .status(axum::http::StatusCode::OK)
+                .header("content-type", "application/json")
+                .header(
+                    axum::http::header::AUTHORIZATION,
+                    axum::http::HeaderValue::from_str(&token).unwrap(),
+                )
+                .body(serde_json::to_string(&user).unwrap())
+                .unwrap()
+        }
+        Err(e) => {
+            println!("--> {:<12} : LOGIN USER - {:?}", "ERROR", e);
+
+            axum::http::Response::builder()
+                .status(axum::http::StatusCode::UNAUTHORIZED)
+                .header("content-type", "application/json")
+                .body(
+                    json!({
+                        "Error":
+                            format!(
+                                "{:?}",
+                                match e {
+                                    Error::InvalidQuery(_) => Error::InternalServerFailure,
+                                    _ => {
+                                        e
+                                    }
+                                }
+                            )
+                    })
+                    .to_string(),
+                )
+                .unwrap()
+        }
+    }
+}

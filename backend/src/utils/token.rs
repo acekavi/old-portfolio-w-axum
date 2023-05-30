@@ -5,8 +5,9 @@ use hyper::header::AUTHORIZATION;
 
 use jsonwebtoken::{decode, encode, Header, Validation};
 
-use crate::user::error::{Error, Result};
 use crate::user::schema::{Claims, Keys};
+
+use super::error::{Result, UtilError};
 
 fn get_keys() -> Keys {
     let jwt_secret = std::env::var("JWT_SECRET").expect("JWT_SECRET must be set");
@@ -28,22 +29,22 @@ impl<B> FromRequestParts<B> for Claims
 where
     B: Send + Sync,
 {
-    type Rejection = Error;
+    type Rejection = UtilError;
 
     async fn from_request_parts(parts: &mut Parts, _state: &B) -> Result<Self> {
         let auth_token = parts
             .headers
             .get(AUTHORIZATION)
-            .ok_or(Error::InvalidToken)?;
+            .ok_or(UtilError::InvalidToken)?;
         let data = decode::<Claims>(
             auth_token.to_str().unwrap(),
             &get_keys().decode_key,
             &Validation::default(),
         )
-        .map_err(|_| Error::InvalidToken)?;
+        .map_err(|_| UtilError::InvalidToken)?;
 
         if data.claims.exp < Utc::now().timestamp() {
-            return Err(Error::TokenExpired);
+            return Err(UtilError::TokenExpired);
         }
 
         Ok(data.claims)
@@ -58,7 +59,7 @@ pub fn generate_token(username: String) -> Result<String> {
     };
 
     let token = encode(&Header::default(), &claims, &get_keys().encode_key)
-        .map_err(|_| Error::TokenCreationFailed)?;
+        .map_err(|_| UtilError::TokenCreationFailed)?;
 
     Ok(token)
 }

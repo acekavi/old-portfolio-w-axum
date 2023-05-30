@@ -48,11 +48,9 @@ pub struct UserLoginPayload {
 // region: User Update payload
 #[derive(Deserialize)]
 pub struct UserUpdatePayload {
-    pub username: String,
-    pub password: String,
-    pub email: String,
-    pub first_name: String,
-    pub last_name: String,
+    pub email: Option<String>,
+    pub first_name: Option<String>,
+    pub last_name: Option<String>,
 }
 // endregion: User Update payload
 
@@ -63,6 +61,13 @@ pub struct Claims {
     pub exp: i64,
 }
 // endregion: Claims
+
+// region: CustomMessage
+#[derive(Serialize)]
+pub struct CustomMessage {
+    pub message: String,
+}
+// endregion: CustomMessage
 
 // region: Keys
 #[derive(Clone)]
