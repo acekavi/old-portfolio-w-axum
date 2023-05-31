@@ -1,15 +1,16 @@
+use crate::utils::schema::{Claims, CustomMessage};
 use crate::utils::states::AppState;
 use crate::utils::token::generate_token;
 
 use super::error::Result;
 use super::model::UserController;
 use super::schema::{
-    Claims, CustomMessage, User, UserCreatePayload, UserLoginPayload, UserUpdatePayload,
+    PasswordChangePayload, User, UserCreatePayload, UserLoginPayload, UserUpdatePayload,
 };
 
 use axum::extract::Path;
 use axum::response::{IntoResponse, Response};
-use axum::routing::{delete, get, patch, post};
+use axum::routing::{get, patch, post};
 use axum::Router;
 use axum::{extract::State, Json};
 
@@ -25,15 +26,14 @@ pub async fn user_routes(app_state: &AppState) -> Router {
     Router::new()
         .route("/register", post(register))
         .route("/login", post(login))
-        .route("/:user_id", get(get_user))
-        .route("/:user_id", patch(update))
         .route("/logout", get(logout))
-        .route("/:user_id", delete(delete_user))
+        .route("/password/:user_id", patch(change_password))
+        .route("/:user_id", get(get_user).delete(delete_user).patch(update))
         .with_state(user_controller)
 }
 // endregion: routes
 
-// region: crud handlers
+// region: user auth handlers
 // region: signup
 async fn register(
     State(state): State<UserController>,
@@ -45,6 +45,8 @@ async fn register(
     Ok(Json(user))
 }
 // endregion: signup
+
+// todo!: verify user with email
 
 // region: login
 pub async fn login(
@@ -75,10 +77,10 @@ pub async fn login(
 // region: get user
 pub async fn get_user(
     Path(user_id): Path<Uuid>,
-    clamis: Claims,
+    claims: Claims,
     State(state): State<UserController>,
 ) -> Result<Json<User>> {
-    let user = state.get_user(user_id, clamis.username).await?;
+    let user = state.get_user(user_id, claims.username).await?;
 
     println!("--> {:<12} : GET USER", "HANDLER");
     Ok(Json(user))
@@ -86,7 +88,7 @@ pub async fn get_user(
 // endregion: get user
 
 // region: logout user
-pub async fn logout(_clamis: Claims) -> Result<Response> {
+pub async fn logout(_claims: Claims) -> Result<Response> {
     // Create an axum response with the JSON body and headers
     println!("--> {:<12} : LOG OUT USER", "HANDLER");
 
@@ -103,12 +105,12 @@ pub async fn logout(_clamis: Claims) -> Result<Response> {
 
 // region: update user
 async fn update(
-    State(state): State<UserController>,
     Path(user_id): Path<Uuid>,
-    clamis: Claims,
+    claims: Claims,
+    State(state): State<UserController>,
     Json(payload): Json<UserUpdatePayload>,
 ) -> Result<Json<User>> {
-    let user = state.update(payload, user_id, clamis.username).await?;
+    let user = state.update(payload, user_id, claims.username).await?;
     println!("--> {:<12} : UPDATE USER", "HANDLER");
 
     Ok(Json(user))
@@ -118,17 +120,32 @@ async fn update(
 // region: delete user
 async fn delete_user(
     Path(user_id): Path<Uuid>,
-    clamis: Claims,
+    claims: Claims,
     State(state): State<UserController>,
 ) -> Result<Json<CustomMessage>> {
-    let result = state.delete(user_id, clamis.username).await?;
+    let result = state.delete(user_id, claims.username).await?;
     println!("--> {:<12} : DELETE USER", "HANDLER");
 
     Ok(Json(result))
 }
 // endregion: delete user
 
-// todo!: add change password
-// todo!: add reset password
+// region: change password
+async fn change_password(
+    Path(user_id): Path<Uuid>,
+    claims: Claims,
+    State(state): State<UserController>,
+    Json(payload): Json<PasswordChangePayload>,
+) -> Result<Json<CustomMessage>> {
+    let result = state
+        .change_password(payload, user_id, claims.username)
+        .await?;
+    println!("--> {:<12} : CHANGE PASSWORD", "HANDLER");
 
-// endregion: crud handlers
+    Ok(Json(result))
+}
+// endregion: change password
+
+// todo!: add reset password with email
+
+// endregion: user auth handlers

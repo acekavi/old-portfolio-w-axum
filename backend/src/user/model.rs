@@ -2,11 +2,11 @@ use bcrypt::verify;
 use chrono::Utc;
 use uuid::Uuid;
 
-use crate::utils::states::AppState;
+use crate::utils::{schema::CustomMessage, states::AppState};
 
 use super::{
     error::{Result, UserError},
-    schema::{CustomMessage, User, UserCreatePayload, UserLoginPayload, UserUpdatePayload},
+    schema::{PasswordChangePayload, User, UserCreatePayload, UserLoginPayload, UserUpdatePayload},
 };
 
 // region: User Model Controller
@@ -24,6 +24,7 @@ impl UserController {
 }
 // CRUD Implementation
 impl UserController {
+    // region: create user
     pub async fn create(&self, payload: UserCreatePayload) -> Result<User> {
         if payload.username.is_empty() || payload.email.is_empty() || payload.password.is_empty() {
             return Err(UserError::MissingFields);
@@ -66,7 +67,9 @@ impl UserController {
             Ok(user)
         }
     }
+    // endregion: create user
 
+    // region: login user
     pub async fn login(&self, payload: UserLoginPayload) -> Result<User> {
         if payload.username.is_empty() || payload.password.is_empty() {
             return Err(UserError::MissingFields);
@@ -104,7 +107,9 @@ impl UserController {
         }
         // user does not exist
     }
+    // endregion: login user
 
+    // region: get user
     pub async fn get_user(&self, user_id: Uuid, username: String) -> Result<User> {
         let user = sqlx::query_as::<_, User>(
             r#"
@@ -125,10 +130,12 @@ impl UserController {
             let user = user.unwrap();
             Ok(user)
         } else {
-            Err(UserError::WrongCredentials)
+            Err(UserError::InvalidRequest)
         }
     }
+    // endregion: get user
 
+    // region: update user
     pub async fn update(
         &self,
         payload: UserUpdatePayload,
@@ -178,9 +185,11 @@ impl UserController {
                 }
             }
         }
-        Err(UserError::WrongCredentials)
+        Err(UserError::InvalidRequest)
     }
+    // endregion: update user
 
+    // region: delete user
     pub async fn delete(&self, user_id: Uuid, username: String) -> Result<CustomMessage> {
         let exists: (bool,) =
             sqlx::query_as("SELECT EXISTS(SELECT 1 FROM users WHERE id = $1 AND username = $2)")
@@ -212,8 +221,84 @@ impl UserController {
                 Err(e) => Err(UserError::InvalidQuery(e)),
             }
         } else {
-            Err(UserError::WrongCredentials)
+            Err(UserError::InvalidRequest)
         }
     }
+    // endregion: delete user
+
+    // region: change password
+    pub async fn change_password(
+        &self,
+        payload: PasswordChangePayload,
+        user_id: Uuid,
+        username: String,
+    ) -> Result<CustomMessage> {
+        if payload.old_password.is_empty() || payload.new_password.is_empty() {
+            return Err(UserError::MissingFields);
+        }
+
+        let user = sqlx::query_as::<_, User>(
+            r#"
+                SELECT id, username, password, email, first_name, last_name, is_active, is_superuser, created_at, updated_at
+                FROM users
+                WHERE id = $1 AND username = $2
+            "#,
+        )
+        .bind(user_id)
+        .bind(&username)
+        .fetch_optional(&self.app_state.get_db_conn())
+        .await
+        .map_err(|e| {
+            UserError::InvalidQuery(e)
+        })?;
+
+        if user.is_some() {
+            let user = user.unwrap();
+            let valid = verify(payload.old_password, &user.password);
+            match valid {
+                Ok(valid) => {
+                    if valid {
+                        let hashed_new_password =
+                            bcrypt::hash(payload.new_password, bcrypt::DEFAULT_COST);
+                        let hashed_new_password = match hashed_new_password {
+                            Ok(password_hash) => password_hash,
+                            Err(e) => return Err(UserError::InvalidHash(e)),
+                        };
+
+                        let query_result = sqlx::query(
+                            r#"
+                                    UPDATE users
+                                    SET password = $1,
+                                        updated_at = $2
+                                    WHERE id = $3 AND username = $4
+                                "#,
+                        )
+                        .bind(hashed_new_password)
+                        .bind(Utc::now())
+                        .bind(user_id)
+                        .bind(username)
+                        .execute(&self.app_state.get_db_conn())
+                        .await;
+                        match query_result {
+                            Ok(result) => {
+                                println!("--> {:<12} : DB - {:?}", "INFO", result);
+                                let message = CustomMessage {
+                                    message: "Successfully Changed Password!".to_string(),
+                                };
+                                Ok(message)
+                            }
+                            Err(e) => Err(UserError::InvalidQuery(e)),
+                        }
+                    } else {
+                        Err(UserError::CurrentPasswordDoesNotMatch)
+                    }
+                }
+                Err(e) => Err(UserError::InvalidHash(e)),
+            }
+        } else {
+            Err(UserError::InvalidRequest)
+        }
+    }
+    // endregion: change password
 }
 // endregion: Users Model Controller

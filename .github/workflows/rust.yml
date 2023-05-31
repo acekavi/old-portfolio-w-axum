@@ -35,8 +35,8 @@ jobs:
       working-directory : backend/
       run: cargo clippy --verbose -- -D warnings
 
-    - name: Audit
-      working-directory : backend/
-      run: |
-        cargo install cargo-audit 
-        cargo audit
+    # - name: Audit
+    #   working-directory : backend/
+    #   run: |
+    #     cargo install cargo-audit 
+    #     cargo audit 

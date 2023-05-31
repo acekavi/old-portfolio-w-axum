@@ -5,15 +5,9 @@ use hyper::header::AUTHORIZATION;
 
 use jsonwebtoken::{decode, encode, Header, Validation};
 
-use crate::user::schema::{Claims, Keys};
-
+use super::env::Config;
 use super::error::{Result, UtilError};
-
-fn get_keys() -> Keys {
-    let jwt_secret = std::env::var("JWT_SECRET").expect("JWT_SECRET must be set");
-    let keys = Keys::new(jwt_secret.as_bytes());
-    keys
-}
+use super::schema::{Claims, Keys};
 
 // 8 hours timestamp before jwt expiration
 pub fn get_timestamp_8h() -> i64 {
@@ -32,13 +26,19 @@ where
     type Rejection = UtilError;
 
     async fn from_request_parts(parts: &mut Parts, _state: &B) -> Result<Self> {
+        let keys = Keys::new(
+            Config::new()
+                .expect("Failed to retrieve Config from Environment!")
+                .jwt_secret
+                .as_bytes(),
+        );
         let auth_token = parts
             .headers
             .get(AUTHORIZATION)
             .ok_or(UtilError::InvalidToken)?;
         let data = decode::<Claims>(
             auth_token.to_str().unwrap(),
-            &get_keys().decode_key,
+            &keys.decode_key,
             &Validation::default(),
         )
         .map_err(|_| UtilError::InvalidToken)?;
@@ -53,12 +53,19 @@ where
 
 // generate_token is used in the login handler
 pub fn generate_token(username: String) -> Result<String> {
+    let keys = Keys::new(
+        Config::new()
+            .expect("Failed to retrieve Config from Environment!")
+            .jwt_secret
+            .as_bytes(),
+    );
+
     let claims = Claims {
         username,
         exp: get_timestamp_8h(),
     };
 
-    let token = encode(&Header::default(), &claims, &get_keys().encode_key)
+    let token = encode(&Header::default(), &claims, &keys.encode_key)
         .map_err(|_| UtilError::TokenCreationFailed)?;
 
     Ok(token)

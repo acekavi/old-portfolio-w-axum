@@ -1,12 +1,16 @@
 use axum::async_trait;
 use sqlx::{postgres::PgPoolOptions, PgPool};
 
+use crate::utils::env::Config;
+
 use super::DBPool;
 
 #[async_trait]
 impl DBPool for PgPool {
     async fn retrieve() -> Self {
-        let database_url = std::env::var("DATABASE_URL").expect("DATABASE_URL must be set");
+        let database_url = Config::new()
+            .expect("Failed to retrieve Config from Environment!")
+            .database_url;
 
         println!("--> {:<12} : Connection Successful", "DATABASE");
         PgPoolOptions::new()

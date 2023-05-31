@@ -1,13 +1,11 @@
+use chrono::{DateTime, Utc};
 use jsonwebtoken::{DecodingKey, EncodingKey};
 use serde::{Deserialize, Serialize};
-use sqlx::{
-    types::chrono::{DateTime, Utc},
-    FromRow,
-};
+use sqlx::FromRow;
 use uuid::Uuid;
 
 // region: User model
-#[derive(Debug, Clone, Serialize, FromRow)]
+#[derive(Debug, Clone, Deserialize, Serialize, FromRow)]
 // #[sqlx(rename_all = "camelCase")]
 pub struct User {
     pub id: Uuid,
@@ -53,35 +51,10 @@ pub struct UserUpdatePayload {
     pub last_name: Option<String>,
 }
 // endregion: User Update payload
-
-// region: Claims
-#[derive(Debug, Serialize, Deserialize)]
-pub struct Claims {
-    pub username: String,
-    pub exp: i64,
+// region: password change payload
+#[derive(Deserialize)]
+pub struct PasswordChangePayload {
+    pub old_password: String,
+    pub new_password: String,
 }
-// endregion: Claims
-
-// region: CustomMessage
-#[derive(Serialize)]
-pub struct CustomMessage {
-    pub message: String,
-}
-// endregion: CustomMessage
-
-// region: Keys
-#[derive(Clone)]
-pub struct Keys {
-    pub encode_key: EncodingKey,
-    pub decode_key: DecodingKey,
-}
-
-impl Keys {
-    pub fn new(secret: &[u8]) -> Self {
-        Self {
-            encode_key: EncodingKey::from_secret(secret),
-            decode_key: DecodingKey::from_secret(secret),
-        }
-    }
-}
-// endregion: Keys
+// endregion: password change payload

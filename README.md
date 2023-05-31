@@ -15,12 +15,13 @@ My Personal Portfolio Website
 
 -   Todo
 
-    -   [ ]     Hook static file storage to AWS s3
     -   [x]     Hook login credential checker to a database and hash the passwords
     -   [x]     Generate JWT token dynamically
     -   [x]     CRUD Error handling
-    -   [ ]     Check auth token against database
     -   [x]     Auth Token component validation (e.g., expires, sign)
+    -   [ ]     Hook static file storage to AWS s3
+    -   [ ]     Verify user using email
+    -   [ ]     Send password reset link to email
 
 ### Backend
 

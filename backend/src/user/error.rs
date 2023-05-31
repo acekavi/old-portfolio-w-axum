@@ -8,9 +8,10 @@ pub enum UserError {
     AlreadyExists,
     MissingFields,
     WrongCredentials,
+    CurrentPasswordDoesNotMatch,
+    InvalidRequest,
     InvalidQuery(sqlx::Error),
     InvalidHash(bcrypt::BcryptError),
-    _InternalServerFailure,
 }
 
 impl IntoResponse for UserError {
@@ -23,9 +24,10 @@ impl IntoResponse for UserError {
             UserError::AlreadyExists => "USERNAME_OR_EMAIL_ALREADY_TAKEN",
             UserError::MissingFields => "FILL_ALL_THE_FIELDS",
             UserError::WrongCredentials => "CREDENTIALS_DO_NOT_MATCH_ANY_USER",
+            UserError::CurrentPasswordDoesNotMatch => "CURRENT_PASSWORD_DOES_NOT_MATCH",
+            UserError::InvalidRequest => "INVALID_REQUEST",
             UserError::InvalidQuery(..) => "DATABASE_ERROR",
             UserError::InvalidHash(..) => "HASH_ERROR",
-            UserError::_InternalServerFailure => "UNHANDLED_SERVER_ERROR",
         };
 
         (
