@@ -5,7 +5,8 @@ use super::schema::{
     BlogComment, BlogCommentCreatePayload, BlogCommentEditPayload, BlogCreatePayload,
     BlogEditPayload, BlogPost,
 };
-use crate::utils::schema::CustomMessage;
+use crate::user::schema::User;
+use crate::utils::schema::{Claims, CustomMessage};
 use crate::utils::states::AppState;
 
 // region: User Model Controller
@@ -26,8 +27,33 @@ impl BlogController {
 // region: User Model Controller Implementation
 impl BlogController {
     // region: create post
-    pub async fn create_post(&self, payload: BlogCreatePayload) -> Result<BlogPost> {
-        todo!("create post")
+    pub async fn create_post(
+        &self,
+        claims: Claims,
+        payload: BlogCreatePayload,
+    ) -> Result<BlogPost> {
+        if claims.is_superuser && claims.is_active {
+            let blog_post = sqlx::query_as::<_, BlogPost<User>>(
+                r#"
+                INSERT INTO blog_posts (title, content, author_id)
+                VALUES ($1, $2, $3)
+                RETURNING blog_posts.id, blog_posts.title, blog_posts.content, blog_posts.created_at, blog_posts.updated_at, 
+                    (users.id, users.username, users.email, users.is_active, users.is_superuser, users.created_at, users.updated_at) AS author_id
+                FROM blog_posts
+                INNER JOIN users ON users.id = blog_posts.author_id
+                "#,
+            )
+            .bind(payload.title)
+            .bind(payload.content)
+            .bind(payload.author_id)
+            .fetch_one(&self.app_state.get_db_conn())
+            .await
+            .map_err(|e| BlogError::InvalidQuery(e))?;
+
+            Ok(user)
+        } else {
+            return Err(BlogError::Unauthorized);
+        }
     }
     // endregion: create post
 

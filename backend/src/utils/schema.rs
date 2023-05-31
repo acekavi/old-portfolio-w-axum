@@ -5,6 +5,8 @@ use serde::{Deserialize, Serialize};
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Claims {
     pub username: String,
+    pub is_active: bool,
+    pub is_superuser: bool,
     pub exp: i64,
 }
 // endregion: Claims

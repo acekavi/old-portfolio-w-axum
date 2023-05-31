@@ -52,7 +52,7 @@ where
 }
 
 // generate_token is used in the login handler
-pub fn generate_token(username: String) -> Result<String> {
+pub fn generate_token(username: String, is_active: bool, is_superuser: bool) -> Result<String> {
     let keys = Keys::new(
         Config::new()
             .expect("Failed to retrieve Config from Environment!")
@@ -62,6 +62,8 @@ pub fn generate_token(username: String) -> Result<String> {
 
     let claims = Claims {
         username,
+        is_active,
+        is_superuser,
         exp: get_timestamp_8h(),
     };
 

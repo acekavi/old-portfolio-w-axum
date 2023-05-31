@@ -1,7 +1,7 @@
 -- Add up migration script here
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
-CREATE TABLE IF NOT EXISTS users (
+CREATE TABLE IF NOT EXISTS user (
         id UUID PRIMARY KEY NOT NULL DEFAULT (uuid_generate_v4()),
         username VARCHAR(50) NOT NULL UNIQUE,
         password VARCHAR(255) NOT NULL,
@@ -15,7 +15,7 @@ CREATE TABLE IF NOT EXISTS users (
     );
 
 -- Add index on username column
-CREATE INDEX idx_users_username ON users (username);
+CREATE INDEX idx_user_username ON user (username);
 
 -- Add index on email column
-CREATE INDEX idx_users_email ON users (email);
+CREATE INDEX idx_user_email ON user (email);

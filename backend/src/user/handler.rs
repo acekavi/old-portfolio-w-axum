@@ -58,7 +58,7 @@ pub async fn login(
     let user = state.login(payload).await?;
     let username = user.username.clone();
 
-    let token = generate_token(username);
+    let token = generate_token(username, user.is_active, user.is_superuser);
 
     match token {
         Ok(token) => {
