@@ -1,8 +1,8 @@
 -- Add down migration script here
-DROP TABLE IF EXISTS users;
+DROP TABLE IF EXISTS "user";
 
 -- Add index on username column
-DROP INDEX IF EXISTS idx_users_username;
+DROP INDEX IF EXISTS idx_user_username;
 
 -- Add index on email column
-DROP INDEX IF EXISTS idx_users_email;
+DROP INDEX IF EXISTS idx_user_email;

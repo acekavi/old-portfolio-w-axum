@@ -1,5 +1,5 @@
 use bcrypt::verify;
-use chrono::Utc;
+use time::OffsetDateTime;
 use uuid::Uuid;
 
 use crate::utils::{schema::CustomMessage, states::AppState};
@@ -57,8 +57,8 @@ impl UserController {
             .bind(payload.username)
             .bind(hashed_password)
             .bind(payload.email)
-            .bind(Utc::now())
-            .bind(Utc::now())
+            .bind(OffsetDateTime::now_utc())
+            .bind(OffsetDateTime::now_utc())
             .fetch_one(&self.app_state.get_db_conn())
             .await.map_err(|e| {
                 UserError::InvalidQuery(e)
@@ -165,7 +165,7 @@ impl UserController {
             .bind(payload.email)
             .bind(payload.first_name)
             .bind(payload.last_name)
-            .bind(Utc::now())
+            .bind(OffsetDateTime::now_utc())
             .bind(user_id)
             .bind(username)
             .fetch_one(&self.app_state.get_db_conn())
@@ -274,7 +274,7 @@ impl UserController {
                                 "#,
                         )
                         .bind(hashed_new_password)
-                        .bind(Utc::now())
+                        .bind(OffsetDateTime::now_utc())
                         .bind(user_id)
                         .bind(username)
                         .execute(&self.app_state.get_db_conn())

@@ -1,7 +1,6 @@
-use chrono::{DateTime, Utc};
-use jsonwebtoken::{DecodingKey, EncodingKey};
 use serde::{Deserialize, Serialize};
 use sqlx::FromRow;
+use time::OffsetDateTime;
 use uuid::Uuid;
 
 // region: User model
@@ -21,8 +20,8 @@ pub struct User {
     pub is_active: bool,
     #[serde(skip_serializing)]
     pub is_superuser: bool,
-    pub created_at: Option<DateTime<Utc>>,
-    pub updated_at: Option<DateTime<Utc>>,
+    pub created_at: OffsetDateTime,
+    pub updated_at: OffsetDateTime,
 }
 // endregion: User model
 
