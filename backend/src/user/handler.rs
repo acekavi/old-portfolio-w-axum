@@ -5,7 +5,7 @@ use crate::utils::token::generate_token;
 use super::error::Result;
 use super::model::UserController;
 use super::schema::{
-    PasswordChangePayload, User, UserCreatePayload, UserLoginPayload, UserUpdatePayload,
+    PasswordChangePayload, UserCreatePayload, UserLoginPayload, UserUpdatePayload,
 };
 
 use axum::extract::Path;
@@ -14,6 +14,7 @@ use axum::routing::{get, patch, post};
 use axum::Router;
 use axum::{extract::State, Json};
 
+use backend::models::User;
 use hyper::{HeaderMap, StatusCode};
 
 use tower_cookies::Cookies;

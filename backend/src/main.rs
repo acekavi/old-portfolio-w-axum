@@ -1,7 +1,6 @@
 use crate::user::handler::user_routes;
 use axum::{middleware, response::Response, Router};
 use backend::health_checker;
-use blog::handler::blog_routes;
 use tower_cookies::CookieManagerLayer;
 
 use std::{net::SocketAddr, sync::Arc};
@@ -19,7 +18,6 @@ async fn main() {
     let app = Router::new()
         .route("/post", axum::routing::post(health_checker))
         .nest("/user", user_routes(&state).await)
-        .nest("/blog", blog_routes(&state).await)
         .layer(middleware::map_response(main_response_mapper))
         // .layer(middleware::AddExtension(state))
         .layer(CookieManagerLayer::new());

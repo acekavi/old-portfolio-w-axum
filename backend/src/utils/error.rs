@@ -1,5 +1,5 @@
+use axum::http::StatusCode;
 use axum::response::{IntoResponse, Response};
-use hyper::StatusCode;
 
 pub type Result<T> = core::result::Result<T, UtilError>;
 

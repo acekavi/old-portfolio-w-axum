@@ -1,13 +1,14 @@
+use backend::{models::User, schema::user};
 use bcrypt::verify;
-use chrono::Utc;
-use uuid::Uuid;
 
-use crate::utils::{schema::CustomMessage, states::AppState};
+use diesel::{associations::HasTable, ExpressionMethods, QueryDsl};
+use uuid::Uuid;
 
 use super::{
     error::{Result, UserError},
-    schema::{PasswordChangePayload, User, UserCreatePayload, UserLoginPayload, UserUpdatePayload},
+    schema::{PasswordChangePayload, UserCreatePayload, UserLoginPayload, UserUpdatePayload},
 };
+use crate::utils::{schema::CustomMessage, states::AppState};
 
 // region: User Model Controller
 #[derive(Clone)]
@@ -30,13 +31,13 @@ impl UserController {
             return Err(UserError::MissingFields);
         }
 
-        let exists: (bool,) =
-            sqlx::query_as("SELECT EXISTS(SELECT 1 FROM user WHERE username = $1 AND email = $2)")
-                .bind(&payload.username)
-                .bind(&payload.email)
-                .fetch_one(&self.app_state.get_db_conn())
-                .await
-                .map_err(UserError::InvalidQuery)?;
+        let exists = user::table
+            .filter(user::username.eq(&payload.username))
+            .or_filter(user::email.eq(&payload.email))
+            .select(user::username)
+            .load
+            .optional()
+            .await;
 
         if exists.0 {
             Err(UserError::AlreadyExists)
@@ -49,16 +50,14 @@ impl UserController {
 
             let user = sqlx::query_as::<_, User>(
                 r#"
-                    INSERT INTO user (username, password, email, created_at, updated_at)
-                    VALUES ($1, $2, $3, $4, $5)
+                    INSERT INTO user (username, password, email)
+                    VALUES ($1, $2, $3)
                     RETURNING id, username, password, email, first_name, last_name, is_active, is_superuser, created_at, updated_at
                 "#,
             )
             .bind(payload.username)
             .bind(hashed_password)
             .bind(payload.email)
-            .bind(Utc::now())
-            .bind(Utc::now())
             .fetch_one(&self.app_state.get_db_conn())
             .await.map_err(|e| {
                 UserError::InvalidQuery(e)

@@ -1,22 +1,22 @@
 use axum::async_trait;
-use sqlx::{postgres::PgPoolOptions, PgPool};
+use diesel::{Connection, PgConnection};
 
 use crate::utils::env::Config;
 
 use super::DBPool;
 
 #[async_trait]
-impl DBPool for PgPool {
+impl DBPool for PgConnection {
     async fn retrieve() -> Self {
         let database_url = Config::new()
             .expect("Failed to retrieve Config from Environment!")
             .database_url;
 
+        let conection: PgConnection = PgConnection::establish(&database_url)
+            .unwrap_or_else(|_| panic!("Error connecting to {}", database_url));
+
         println!("--> {:<12} : Connection Successful", "DATABASE");
-        PgPoolOptions::new()
-            .max_connections(50)
-            .connect(&database_url)
-            .await
-            .expect("Failed to connect to Database!")
+
+        return conection;
     }
 }

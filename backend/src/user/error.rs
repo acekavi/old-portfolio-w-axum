@@ -10,7 +10,7 @@ pub enum UserError {
     WrongCredentials,
     CurrentPasswordDoesNotMatch,
     InvalidRequest,
-    InvalidQuery(sqlx::Error),
+    InvalidQuery(diesel::result::Error),
     InvalidHash(bcrypt::BcryptError),
 }
 
