@@ -1,4 +1,4 @@
-use sqlx::{Pool, Postgres};
+use sea_orm::DatabaseConnection;
 
 use super::DBPool;
 
@@ -10,12 +10,12 @@ pub struct AppState {
 // the api specific state
 #[derive(Clone)]
 struct DBState {
-    db_pool: Pool<Postgres>,
+    db_pool: DatabaseConnection,
 }
 
 impl DBState {
     async fn new() -> DBState {
-        let db_pool = sqlx::PgPool::retrieve().await;
+        let db_pool = DatabaseConnection::retrieve().await;
         DBState { db_pool }
     }
 }
@@ -26,7 +26,7 @@ impl AppState {
         AppState { db_conn }
     }
 
-    pub fn get_db_conn(&self) -> Pool<Postgres> {
+    pub fn get_db_conn(&self) -> DatabaseConnection {
         self.db_conn.db_pool.clone()
     }
 }
