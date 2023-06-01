@@ -5,7 +5,6 @@ pub type Result<T> = core::result::Result<T, BlogError>;
 
 #[derive(Debug)]
 pub enum BlogError {
-    Unauthorized,
     MissingFields,
     InvalidRequest,
     InvalidQuery(sqlx::Error),
@@ -19,7 +18,6 @@ impl IntoResponse for BlogError {
 
         // Client Error
         let err = match self {
-            BlogError::Unauthorized => "You are not authorized to perform this action!",
             BlogError::MissingFields => "FILL_ALL_THE_FIELDS",
             BlogError::InvalidRequest => "INVALID_REQUEST",
             BlogError::InvalidQuery(..) => "DATABASE_ERROR",

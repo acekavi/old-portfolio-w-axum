@@ -5,8 +5,7 @@ use super::schema::{
     BlogComment, BlogCommentCreatePayload, BlogCommentEditPayload, BlogCreatePayload,
     BlogEditPayload, BlogPost,
 };
-use crate::user::schema::User;
-use crate::utils::schema::{Claims, CustomMessage};
+use crate::utils::schema::CustomMessage;
 use crate::utils::states::AppState;
 
 // region: User Model Controller
@@ -27,11 +26,7 @@ impl BlogController {
 // region: User Model Controller Implementation
 impl BlogController {
     // region: create post
-    pub async fn create_post(
-        &self,
-        claims: Claims,
-        payload: BlogCreatePayload,
-    ) -> Result<BlogPost> {
+    pub async fn create_post(&self, payload: BlogCreatePayload) -> Result<BlogPost> {
         todo!("create post")
     }
     // endregion: create post

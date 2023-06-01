@@ -6,10 +6,7 @@ use axum::{
 use uuid::Uuid;
 
 use super::{error::Result, schema::BlogEditPayload};
-use crate::utils::{
-    schema::{Claims, CustomMessage},
-    states::AppState,
-};
+use crate::utils::{schema::CustomMessage, states::AppState};
 
 use super::{
     model::BlogController,
@@ -34,10 +31,9 @@ pub async fn blog_routes(app_state: &AppState) -> Router {
 // region: create post
 async fn create_post(
     State(state): State<BlogController>,
-    claims: Claims,
     Json(payload): Json<BlogCreatePayload>,
 ) -> Result<Json<BlogPost>> {
-    let post = state.create_post(claims, payload).await?;
+    let post = state.create_post(payload).await?;
     println!("--> {:<12} : CREATE POST", "HANDLER");
 
     Ok(Json(post))

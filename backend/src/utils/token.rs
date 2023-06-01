@@ -1,9 +1,9 @@
 use axum::http::request::Parts;
 use axum::{async_trait, extract::FromRequestParts};
+use chrono::{Duration, Utc};
 use hyper::header::AUTHORIZATION;
 
 use jsonwebtoken::{decode, encode, Header, Validation};
-use time::{Duration, OffsetDateTime};
 
 use super::env::Config;
 use super::error::{Result, UtilError};
@@ -11,10 +11,10 @@ use super::schema::{Claims, Keys};
 
 // 8 hours timestamp before jwt expiration
 pub fn get_timestamp_8h() -> i64 {
-    let now = OffsetDateTime::now_utc();
+    let now = Utc::now();
     let eight_hours = Duration::hours(8);
     let eight_hours_from_now = now + eight_hours;
-    eight_hours_from_now.unix_timestamp()
+    eight_hours_from_now.timestamp()
 }
 
 // verify_token and extract_token are used in the middleware
@@ -43,7 +43,7 @@ where
         )
         .map_err(|_| UtilError::InvalidToken)?;
 
-        if data.claims.exp < OffsetDateTime::now_utc().unix_timestamp() {
+        if data.claims.exp < Utc::now().timestamp() {
             return Err(UtilError::TokenExpired);
         }
 
@@ -52,7 +52,7 @@ where
 }
 
 // generate_token is used in the login handler
-pub fn generate_token(username: String, is_active: bool, is_superuser: bool) -> Result<String> {
+pub fn generate_token(username: String) -> Result<String> {
     let keys = Keys::new(
         Config::new()
             .expect("Failed to retrieve Config from Environment!")
@@ -62,8 +62,6 @@ pub fn generate_token(username: String, is_active: bool, is_superuser: bool) -> 
 
     let claims = Claims {
         username,
-        is_active,
-        is_superuser,
         exp: get_timestamp_8h(),
     };
 

@@ -1,5 +1,5 @@
 use bcrypt::verify;
-use time::OffsetDateTime;
+use chrono::Utc;
 use uuid::Uuid;
 
 use crate::utils::{schema::CustomMessage, states::AppState};
@@ -31,7 +31,7 @@ impl UserController {
         }
 
         let exists: (bool,) =
-            sqlx::query_as("SELECT EXISTS(SELECT 1 FROM user WHERE username = $1 AND email = $2)")
+            sqlx::query_as("SELECT EXISTS(SELECT 1 FROM users WHERE username = $1 AND email = $2)")
                 .bind(&payload.username)
                 .bind(&payload.email)
                 .fetch_one(&self.app_state.get_db_conn())
@@ -49,7 +49,7 @@ impl UserController {
 
             let user = sqlx::query_as::<_, User>(
                 r#"
-                    INSERT INTO user (username, password, email, created_at, updated_at)
+                    INSERT INTO users (username, password, email, created_at, updated_at)
                     VALUES ($1, $2, $3, $4, $5)
                     RETURNING id, username, password, email, first_name, last_name, is_active, is_superuser, created_at, updated_at
                 "#,
@@ -57,8 +57,8 @@ impl UserController {
             .bind(payload.username)
             .bind(hashed_password)
             .bind(payload.email)
-            .bind(OffsetDateTime::now_utc())
-            .bind(OffsetDateTime::now_utc())
+            .bind(Utc::now())
+            .bind(Utc::now())
             .fetch_one(&self.app_state.get_db_conn())
             .await.map_err(|e| {
                 UserError::InvalidQuery(e)
@@ -78,7 +78,7 @@ impl UserController {
         let user = sqlx::query_as::<_, User>(
             r#"
                 SELECT id, username, password, email, first_name, last_name, is_active, is_superuser, created_at, updated_at
-                FROM user
+                FROM users
                 WHERE username = $1 OR email = $1
             "#,
         )
@@ -114,7 +114,7 @@ impl UserController {
         let user = sqlx::query_as::<_, User>(
             r#"
                 SELECT id, username, password, email, first_name, last_name, is_active, is_superuser, created_at, updated_at
-                FROM user
+                FROM users
                 WHERE id = $1 AND username = $2
             "#,
         )
@@ -143,7 +143,7 @@ impl UserController {
         username: String,
     ) -> Result<User> {
         let exists: (bool,) =
-            sqlx::query_as("SELECT EXISTS(SELECT 1 FROM user WHERE id = $1 AND username = $2)")
+            sqlx::query_as("SELECT EXISTS(SELECT 1 FROM users WHERE id = $1 AND username = $2)")
                 .bind(user_id)
                 .bind(&username)
                 .fetch_one(&self.app_state.get_db_conn())
@@ -153,7 +153,7 @@ impl UserController {
         if exists.0 {
             let query_result = sqlx::query_as::<_, User>(
                 r#"
-                    UPDATE user
+                    UPDATE users
                     SET email = COALESCE($2, email),
                         first_name = COALESCE($3, first_name),
                         last_name = COALESCE($4, last_name),
@@ -165,7 +165,7 @@ impl UserController {
             .bind(payload.email)
             .bind(payload.first_name)
             .bind(payload.last_name)
-            .bind(OffsetDateTime::now_utc())
+            .bind(Utc::now())
             .bind(user_id)
             .bind(username)
             .fetch_one(&self.app_state.get_db_conn())
@@ -192,7 +192,7 @@ impl UserController {
     // region: delete user
     pub async fn delete(&self, user_id: Uuid, username: String) -> Result<CustomMessage> {
         let exists: (bool,) =
-            sqlx::query_as("SELECT EXISTS(SELECT 1 FROM user WHERE id = $1 AND username = $2)")
+            sqlx::query_as("SELECT EXISTS(SELECT 1 FROM users WHERE id = $1 AND username = $2)")
                 .bind(user_id)
                 .bind(&username)
                 .fetch_one(&self.app_state.get_db_conn())
@@ -202,7 +202,7 @@ impl UserController {
         if exists.0 {
             let query_result = sqlx::query(
                 r#"
-                    DELETE FROM user
+                    DELETE FROM users
                     WHERE id = $1 AND username = $2
                 "#,
             )
@@ -240,7 +240,7 @@ impl UserController {
         let user = sqlx::query_as::<_, User>(
             r#"
                 SELECT id, username, password, email, first_name, last_name, is_active, is_superuser, created_at, updated_at
-                FROM user
+                FROM users
                 WHERE id = $1 AND username = $2
             "#,
         )
@@ -267,14 +267,14 @@ impl UserController {
 
                         let query_result = sqlx::query(
                             r#"
-                                    UPDATE user
+                                    UPDATE users
                                     SET password = $1,
                                         updated_at = $2
                                     WHERE id = $3 AND username = $4
                                 "#,
                         )
                         .bind(hashed_new_password)
-                        .bind(OffsetDateTime::now_utc())
+                        .bind(Utc::now())
                         .bind(user_id)
                         .bind(username)
                         .execute(&self.app_state.get_db_conn())

@@ -1,6 +1,6 @@
+use chrono::{DateTime, Utc};
 use serde::{Deserialize, Serialize};
 use sqlx::FromRow;
-use time::OffsetDateTime;
 use uuid::Uuid;
 
 use crate::user::schema::User;
@@ -12,8 +12,8 @@ pub struct BlogPost {
     pub id: Uuid,
     pub title: String,
     pub content: String,
-    pub created_at: OffsetDateTime,
-    pub updated_at: OffsetDateTime,
+    pub created_at: DateTime<Utc>,
+    pub updated_at: DateTime<Utc>,
     pub author_id: User,
 }
 
@@ -22,7 +22,7 @@ pub struct BlogPost {
 pub struct BlogComment {
     pub id: Uuid,
     pub content: String,
-    pub created_at: OffsetDateTime,
+    pub created_at: DateTime<Utc>,
     pub blog_post_id: BlogPost,
     pub user_id: User,
     #[serde(skip_serializing_if = "Option::is_none")]
