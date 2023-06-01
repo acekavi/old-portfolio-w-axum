@@ -11,6 +11,7 @@ use utils::states::AppState;
 mod blog;
 mod user;
 mod utils;
+mod entity;
 
 #[tokio::main]
 async fn main() {
