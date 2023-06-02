@@ -37,15 +37,18 @@ CREATE TABLE IF NOT EXISTS blog_comment (
     id UUID PRIMARY KEY NOT NULL DEFAULT (uuid_generate_v4()),
     content TEXT NOT NULL,
     created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    blog_post_id UUID NOT NULL REFERENCES blog_post (id),
-    user_id UUID NOT NULL REFERENCES users (id),
+    blog_post_id UUID NOT NULL REFERENCES blog_post (id) ON DELETE CASCADE,
+    user_id UUID NOT NULL REFERENCES users (id) ON DELETE CASCADE,
     is_reply BOOLEAN DEFAULT FALSE NOT NULL,
-    parent_comment_id UUID REFERENCES blog_comment (id) ON DELETE CASCADE
+    parent_id UUID REFERENCES blog_comment (id) ON DELETE CASCADE,
+
+    CONSTRAINT if_reply_make_parent_id_not_null 
+        CHECK (NOT (is_reply AND parent_id IS NULL)) 
+
 );
 
 CREATE INDEX idx_blog_comment_blog_post_id ON blog_comment(blog_post_id);
 CREATE INDEX idx_blog_comment_user_id ON blog_comment(user_id);
-CREATE INDEX idx_blog_comment_parent_comment_id ON blog_comment (parent_comment_id);
 
 -- Create the Like table
 CREATE TABLE IF NOT EXISTS blog_like (

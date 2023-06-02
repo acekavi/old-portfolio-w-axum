@@ -25,6 +25,8 @@ pub struct BlogComment {
     pub created_at: OffsetDateTime,
     pub blog_post_id: Uuid,
     pub user_id: Uuid,
+    #[serde(skip_serializing)]
+    pub is_reply: bool,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub parent_comment_id: Option<Uuid>,
 }
@@ -59,15 +61,15 @@ pub struct BlogEditPayload {
 #[derive(Deserialize)]
 pub struct BlogCommentCreatePayload {
     pub content: String,
-    pub blog_post_id: Uuid,
-    pub user_id: Uuid,
+    pub is_reply: bool,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub parent_comment_id: Option<Uuid>,
 }
 // endregion: blog comment create payload
 
 // region: blog comment edit payload
 #[derive(Deserialize)]
 pub struct BlogCommentEditPayload {
-    pub comment_id: Uuid,
     pub content: Option<String>,
 }
 // endregion: blog comment edit payload
@@ -79,3 +81,17 @@ pub struct BlogLikeCreatePayload {
     pub user_id: Uuid,
 }
 // endregion: blog like create payload
+
+// region: blog comment response
+#[derive(Debug, Serialize, Deserialize, FromRow)]
+pub struct BlogCommentResponse {
+    pub id: Uuid,
+    pub content: String,
+    pub created_at: OffsetDateTime,
+    pub blog_post_id: Uuid,
+    pub user_id: Uuid,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub parent_comment_id: Option<Uuid>,
+    pub replies: Option<Vec<BlogComment>>,
+}
+// endregion: blog comment response

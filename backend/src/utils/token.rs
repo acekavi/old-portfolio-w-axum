@@ -40,8 +40,12 @@ where
             .ok_or(Error::InvalidToken)?;
 
         let validation = Validation::new(Algorithm::HS256);
-        let data = decode::<Claims>(auth_token.to_str().unwrap(), &keys.decode_key, &validation)
-            .map_err(Error::ParsingTokenFailed)?;
+        let data = decode::<Claims>(
+            auth_token.to_str().unwrap().replace("Bearer ", "").as_str(),
+            &keys.decode_key,
+            &validation,
+        )
+        .map_err(Error::ParsingTokenFailed)?;
 
         if data.claims.exp < OffsetDateTime::now_utc().unix_timestamp() {
             return Err(Error::TokenExpired);

@@ -2,8 +2,8 @@ use time::OffsetDateTime;
 use uuid::Uuid;
 
 use super::schema::{
-    BlogCreatePayload,
-    BlogEditPayload, BlogPost,
+    BlogComment, BlogCommentCreatePayload, BlogCommentEditPayload, BlogCommentResponse,
+    BlogCreatePayload, BlogEditPayload, BlogPost,
 };
 use crate::utils::{
     error::{Error, Result},
@@ -65,7 +65,6 @@ impl BlogController {
             r#"
                 Select id, title, slug, content, is_draft, created_at, updated_at, author_id
                 FROM blog_post
-                WHERE is_draft = false
             "#,
         )
         .fetch_all(&self.app_state.get_db_conn())
@@ -159,33 +158,127 @@ impl BlogController {
     }
     // endregion: delete post
 
-    // region: todo! get comments
+    // region: create comment
+    pub async fn create_comment(
+        &self,
+        claims: Claims,
+        blog_id: Uuid,
+        payload: BlogCommentCreatePayload,
+    ) -> Result<BlogComment> {
+        if payload.content.is_empty() {
+            return Err(Error::InvalidRequest);
+        }
 
-    // endregion: get comments
+        let blog_comment = sqlx::query_as::<_, BlogComment>(
+            r#"
+                INSERT INTO blog_comment (content, blog_post_id, user_id, is_reply, parent_comment_id)
+                VALUES ($1, $2, $3, $4, $5)
+                RETURNING id, content, created_at, blog_post_id, user_id, is_reply, parent_comment_id
+            "#,
+        )
+        .bind(payload.content)
+        .bind(blog_id)
+        .bind(claims.sub)
+        .bind(payload.is_reply)
+        .bind(payload.parent_comment_id)
+        .fetch_one(&self.app_state.get_db_conn())
+        .await
+        .map_err(|e| Error::InvalidQuery(e.to_string()))?;
 
-    // region: todo! create comment
-
+        Ok(blog_comment)
+    }
     // endregion: create comment
 
-    // region: todo! edit comment
+    // region: get comments
+    pub async fn get_comments(&self, blog_id: Uuid) -> Result<Vec<BlogCommentResponse>> {
+        let mut all_comments: Vec<BlogCommentResponse> = vec![];
+        let main_comments = sqlx::query_as::<_, BlogComment>(
+            r#"
+                SELECT id, content, created_at, blog_post_id, user_id, is_reply, parent_comment_id
+                FROM blog_comment
+                WHERE blog_post_id = $1 and is_reply = false and parent_comment_id is null
+            "#,
+        )
+        .bind(blog_id)
+        .fetch_all(&self.app_state.get_db_conn())
+        .await
+        .map_err(|e| Error::InvalidQuery(e.to_string()))?;
 
+        for this_comment in main_comments {
+            let comment = BlogCommentResponse {
+                id: this_comment.id,
+                content: this_comment.content,
+                created_at: this_comment.created_at,
+                blog_post_id: this_comment.blog_post_id,
+                user_id: this_comment.user_id,
+                parent_comment_id: this_comment.parent_comment_id,
+                replies: Some(sqlx::query_as::<_, BlogComment>(
+                    r#"
+                        SELECT id, content, created_at, blog_post_id, user_id, is_reply, parent_comment_id
+                        FROM blog_comment
+                        WHERE blog_post_id = $1 and is_reply = true and parent_comment_id = $2
+                    "#,
+                ).bind(blog_id)
+                .bind(this_comment.id)
+                .fetch_all(&self.app_state.get_db_conn())
+                .await
+                .map_err(|e| Error::InvalidQuery(e.to_string()))?),
+            };
+            all_comments.push(comment);
+        }
+        Ok(all_comments)
+    }
+    // endregion: get comments
+
+    // region: edit comment
+    pub async fn edit_comment(
+        &self,
+        claims: Claims,
+        comment_id: Uuid,
+        payload: BlogCommentEditPayload,
+    ) -> Result<BlogComment> {
+        let query_result = sqlx::query_as::<_, BlogComment>(
+            r#"
+                UPDATE blog_comment
+                SET content = COALESCE($1, content)
+                WHERE id = $2 and user_id = $3
+                RETURNING id, content, created_at, blog_post_id, user_id, is_reply, parent_comment_id
+            "#,
+        )
+        .bind(payload.content)
+        .bind(comment_id)
+        .bind(claims.sub)
+        .fetch_one(&self.app_state.get_db_conn())
+        .await
+        .map_err(|e| Error::InvalidQuery(e.to_string()))?;
+
+        Ok(query_result)
+    }
     // endregion: edit comment
 
-    // region: todo! delete comment
-
+    // region: delete comment
+    pub async fn delete_comment(&self, claims: Claims, comment_id: Uuid) -> Result<CustomMessage> {
+        let query_result = sqlx::query(
+            r#"
+                DELETE FROM blog_comment
+                WHERE id = $1 and user_id = $2
+            "#,
+        )
+        .bind(comment_id)
+        .bind(claims.sub)
+        .execute(&self.app_state.get_db_conn())
+        .await;
+        match query_result {
+            Ok(_) => {
+                let message = CustomMessage {
+                    message: "Blog comment has been deleted successfully".to_string(),
+                };
+                Ok(message)
+            }
+            Err(e) => Err(Error::InvalidQuery(e.to_string())),
+        }
+    }
     // endregion: delete comment
-
-    // region: todo! create reply comment
-
-    // endregion: create reply comment
-
-    // region: todo! edit reply comment
-
-    // endregion: edit reply comment
-
-    // region: todo! delete reply comment
-
-    // endregion: delete reply comment
 
     // region: todo! like post
 
