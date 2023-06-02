@@ -3,8 +3,6 @@ use sqlx::FromRow;
 use time::OffsetDateTime;
 use uuid::Uuid;
 
-use crate::user::schema::User;
-
 // region: blog post model
 // BlogPost struct representing the BlogPost table
 #[derive(Debug, Serialize, Deserialize, FromRow)]
@@ -12,6 +10,7 @@ pub struct BlogPost {
     pub id: Uuid,
     pub title: String,
     pub content: String,
+    pub is_draft: bool,
     pub created_at: OffsetDateTime,
     pub updated_at: OffsetDateTime,
     pub author_id: Uuid,

@@ -56,9 +56,8 @@ pub async fn login(
 ) -> Result<Response> {
     println!("--> {:<12} : LOGIN USER", "HANDLER");
     let user = state.login(payload).await?;
-    let username = user.username.clone();
 
-    let token = generate_token(username);
+    let token = generate_token(user.id.clone(), user.is_superuser);
 
     match token {
         Ok(token) => {
@@ -80,7 +79,7 @@ pub async fn get_user(
     claims: Claims,
     State(state): State<UserController>,
 ) -> Result<Json<User>> {
-    let user = state.get_user(user_id, claims.username).await?;
+    let user = state.get_user(user_id, claims.sub).await?;
 
     println!("--> {:<12} : GET USER", "HANDLER");
     Ok(Json(user))
@@ -110,7 +109,7 @@ async fn update(
     State(state): State<UserController>,
     Json(payload): Json<UserUpdatePayload>,
 ) -> Result<Json<User>> {
-    let user = state.update(payload, user_id, claims.username).await?;
+    let user = state.update(payload, user_id, claims.sub).await?;
     println!("--> {:<12} : UPDATE USER", "HANDLER");
 
     Ok(Json(user))
@@ -123,7 +122,7 @@ async fn delete_user(
     claims: Claims,
     State(state): State<UserController>,
 ) -> Result<Json<CustomMessage>> {
-    let result = state.delete(user_id, claims.username).await?;
+    let result = state.delete(user_id, claims.sub).await?;
     println!("--> {:<12} : DELETE USER", "HANDLER");
 
     Ok(Json(result))
@@ -137,9 +136,7 @@ async fn change_password(
     State(state): State<UserController>,
     Json(payload): Json<PasswordChangePayload>,
 ) -> Result<Json<CustomMessage>> {
-    let result = state
-        .change_password(payload, user_id, claims.username)
-        .await?;
+    let result = state.change_password(payload, user_id, claims.sub).await?;
     println!("--> {:<12} : CHANGE PASSWORD", "HANDLER");
 
     Ok(Json(result))

@@ -2,8 +2,9 @@ use axum::http::request::Parts;
 use axum::{async_trait, extract::FromRequestParts};
 use hyper::header::AUTHORIZATION;
 
-use jsonwebtoken::{decode, encode, Header, Validation};
+use jsonwebtoken::{decode, encode, Algorithm, DecodingKey, EncodingKey, Header, Validation};
 use time::{Duration, OffsetDateTime};
+use uuid::Uuid;
 
 use super::env::Config;
 use super::error::{Result, UtilError};
@@ -11,10 +12,10 @@ use super::schema::{Claims, Keys};
 
 // 8 hours timestamp before jwt expiration
 pub fn get_timestamp_8h() -> i64 {
-    let now = OffsetDateTime::now_utc();
-    let eight_hours = Duration::hours(8);
-    let eight_hours_from_now = now + eight_hours;
-    eight_hours_from_now.unix_timestamp()
+    let now = jsonwebtoken::get_current_timestamp() as i64;
+    let eight_hours = Duration::hours(8).whole_seconds();
+
+    now + eight_hours
 }
 
 // verify_token and extract_token are used in the middleware
@@ -32,16 +33,15 @@ where
                 .jwt_secret
                 .as_bytes(),
         );
+
         let auth_token = parts
             .headers
             .get(AUTHORIZATION)
             .ok_or(UtilError::InvalidToken)?;
-        let data = decode::<Claims>(
-            auth_token.to_str().unwrap(),
-            &keys.decode_key,
-            &Validation::default(),
-        )
-        .map_err(|_| UtilError::InvalidToken)?;
+
+        let validation = Validation::new(Algorithm::HS256);
+        let data = decode::<Claims>(auth_token.to_str().unwrap(), &keys.decode_key, &validation)
+            .map_err(UtilError::ErrorParsingToken)?;
 
         if data.claims.exp < OffsetDateTime::now_utc().unix_timestamp() {
             return Err(UtilError::TokenExpired);
@@ -52,7 +52,7 @@ where
 }
 
 // generate_token is used in the login handler
-pub fn generate_token(username: String) -> Result<String> {
+pub fn generate_token(sub: Uuid, is_admin: bool) -> Result<String> {
     let keys = Keys::new(
         Config::new()
             .expect("Failed to retrieve Config from Environment!")
@@ -61,8 +61,12 @@ pub fn generate_token(username: String) -> Result<String> {
     );
 
     let claims = Claims {
-        username,
         exp: get_timestamp_8h(),
+        sub,
+        aud: "public".to_string(),
+        iat: jsonwebtoken::get_current_timestamp() as i64,
+        iss: "acekavi.me".to_string(),
+        is_admin,
     };
 
     let token = encode(&Header::default(), &claims, &keys.encode_key)

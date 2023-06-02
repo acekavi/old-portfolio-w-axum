@@ -5,7 +5,6 @@ use uuid::Uuid;
 
 // region: User model
 #[derive(Debug, Clone, Deserialize, Serialize, FromRow)]
-// #[sqlx(rename_all = "camelCase")]
 pub struct User {
     pub id: Uuid,
     pub username: String,

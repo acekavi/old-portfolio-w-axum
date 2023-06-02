@@ -8,6 +8,7 @@ pub enum UtilError {
     InvalidToken,
     TokenCreationFailed,
     TokenExpired,
+    ErrorParsingToken(jsonwebtoken::errors::Error),
     _InternalServerFailure,
 }
 
@@ -21,6 +22,7 @@ impl IntoResponse for UtilError {
             UtilError::InvalidToken => "INVALID_TOKEN",
             UtilError::TokenCreationFailed => "FAILED_TO_CREATE_TOKEN",
             UtilError::TokenExpired => "TOKEN_EXPIRED",
+            UtilError::ErrorParsingToken(..) => "ERROR_PARSING_TOKEN",
             UtilError::_InternalServerFailure => "UNHANDLED_SERVER_ERROR",
         };
         (
