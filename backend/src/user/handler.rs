@@ -1,8 +1,10 @@
-use crate::utils::schema::{Claims, CustomMessage};
-use crate::utils::states::AppState;
-use crate::utils::token::generate_token;
+use crate::utils::{
+    error::Result,
+    schema::{Claims, CustomMessage},
+    states::AppState,
+    token::generate_token,
+};
 
-use super::error::Result;
 use super::model::UserController;
 use super::schema::{
     PasswordChangePayload, User, UserCreatePayload, UserLoginPayload, UserUpdatePayload,
@@ -57,7 +59,7 @@ pub async fn login(
     println!("--> {:<12} : LOGIN USER", "HANDLER");
     let user = state.login(payload).await?;
 
-    let token = generate_token(user.id.clone(), user.is_superuser);
+    let token = generate_token(user.id, user.is_superuser);
 
     match token {
         Ok(token) => {

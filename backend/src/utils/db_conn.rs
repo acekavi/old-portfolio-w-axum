@@ -1,7 +1,7 @@
 use axum::async_trait;
 use sqlx::{postgres::PgPoolOptions, PgPool};
 
-use crate::utils::env::Config;
+use crate::utils::{env::Config, error::Error};
 
 use super::DBPool;
 
@@ -17,6 +17,7 @@ impl DBPool for PgPool {
             .max_connections(50)
             .connect(&database_url)
             .await
-            .expect("Failed to connect to Database!")
+            .map_err(|e| Error::InternalServerFailure(e.to_string()))
+            .unwrap()
     }
 }

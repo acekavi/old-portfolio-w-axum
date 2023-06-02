@@ -9,6 +9,7 @@ use uuid::Uuid;
 pub struct BlogPost {
     pub id: Uuid,
     pub title: String,
+    pub slug: String,
     pub content: String,
     pub is_draft: bool,
     pub created_at: OffsetDateTime,
@@ -42,7 +43,6 @@ pub struct BlogLike {
 pub struct BlogCreatePayload {
     pub title: String,
     pub content: String,
-    pub author_id: Uuid,
 }
 // endregion: blog post create payload
 
@@ -51,6 +51,7 @@ pub struct BlogCreatePayload {
 pub struct BlogEditPayload {
     pub title: Option<String>,
     pub content: Option<String>,
+    pub is_draft: Option<bool>,
 }
 // endregion: blog post edit payload
 

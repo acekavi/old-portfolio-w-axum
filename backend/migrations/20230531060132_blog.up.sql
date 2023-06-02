@@ -5,6 +5,7 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 CREATE TABLE IF NOT EXISTS blog_post (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     title VARCHAR(255) NOT NULL,
+    slug VARCHAR(255) NOT NULL UNIQUE,
     content TEXT NOT NULL,
     is_draft BOOLEAN DEFAULT TRUE NOT NULL,
     created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -12,9 +13,25 @@ CREATE TABLE IF NOT EXISTS blog_post (
     author_id UUID NOT NULL REFERENCES users (id) ON DELETE CASCADE
 );
 
+CREATE INDEX idx_blog_posts_slug ON blog_post(slug);
 CREATE INDEX idx_blog_posts_author_id ON blog_post(author_id);
 CREATE INDEX idx_blog_posts_created_at ON blog_post(created_at);
 
+-- Create a trigger function to update the slug on INSERT and UPDATE
+CREATE OR REPLACE FUNCTION update_slug()
+    RETURNS TRIGGER AS $$
+BEGIN
+    NEW.slug := lower(regexp_replace(NEW.title, '[^a-zA-Z0-9]+', '-', 'g'));
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+-- Create a trigger to execute the update_slug function on INSERT and UPDATE
+CREATE TRIGGER update_slug_trigger
+    BEFORE INSERT OR UPDATE ON blog_post
+    FOR EACH ROW
+    EXECUTE FUNCTION update_slug();
+    
 -- Create the Comment table
 CREATE TABLE IF NOT EXISTS blog_comment (
     id UUID PRIMARY KEY NOT NULL DEFAULT (uuid_generate_v4()),
