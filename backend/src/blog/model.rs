@@ -335,6 +335,26 @@ impl BlogController {
     }
     // endregion: like post
 
+    // region: get likes
+    pub async fn get_likes(&self, blog_id: Uuid) -> Result<CustomMessage> {
+        let likes = sqlx::query_as::<_, BlogLike>(
+            r#"
+                SELECT id, blog_post_id, user_id
+                FROM blog_like
+                WHERE blog_post_id = $1
+            "#,
+        )
+        .bind(blog_id)
+        .fetch_all(&self.app_state.get_db_conn())
+        .await
+        .map_err(|e| Error::InvalidQuery(e.to_string()))?;
+
+        let custom_message = CustomMessage {
+            message: likes.len().to_string(),
+        };
+        Ok(custom_message)
+    }
+    // endregion: get likes
     // region: todo! unlike post
 
     // endregion: unlike post

@@ -37,7 +37,7 @@ pub async fn blog_routes(app_state: &AppState) -> Router {
                 .patch(edit_comment)
                 .delete(delete_comment),
         )
-        .route("/like/:blog_id", get(like_post))
+        .route("/like/:blog_id", get(get_likes).post(like_post))
         .with_state(user_controller)
 }
 // endregion: routes
@@ -170,4 +170,16 @@ async fn like_post(
     Ok(Json(post))
 }
 // endregion: like post
+
+// region: get likes
+async fn get_likes(
+    State(state): State<BlogController>,
+    Path(slug): Path<Uuid>,
+) -> Result<Json<CustomMessage>> {
+    let post = state.get_likes(slug).await?;
+    println!("--> {:<12} : GET LIKES", "HANDLER");
+
+    Ok(Json(post))
+}
+// endregion: get likes
 // endregion: blog handlers
