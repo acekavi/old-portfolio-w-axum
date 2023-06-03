@@ -7,7 +7,7 @@ use uuid::Uuid;
 
 use super::schema::{
     BlogComment, BlogCommentCreatePayload, BlogCommentEditPayload, BlogCommentResponse,
-    BlogEditPayload, BlogLike,
+    BlogEditPayload,
 };
 use crate::utils::{
     error::Result,

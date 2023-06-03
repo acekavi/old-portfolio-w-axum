@@ -62,7 +62,6 @@ pub struct BlogEditPayload {
 pub struct BlogCommentCreatePayload {
     pub content: String,
     pub is_reply: bool,
-    #[serde(skip_serializing_if = "Option::is_none")]
     pub parent_comment_id: Option<Uuid>,
 }
 // endregion: blog comment create payload
