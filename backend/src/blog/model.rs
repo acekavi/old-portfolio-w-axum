@@ -3,7 +3,7 @@ use uuid::Uuid;
 
 use super::schema::{
     BlogComment, BlogCommentCreatePayload, BlogCommentEditPayload, BlogCommentResponse,
-    BlogCreatePayload, BlogEditPayload, BlogPost,
+    BlogCreatePayload, BlogEditPayload, BlogLike, BlogPost,
 };
 use crate::utils::{
     error::{Error, Result},
@@ -53,7 +53,14 @@ impl BlogController {
         .bind(claims.sub)
         .fetch_one(&self.app_state.get_db_conn())
         .await
-        .map_err(|e| Error::InvalidQuery(e.to_string()))?;
+        .map_err(|e| {
+            let error = e.to_string();
+            if error.contains("duplicate key value violates unique constraint") {
+                Error::AlreadyExists("Blog Post".to_string())
+            } else {
+                Error::InvalidQuery(error)
+            }
+        })?;
 
         Ok(blog_post)
     }
@@ -280,8 +287,52 @@ impl BlogController {
     }
     // endregion: delete comment
 
-    // region: todo! like post
+    // region: like post
+    pub async fn like_post(&self, claims: Claims, blog_id: Uuid) -> Result<CustomMessage> {
+        let like_result = sqlx::query_as::<_, BlogLike>(
+            r#"
+                INSERT INTO blog_like (blog_post_id, user_id)
+                VALUES ($1, $2)
+                RETURNING id, blog_post_id, user_id
+            "#,
+        )
+        .bind(blog_id)
+        .bind(claims.sub)
+        .fetch_one(&self.app_state.get_db_conn())
+        .await;
 
+        match like_result {
+            Ok(_) => {
+                let message = CustomMessage {
+                    message: "You liked the post!".to_string(),
+                };
+                Ok(message)
+            }
+            Err(e) => {
+                if e.to_string()
+                    .contains("duplicate key value violates unique constraint")
+                {
+                    sqlx::query(
+                        r#"
+                            DELETE FROM blog_like
+                            WHERE blog_post_id = $1 AND user_id = $2
+                        "#,
+                    )
+                    .bind(blog_id)
+                    .bind(claims.sub)
+                    .execute(&self.app_state.get_db_conn())
+                    .await
+                    .map_err(|e| Error::InvalidQuery(e.to_string()))?;
+
+                    let message = CustomMessage {
+                        message: "You unliked the post!".to_string(),
+                    };
+                    return Ok(message);
+                }
+                Err(Error::InvalidQuery(e.to_string()))
+            }
+        }
+    }
     // endregion: like post
 
     // region: todo! unlike post

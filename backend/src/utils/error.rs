@@ -5,7 +5,8 @@ pub type Result<T> = core::result::Result<T, Error>;
 
 #[derive(Debug)]
 pub enum Error {
-    InvalidToken,
+    AlreadyExists(String),
+    LoginFailed,
     TokenCreationFailed,
     TokenExpired,
     ParsingTokenFailed(jsonwebtoken::errors::Error),
@@ -19,7 +20,6 @@ pub enum Error {
     Unauthorized,
 
     //User errors
-    AlreadyExists,
     WrongCredentials,
     CurrentPasswordDoNotMatch,
 }
@@ -27,27 +27,27 @@ pub enum Error {
 impl IntoResponse for Error {
     fn into_response(self) -> Response {
         // Server Error
-        println!("--> {:<12} : UTILS - {self:?}", "ERROR");
+        println!("--> {:<12} : {self:?}", "ERROR");
 
         // Client Error
         let err = match self {
-            Error::InvalidToken => "INVALID_TOKEN",
-            Error::TokenCreationFailed => "FAILED_TO_CREATE_TOKEN",
-            Error::TokenExpired => "TOKEN_EXPIRED",
-            Error::ParsingTokenFailed(..) => "ERROR_PARSING_TOKEN",
-            Error::InvalidQuery(..) => "DATABASE_ERROR",
-            Error::InvalidHash(..) => "HASH_ERROR",
-            Error::MissingFields => "FILL_ALL_THE_FIELDS",
-            Error::InvalidRequest => "INVALID_REQUEST",
-            Error::InternalServerFailure(..) => "UNHANDLED_SERVER_ERROR",
+            Error::AlreadyExists(error) => format!("{error} already exists!"),
+            Error::LoginFailed => "Please log in to proceed!".to_owned(),
+            Error::TokenCreationFailed => "Failed to create an auth token!".to_owned(),
+            Error::TokenExpired => "The token provided is expired!".to_owned(),
+            Error::ParsingTokenFailed(..) => "Failed to parse token!".to_owned(),
+            Error::InvalidQuery(..) => "Internal database error!".to_owned(),
+            Error::InvalidHash(..) => "Failed to hash the password!".to_owned(),
+            Error::MissingFields => "Please fill all the fields!".to_owned(),
+            Error::InvalidRequest => "Provided request is invalid!".to_owned(),
+            Error::InternalServerFailure(..) => "UNHANDLED_SERVER_ERROR".to_owned(),
 
             // Blog Errors
-            Error::Unauthorized => "You are not authorized to perform this action!",
+            Error::Unauthorized => "You are not authorized to perform this action!".to_owned(),
 
             // User Errors
-            Error::AlreadyExists => "USERNAME_OR_EMAIL_ALREADY_TAKEN",
-            Error::WrongCredentials => "CREDENTIALS_DO_NOT_MATCH_ANY_USER",
-            Error::CurrentPasswordDoNotMatch => "CURRENT_PASSWORD_DOES_NOT_MATCH",
+            Error::WrongCredentials => "Provided credentials do not match!".to_owned(),
+            Error::CurrentPasswordDoNotMatch => "Current password is invalid!".to_owned(),
         };
         (
             StatusCode::INTERNAL_SERVER_ERROR,

@@ -54,7 +54,9 @@ CREATE INDEX idx_blog_comment_user_id ON blog_comment(user_id);
 CREATE TABLE IF NOT EXISTS blog_like (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     blog_post_id UUID NOT NULL REFERENCES blog_post (id) ON DELETE CASCADE,
-    user_id UUID NOT NULL REFERENCES users (id) ON DELETE CASCADE
+    user_id UUID NOT NULL REFERENCES users (id) ON DELETE CASCADE,
+
+    CONSTRAINT like_and_dislike UNIQUE (blog_post_id, user_id);
 );
 
 CREATE INDEX idx_blog_like_blog_post_id ON blog_like(blog_post_id);

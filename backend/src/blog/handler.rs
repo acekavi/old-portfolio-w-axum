@@ -7,7 +7,7 @@ use uuid::Uuid;
 
 use super::schema::{
     BlogComment, BlogCommentCreatePayload, BlogCommentEditPayload, BlogCommentResponse,
-    BlogEditPayload,
+    BlogEditPayload, BlogLike,
 };
 use crate::utils::{
     error::Result,
@@ -37,6 +37,7 @@ pub async fn blog_routes(app_state: &AppState) -> Router {
                 .patch(edit_comment)
                 .delete(delete_comment),
         )
+        .route("/like/:blog_id", get(like_post))
         .with_state(user_controller)
 }
 // endregion: routes
@@ -156,4 +157,17 @@ async fn delete_comment(
 }
 // endregion: delete comment
 
+// region: like post
+async fn like_post(
+    State(state): State<BlogController>,
+    claims: Claims,
+    Path(slug): Path<Uuid>,
+) -> Result<Json<CustomMessage>> {
+    let post = state.like_post(claims, slug).await?;
+    println!("--> {:<12} : LIKE POST", "HANDLER");
+
+    // Ok(Json(post))
+    Ok(Json(post))
+}
+// endregion: like post
 // endregion: blog handlers

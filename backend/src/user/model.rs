@@ -55,7 +55,7 @@ impl UserController {
         .map_err(|e| {
             let error = e.to_string();
             if error.contains("duplicate key value violates unique constraint") {
-                Error::AlreadyExists
+                Error::AlreadyExists("Username or email".to_owned())
             } else {
             Error::InvalidQuery(error)
         }}
@@ -161,7 +161,7 @@ impl UserController {
         .await.map_err(|e| {
             let error = e.to_string();
             if error.contains("duplicate key value violates unique constraint") {
-                Error::AlreadyExists
+                Error::AlreadyExists("Email".to_owned())
             } else {
             Error::InvalidQuery(error)
         }}

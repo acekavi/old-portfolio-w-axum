@@ -34,10 +34,7 @@ where
                 .as_bytes(),
         );
 
-        let auth_token = parts
-            .headers
-            .get(AUTHORIZATION)
-            .ok_or(Error::InvalidToken)?;
+        let auth_token = parts.headers.get(AUTHORIZATION).ok_or(Error::LoginFailed)?;
 
         let validation = Validation::new(Algorithm::HS256);
         let data = decode::<Claims>(

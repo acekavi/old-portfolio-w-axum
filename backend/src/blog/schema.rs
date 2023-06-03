@@ -74,14 +74,6 @@ pub struct BlogCommentEditPayload {
 }
 // endregion: blog comment edit payload
 
-// region: blog like create payload
-#[derive(Deserialize)]
-pub struct BlogLikeCreatePayload {
-    pub blog_post_id: Uuid,
-    pub user_id: Uuid,
-}
-// endregion: blog like create payload
-
 // region: blog comment response
 #[derive(Debug, Serialize, Deserialize, FromRow)]
 pub struct BlogCommentResponse {
