@@ -158,7 +158,8 @@ impl UserController {
         .bind(OffsetDateTime::now_utc())
         .bind(user_id)
         .fetch_one(&self.app_state.get_db_conn())
-        .await.map_err(|e| {
+        .await
+        .map_err(|e| {
             let error = e.to_string();
             if error.contains("duplicate key value violates unique constraint") {
                 Error::AlreadyExists("Email".to_owned())
@@ -183,16 +184,17 @@ impl UserController {
         )
         .bind(user_id)
         .execute(&self.app_state.get_db_conn())
-        .await;
-        match query_result {
-            Ok(_) => {
-                let message = CustomMessage {
-                    message: "User has been deleted successfully".to_string(),
-                };
-                Ok(message)
-            }
-            Err(e) => Err(Error::InvalidQuery(e.to_string())),
+        .await
+        .map_err(|e| Error::InvalidQuery(e.to_string()))?;
+
+        if query_result.rows_affected() == 0 {
+            return Err(Error::InvalidRequest);
         }
+
+        let message = CustomMessage {
+            message: "User has been deleted successfully".to_string(),
+        };
+        Ok(message)
     }
     // endregion: delete user
 
@@ -270,5 +272,36 @@ impl UserController {
         }
     }
     // endregion: change password
+
+    // region: verify user
+    pub async fn _verify_user(&self, user_id: Uuid, token_sub: Uuid) -> Result<CustomMessage> {
+        if user_id != token_sub {
+            return Err(Error::InvalidRequest);
+        }
+
+        let query_result = sqlx::query(
+            r#"
+                    UPDATE users
+                    SET is_active = true,
+                        updated_at = $1
+                    WHERE id = $2
+                "#,
+        )
+        .bind(OffsetDateTime::now_utc())
+        .bind(user_id)
+        .execute(&self.app_state.get_db_conn())
+        .await
+        .map_err(|e| Error::InvalidQuery(e.to_string()))?;
+
+        if query_result.rows_affected() == 0 {
+            return Err(Error::InvalidRequest);
+        }
+
+        let message = CustomMessage {
+            message: "User has been verified successfully".to_string(),
+        };
+        Ok(message)
+    }
+    // endregion: verify user
 }
 // endregion: Users Model Controller

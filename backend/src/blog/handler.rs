@@ -80,7 +80,7 @@ async fn view_post(
 // region: edit post
 async fn edit_post(
     State(state): State<BlogController>,
-    Path(slug): Path<Uuid>,
+    Path(slug): Path<String>,
     claims: Claims,
     Json(payload): Json<BlogEditPayload>,
 ) -> Result<Json<BlogPost>> {
@@ -94,7 +94,7 @@ async fn edit_post(
 // region: delete post
 async fn delete_post(
     State(state): State<BlogController>,
-    Path(slug): Path<Uuid>,
+    Path(slug): Path<String>,
     claims: Claims,
 ) -> Result<Json<CustomMessage>> {
     let post = state.delete_post(slug, claims).await?;

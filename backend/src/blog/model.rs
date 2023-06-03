@@ -108,7 +108,7 @@ impl BlogController {
     // region: edit post
     pub async fn edit_post(
         &self,
-        blog_id: Uuid,
+        slug: String,
         payload: BlogEditPayload,
         claims: Claims,
     ) -> Result<BlogPost> {
@@ -122,7 +122,7 @@ impl BlogController {
                     content = COALESCE($2, content),
                     is_draft = COALESCE($3, is_draft),
                     updated_at = $4
-                WHERE id = $5
+                WHERE slug = $5
                 RETURNING id, title, slug, content, is_draft, created_at, updated_at, author_id
             "#,
         )
@@ -130,7 +130,7 @@ impl BlogController {
         .bind(payload.content)
         .bind(payload.is_draft)
         .bind(OffsetDateTime::now_utc())
-        .bind(blog_id)
+        .bind(slug)
         .fetch_one(&self.app_state.get_db_conn())
         .await
         .map_err(|e| Error::InvalidQuery(e.to_string()))?;
@@ -140,28 +140,30 @@ impl BlogController {
     // endregion: edit post
 
     // region: delete post
-    pub async fn delete_post(&self, blog_id: Uuid, claims: Claims) -> Result<CustomMessage> {
+    pub async fn delete_post(&self, slug: String, claims: Claims) -> Result<CustomMessage> {
         if !claims.is_admin {
             return Err(Error::Unauthorized);
         }
         let query_result = sqlx::query(
             r#"
                 DELETE FROM blog_post
-                WHERE id = $1
+                WHERE slug = $1 AND author_id = $2
             "#,
         )
-        .bind(blog_id)
+        .bind(slug)
+        .bind(claims.sub)
         .execute(&self.app_state.get_db_conn())
-        .await;
-        match query_result {
-            Ok(_) => {
-                let message = CustomMessage {
-                    message: "Blog post has been deleted successfully".to_string(),
-                };
-                Ok(message)
-            }
-            Err(e) => Err(Error::InvalidQuery(e.to_string())),
+        .await
+        .map_err(|e| Error::InvalidQuery(e.to_string()))?;
+
+        if query_result.rows_affected() == 0 {
+            return Err(Error::InvalidRequest);
         }
+
+        let message = CustomMessage {
+            message: "Blog post has been deleted successfully".to_string(),
+        };
+        Ok(message)
     }
     // endregion: delete post
 
@@ -274,18 +276,40 @@ impl BlogController {
         .bind(comment_id)
         .bind(claims.sub)
         .execute(&self.app_state.get_db_conn())
-        .await;
-        match query_result {
-            Ok(_) => {
-                let message = CustomMessage {
-                    message: "Blog comment has been deleted successfully".to_string(),
-                };
-                Ok(message)
-            }
-            Err(e) => Err(Error::InvalidQuery(e.to_string())),
+        .await
+        .map_err(|e| Error::InvalidQuery(e.to_string()))?;
+
+        if query_result.rows_affected() == 0 {
+            return Err(Error::InvalidRequest);
         }
+
+        let message = CustomMessage {
+            message: "Comment has been deleted successfully".to_string(),
+        };
+        Ok(message)
     }
     // endregion: delete comment
+
+    // region: get likes
+    pub async fn get_likes(&self, blog_id: Uuid) -> Result<CustomMessage> {
+        let likes = sqlx::query_as::<_, BlogLike>(
+            r#"
+                SELECT id, blog_post_id, user_id
+                FROM blog_like
+                WHERE blog_post_id = $1
+            "#,
+        )
+        .bind(blog_id)
+        .fetch_all(&self.app_state.get_db_conn())
+        .await
+        .map_err(|e| Error::InvalidQuery(e.to_string()))?;
+
+        let custom_message = CustomMessage {
+            message: likes.len().to_string(),
+        };
+        Ok(custom_message)
+    }
+    // endregion: get likes
 
     // region: like post
     pub async fn like_post(&self, claims: Claims, blog_id: Uuid) -> Result<CustomMessage> {
@@ -334,28 +358,4 @@ impl BlogController {
         }
     }
     // endregion: like post
-
-    // region: get likes
-    pub async fn get_likes(&self, blog_id: Uuid) -> Result<CustomMessage> {
-        let likes = sqlx::query_as::<_, BlogLike>(
-            r#"
-                SELECT id, blog_post_id, user_id
-                FROM blog_like
-                WHERE blog_post_id = $1
-            "#,
-        )
-        .bind(blog_id)
-        .fetch_all(&self.app_state.get_db_conn())
-        .await
-        .map_err(|e| Error::InvalidQuery(e.to_string()))?;
-
-        let custom_message = CustomMessage {
-            message: likes.len().to_string(),
-        };
-        Ok(custom_message)
-    }
-    // endregion: get likes
-    // region: todo! unlike post
-
-    // endregion: unlike post
 }
