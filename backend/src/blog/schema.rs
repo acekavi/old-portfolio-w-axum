@@ -18,7 +18,7 @@ pub struct BlogPost {
 }
 
 // Comment struct representing the Comment table
-#[derive(Debug, Serialize, Deserialize, FromRow)]
+#[derive(Debug, Serialize, Deserialize, FromRow, Clone)]
 pub struct BlogComment {
     pub id: Uuid,
     pub content: String,

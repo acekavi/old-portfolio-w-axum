@@ -25,6 +25,7 @@ impl UserController {
         }
     }
 }
+
 // CRUD Implementation
 impl UserController {
     // region: create user

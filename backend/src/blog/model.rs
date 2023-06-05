@@ -213,6 +213,18 @@ impl BlogController {
         .await
         .map_err(|e| Error::InvalidQuery(e.to_string()))?;
 
+        let replies = sqlx::query_as::<_, BlogComment>(
+            r#"
+                SELECT id, content, created_at, blog_post_id, user_id, is_reply, parent_comment_id
+                FROM blog_comment
+                WHERE blog_post_id = $1 and is_reply = true
+            "#,
+        )
+        .bind(blog_id)
+        .fetch_all(&self.app_state.get_db_conn())
+        .await
+        .map_err(|e| Error::InvalidQuery(e.to_string()))?;
+
         for this_comment in main_comments {
             let comment = BlogCommentResponse {
                 id: this_comment.id,
@@ -221,17 +233,13 @@ impl BlogController {
                 blog_post_id: this_comment.blog_post_id,
                 user_id: this_comment.user_id,
                 parent_comment_id: this_comment.parent_comment_id,
-                replies: Some(sqlx::query_as::<_, BlogComment>(
-                    r#"
-                        SELECT id, content, created_at, blog_post_id, user_id, is_reply, parent_comment_id
-                        FROM blog_comment
-                        WHERE blog_post_id = $1 and is_reply = true and parent_comment_id = $2
-                    "#,
-                ).bind(blog_id)
-                .bind(this_comment.id)
-                .fetch_all(&self.app_state.get_db_conn())
-                .await
-                .map_err(|e| Error::InvalidQuery(e.to_string()))?),
+                replies: Some(
+                    replies
+                        .iter()
+                        .filter(|reply| reply.parent_comment_id == Some(this_comment.id))
+                        .cloned()
+                        .collect(),
+                ),
             };
             all_comments.push(comment);
         }
