@@ -1,5 +1,5 @@
 <div class="container main-hero h-screen snap-always snap-center">
-	<div class="flex lg:flex-row flex-col-reverse justify-evenly items-center h-4/5">
+	<div class="flex lg:flex-row flex-col-reverse justify-evenly items-center h-5/6">
         <div class="">
             <h1 class="lg:text-9xl font h1 font-bold cursor-grab"><span class="gradient-header">Designer</span></h1>
             <h1 class="lg:text-9xl font h1 font-bold cursor-grab"><span class="gradient-header">Developer</span></h1>

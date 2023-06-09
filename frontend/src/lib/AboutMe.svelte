@@ -5,15 +5,15 @@
         </header>
         <section class="pb-8 flex">
 
-            <p class="lg:text-l font-mono whitespace-pre-line px-4 ">Hello! I'm Avishka Kavinda. I'm a fullstack developer based here in <span class="before:block before:absolute before:-inset-1 before:-skew-y-2 before:bg-primary-500 relative inline-block hover:before:-skew-y-0">
+            <p class="lg:text-l font-mono whitespace-pre-line px-4 ">Hello! I'm Avishka Kavinda. I'm a fullstack developer based here in <span class="skew-text before:-skew-y-2 before:bg-[#9ed6ad]">
                 <a href="https://www.google.com/search?client=firefox-b-d&q=colombo+google+map#" class="relative">📍Colombo, Sri Lanka.</a>
               </span>
 
             I have a passion for creating beautiful, intuitive and highly functional websites and applications. I have a strong interest in learning new technologies and frameworks and I'm always looking for new challenges.
 
-            The site you're currently seeing was created using <span class="before:block before:absolute before:-inset-1 before:-skew-y-6 before:bg-slate-500 relative inline-block hover:before:-skew-y-0">
+            The site you're currently seeing was created using <span class="skew-text before:-skew-y-6 before:bg-[#a674e5]">
                 <a href="https://tokio.rs/blog/2021-07-announcing-axum" class="relative">Axum</a>
-              </span> a rust backend framework and <span class="before:block before:absolute before:-inset-1 before:skew-y-3 before:bg-[#ff3e00] relative inline-block hover:before:-skew-y-0">
+              </span> a rust backend framework and <span class="skew-text before:skew-y-3 before:bg-[#ff3e00]">
                 <a href="https://kit.svelte.dev/" class="relative">SvelteKit</a>
               </span> a javascript frontend framework. I'm currently working on a few projects and I'm always looking for new opportunities. If you have a project you'd like to discuss, feel free to contact me.
             </p>

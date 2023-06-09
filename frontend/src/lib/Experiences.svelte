@@ -13,9 +13,9 @@
             <p class="lg:text-l whitespace-pre-line text-justify 
             first-letter:text-6xl first-letter:font-bold
             first-letter:mr-2 first-letter:float-left font-token">
-            I have been a freelance graphic designer since 2015. As I pursue my university studies in Computer Science at <span class="before:block before:absolute before:-inset-1 before:-skew-y-2 before:bg-[#108480] relative inline-block hover:before:-skew-y-0">
+            I have been a freelance graphic designer since 2015. As I pursue my university studies in Computer Science at <span class="skew-text before:-skew-y-2 before:bg-[#108480]">
                 <a href="https://www.westminster.ac.uk/" class="relative">University of Westminster,</a>
-              </span> my passion has evolved into full-stack development. My internship at <span class="before:block before:absolute before:-inset-1 before:skew-y-6 before:bg-[#d20021] relative inline-block hover:before:-skew-y-0">
+              </span> my passion has evolved into full-stack development. My internship at <span class="skew-text before:skew-y-6 before:bg-[#d20021]">
                 <a href="https://www.infor.com/" class="relative">Infor</a>
               </span> in 2022-2023 provided me with valuable industrial experience, fostering team collaboration and business etiquettes. With a keen eye for aesthetics and a drive for immersive user experiences, I strive to blend creativity and technical expertise. Excited for the future of my career, I'm committed to continuous growth, embracing new technologies, and delivering high-quality work. Let's connect and bring your ideas to life.
             </p>
@@ -33,8 +33,8 @@
                             <p class="h6 text-xs">'Project Manager, Infor'</p>
                         </section>
                         <footer class="h6 card-footer text-sm text-center whitespace-pre-line">"We are glad you chose Infor for your Internship, and I believe you've learnt a lot about the IT industry.
-                            
-                            The work you've engaged in was truly valuable for our product, and the feedback we've received was great!"</footer>
+                            The work you've engaged in was truly valuable for our product, and the feedback we've received was great!
+                            I wish you all the best for your future!"</footer>
                     </div>
                 </div>
 

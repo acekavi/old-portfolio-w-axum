@@ -12,7 +12,7 @@
     
         <div class="me-16 flex justify-between gap-4 uppercase font-semibold items-center lg:mt-8">
             <a href="/blog">Blog</a>
-            <LightSwitch width="w-8" height="h-4" ring="bg-primary-900" />
+            <LightSwitch width="w-8" height="h-4" ring="bg-primary-700" />
         </div>
     </div>
 </div>
