@@ -11,6 +11,8 @@ module.exports = {
 		extend: {
 			animation: {
 				float: 'float 5s ease-in-out infinite',
+				shuffle: 'shuffle 6s ease-in-out infinite',
+				reverseshuffle: 'reverseshuffle 4s ease-in-out infinite',
 			  },
 			keyframes: {
 				float : {
@@ -20,6 +22,22 @@ module.exports = {
 				  '50%': {
 					transform: 'rotate(2deg) translateY(0px)'
 				  },
+				},
+				shuffle : {
+					'0%, 100%': {
+					transform: 'translateX(25px) translateY(25px)'
+				  },
+				  '50%': {
+					transform: 'translateX(-25px) translateY(-25px)'
+				  },
+				},
+				reverseshuffle : {
+					'0%, 100%': {
+						transform: 'translateX(15px) translateY(-15px)'
+					},
+					'50%': {
+						transform: 'translateX(-35px) translateY(15px)'
+					},
 				}
 			  }
 		},
