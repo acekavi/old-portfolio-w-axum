@@ -1,10 +1,10 @@
 <script>
-	import AboutMe from '$lib/AboutMe.svelte';
-	import ContactMe from '$lib/ContactMe.svelte';
-	import Design from '$lib/Design.svelte';
-	import Experiences from '$lib/Experiences.svelte';
-	import MainHero from '$lib/MainHero.svelte';
-	import Projects from '$lib/Projects.svelte';
+	import AboutMe from '$lib/Main/AboutMe.svelte';
+	import ContactMe from '$lib/Main/ContactMe.svelte';
+	import Design from '$lib/Main/Design.svelte';
+	import Experiences from '$lib/Main/Experiences.svelte';
+	import MainHero from '$lib/Main/MainHero.svelte';
+	import Projects from '$lib/Main/Projects.svelte';
 </script>
 
 <svelte:head>

@@ -19,6 +19,7 @@ My Personal Portfolio Website
     -   [x]     Generate JWT token dynamically
     -   [x]     CRUD Error handling
     -   [x]     Auth Token component validation (e.g., expires, sign)
+    -   [ ]     Contact me email
     -   [ ]     Hook static file storage to AWS s3
     -   [ ]     Verify user using email
     -   [ ]     Send password reset link to email
@@ -27,9 +28,7 @@ My Personal Portfolio Website
 
 - API Endpoints for
     -   [x]     Login
-    -   [ ]     Blog CRUD
-    -   [ ]     Designs CRUD
-    -   [ ]     Projects CRUD
+    -   [x]     Blog CRUD
     -   [ ]     FileUploads
 
 - AWS setup
@@ -45,7 +44,22 @@ My Personal Portfolio Website
 
 ### Frontend
 
-- TBD
+- Homepage
+    -   [x]     Hero Section
+    -   [x]     About me
+    -   [x]     Experience
+    -   [x]     Projects
+    -   [x]     Designs
+    -   [x]     Contact me
+    -   [x]     Contact me form
+
+- Blog
+    -   [x]     Login form
+    -   [x]     Register form
+    -   [ ]     Catergories
+    -   [ ]     Get all posts
+    -   [ ]     View single post
+    -   [ ]     Admin dashboard
 
 
 ## Environment Variables

@@ -3,8 +3,8 @@ use axum::{middleware, response::Response, Router};
 use backend::health_checker;
 use blog::handler::blog_routes;
 use hyper::Method;
-use tower_cookies::{cookie::SameSite, CookieManagerLayer};
-use tower_http::cors::{Any, CorsLayer};
+use tower_cookies::CookieManagerLayer;
+use tower_http::cors::CorsLayer;
 
 use std::{net::SocketAddr, sync::Arc};
 
