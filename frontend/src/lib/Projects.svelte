@@ -6,7 +6,7 @@
 	<div
 		class="flex flex-col lg:flex-row justify-evenly items-center h-full my-auto overflow-y-scroll"
 	>
-		<div class="card lg:w-2/6 variant-glass w-4/5 lg:h-[80vh] rounded-none mt-8">
+		<div class="card lg:w-2/6 variant-glass w-4/5 rounded-none mt-8">
 			<header class="card-header text-right">
 				<p
 					class="h1 lg:text-6xl text-4xl font-sans font-extrabold relative lg:-inset-x-10 lg:-inset-y-14 gradient-projects pb-4 lg:p-0"
@@ -28,7 +28,7 @@
 			</section>
 
 			<footer
-				class="flex flex-row lg:gap-4 gap-2 mx-10 flex-no-wrap mt-8 overflow-x-scroll lg:overflow-auto lg:flex-wrap"
+				class="flex flex-row lg:gap-4 gap-2 mx-10 flex-no-wrap overflow-x-scroll lg:overflow-auto lg:flex-wrap py-10"
 			>
 				<div class="variant-soft-secondary py-2 rounded-xl px-4">
 					<span><i class="fa-brands fa-java" /></span>
@@ -51,6 +51,11 @@
 				</div>
 
 				<div class="variant-soft-secondary py-2 rounded-xl px-4">
+					<span><i class="fa-brands fa-git" /></span>
+					<span>git</span>
+				</div>
+
+				<div class="variant-soft-secondary py-2 rounded-xl px-4">
 					<span><i class="fa-brands fa-react" /></span>
 					<span>ReactJS</span>
 				</div>
@@ -63,11 +68,6 @@
 				<div class="variant-soft-secondary py-2 rounded-xl px-4">
 					<span><i class="fa-brands fa-aws" /></span>
 					<span>AWS</span>
-				</div>
-
-				<div class="variant-soft-secondary py-2 rounded-xl px-4">
-					<span><i class="fa-brands fa-git" /></span>
-					<span>git</span>
 				</div>
 
 				<div class="variant-soft-secondary py-2 rounded-xl px-4">

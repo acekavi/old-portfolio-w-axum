@@ -9,11 +9,17 @@
 
 <svelte:head>
 	<title>Home</title>
+	<meta name="acekavi Portfolio">
 </svelte:head>
 
-<MainHero />
-<AboutMe />
-<Experiences />
-<Projects />
-<Design />
-<ContactMe />
+<div
+	class="lg:max-h-screen overflow-y-scroll snap snap-y snap-mandatory scroll-smooth main-container"
+>
+	<MainHero />
+	<AboutMe />
+	<Experiences />
+	<Projects />
+	<Design />
+	<ContactMe />
+
+</div>

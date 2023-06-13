@@ -16,9 +16,8 @@
 		</div>
 
 		<div class="me-16 flex justify-between gap-4 uppercase items-center lg:mt-8">
-			<a class=" hover:font-semibold" href="/avishka_kavinda.pdf" download="Avishka.pdf">Resume</a>
-			<a class=" hover:font-semibold" href="/blog">Blog</a>
-			<LightSwitch width="w-8" height="h-4" ring="variant-ghost-primary" />
+			<a class="hover:text-neutral-600 dark:hover:text-neutral-300" href="/blog">Blog</a>
+			<LightSwitch width="w-8" height="h-4" ring="variant-ghost-surface" />
 		</div>
 	</div>
 </div>

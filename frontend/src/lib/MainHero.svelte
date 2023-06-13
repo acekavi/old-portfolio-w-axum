@@ -1,13 +1,13 @@
 <div class="container h-screen snap-always snap-center">
 	<div class="flex lg:flex-row flex-col-reverse justify-evenly items-center h-5/6">
 		<div class="">
-			<h1 class="lg:text-9xl font h1 font-bold cursor-grab">
+			<h1 class="lg:text-9xl font h1 font-bold cursor-default">
 				<span class="gradient-header">Designer</span>
 			</h1>
-			<h1 class="lg:text-9xl font h1 font-bold cursor-grab">
+			<h1 class="lg:text-9xl font h1 font-bold cursor-default">
 				<span class="gradient-header">Developer</span>
 			</h1>
-			<h1 class="lg:text-9xl font h1 font-bold cursor-grab">
+			<h1 class="lg:text-9xl font h1 font-bold cursor-default">
 				<span class="gradient-header">Human</span><span class="text-neutral-500 text-sm font-normal"
 					>for now...</span
 				>

@@ -31,7 +31,7 @@
 			<form>
 				<div class="border-b border-gray-500/10">
 					<h2 class="text-base font-semibold leading-7">Lets work together!</h2>
-					<p class="mb-4 text-sm leading-6 text-gray-600">
+					<p class="mb-4 text-sm leading-6 text-opacity-10">
 						Send me an email <i class="fa-solid fa-envelope" />
 					</p>
 
@@ -88,7 +88,7 @@
 							>
 							<div class="">
 								<div class="input-ring">
-									<span class="flex select-none items-center pl-3 text-gray-700 sm:text-sm"
+									<span class="flex select-none items-center pl-3 text-gray-900 dark:text-gray-300 sm:text-sm"
 										>www.linkedin.com/in/</span
 									>
 									<input
@@ -116,9 +116,18 @@
 		</section>
 
 		<footer class="card-footer flex flex-row justify-evenly">
-			<a href="https://www.behance.net/acekavi" class="btn variant-glass-tertiary">
-				<span><i class="fa-solid fa-paper-plane" /></span>
-				<span>Contact Me</span>
+			<a href="https://www.behance.net/acekavi" class="btn btn-sm variant-glass-tertiary">
+				<span>Send</span>
+				<span><i class="fa-solid fa-paper-plane" /> </span></a
+			>
+
+			<a
+				href="/avishka_kavinda.pdf"
+				download="Avishka.pdf"
+				class="btn btn-sm variant-glass-tertiary"
+			>
+				<span>View my resume</span>
+				<span><i class="fa-solid fa-file-pdf" /></span>
 			</a>
 		</footer>
 	</div>

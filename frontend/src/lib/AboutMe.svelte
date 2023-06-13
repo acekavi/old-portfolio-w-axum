@@ -1,7 +1,7 @@
 <div
 	class="container my-auto flex items-center justify-evenly lg:flex-row flex-col-reverse lg:justify-center snap-always snap-start lg:h-screen"
 >
-	<div class="card lg:w-2/5 variant-glass w-4/5 lg:rounded-e-none lg:h-[80vh]">
+	<div class="card lg:w-2/5 variant-glass w-4/5 lg:rounded-e-none lg:h-[70vh]">
 		<header class="card-header">
 			<p
 				class="h1 lg:text-6xl text-4xl font-sans font-extrabold relative lg:-inset-x-10 lg:-inset-y-14 gradient-aboutme pb-4 lg:p-0"
@@ -10,8 +10,8 @@
 			</p>
 		</header>
 		<section class="pb-8 flex">
-			<p class="lg:text-l font-mono px-8">
-				Hello! I'm Avishka Kavinda. I'm a fullstack developer based here in <span
+			<p class="lg:text-l text-justify h6 px-8">
+				Hello! I'm Avishka Kavinda, A fullstack developer based here in <span
 					class="skew-text before:-skew-y-2 before:bg-[#9ed6ad]"
 				>
 					<a
@@ -36,24 +36,26 @@
 			</p>
 		</section>
 
-		<footer class="card-footer flex flex-row justify-evenly pb-8 lg:pt-16">
-			<a href="https://www.linkedin.com/in/acekavi" class="btn-icon variant-filled"
-				><i class="fa-brands fa-linkedin-in" /></a
-			>
-			<a href="https://www.behance.net/acekavi" class="btn-icon variant-filled"
-				><i class="fa-brands fa-behance" /></a
-			>
-			<a href="https://www.instagram.com/acekavi" class="btn-icon variant-filled"
-				><i class="fa-brands fa-instagram" /></a
-			>
-			<a href="https://github.com/acekavi" class="btn-icon variant-filled"
-				><i class="fa-brands fa-github" /></a
-			>
+		<footer class="card-footer mx-8 pt-8 border-t border-gray-500/10">
+			<div class=" flex flex-row justify-evenly">
+				<a href="https://www.linkedin.com/in/acekavi" class="btn-icon variant-filled"
+					><i class="fa-brands fa-linkedin-in" /></a
+				>
+				<a href="https://www.behance.net/acekavi" class="btn-icon variant-filled"
+					><i class="fa-brands fa-behance" /></a
+				>
+				<a href="https://www.instagram.com/acekavi" class="btn-icon variant-filled"
+					><i class="fa-brands fa-instagram" /></a
+				>
+				<a href="https://github.com/acekavi" class="btn-icon variant-filled"
+					><i class="fa-brands fa-github" /></a
+				>
+			</div>
 		</footer>
 	</div>
 
 	<div class="card my-16 lg:block hidden">
-		<img src="/lg-self.png" alt="" srcset="" class="border-0 w-auto rounded-e-2xl h-[80vh]" />
+		<img src="/lg-self.png" alt="" srcset="" class="border-0 w-auto rounded-e-2xl lg:h-[70vh]" />
 	</div>
 
 	<div class="card my-16 rounded-full lg:hidden block">

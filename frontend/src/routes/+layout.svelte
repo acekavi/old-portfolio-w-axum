@@ -6,16 +6,7 @@
 	// Most of your app wide CSS should be put in this file
 	import '../app.postcss';
 	import Navbar from '$lib/Navbar.svelte';
-	import { autoModeWatcher } from '@skeletonlabs/skeleton';
 </script>
 
-<svelte:head
-	>{@html `<script>${autoModeWatcher.toString()} autoModeWatcher();</script>`}</svelte:head
->
-
 <Navbar />
-<div
-	class="lg:max-h-screen overflow-y-scroll snap snap-y snap-mandatory scroll-smooth main-container"
->
-	<slot />
-</div>
+<slot />
