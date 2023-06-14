@@ -6,7 +6,9 @@
 	// Most of your app wide CSS should be put in this file
 	import '../app.postcss';
 	import Navbar from '$lib/Navbar.svelte';
+	import { Toast } from '@skeletonlabs/skeleton';
 </script>
 
 <Navbar />
+<Toast />
 <slot />

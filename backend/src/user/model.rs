@@ -33,6 +33,10 @@ impl UserController {
         if payload.username.is_empty() || payload.email.is_empty() || payload.password.is_empty() {
             return Err(Error::MissingFields);
         }
+        if !payload.email.contains('@') {
+            return Err(Error::InvalidEmail);
+        }
+
         let hashed_password = bcrypt::hash(payload.password, bcrypt::DEFAULT_COST);
         let hashed_password = match hashed_password {
             Ok(hashed_password) => hashed_password,

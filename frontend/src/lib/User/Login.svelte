@@ -1,7 +1,3 @@
-<script>
-    // @ts-nocheck
-	 export let form;
-</script>
 
 <div class="card variant-glass py-4 rounded-none">
     <section class="font-heading-token m-8">
@@ -23,7 +19,6 @@
                                 placeholder="g.host"
                                 autocomplete="username"
                                 class="focus-ring"
-                                value={form?.username ?? ''}
                             />
                         </div>
                     </div>
@@ -49,10 +44,6 @@
                     </div>
                 </div>
             </div>
-            
-        {#if form?.error}
-            <p class="error">{form.error}</p>
-        {/if}
         </form>
     </section>
 

@@ -22,6 +22,7 @@ pub enum Error {
     //User errors
     WrongCredentials,
     CurrentPasswordDoNotMatch,
+    InvalidEmail,
 }
 
 impl IntoResponse for Error {
@@ -48,6 +49,7 @@ impl IntoResponse for Error {
             // User Errors
             Error::WrongCredentials => "Provided credentials do not match!".to_owned(),
             Error::CurrentPasswordDoNotMatch => "Current password is invalid!".to_owned(),
+            Error::InvalidEmail => "Provided email is invalid!".to_owned(),
         };
         (
             StatusCode::INTERNAL_SERVER_ERROR,

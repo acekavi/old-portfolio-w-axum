@@ -40,11 +40,23 @@ pub async fn user_routes(app_state: &AppState) -> Router {
 async fn register(
     State(state): State<UserController>,
     Json(payload): Json<UserCreatePayload>,
-) -> Result<Json<User>> {
+) -> Result<Response> {
     let user = state.create(payload).await?;
     println!("--> {:<12} : CREATE USER", "HANDLER");
 
-    Ok(Json(user))
+    let token = generate_token(user.id, user.is_superuser);
+
+    match token {
+        Ok(token) => {
+            let mut headers = HeaderMap::new();
+            headers.insert(
+                axum::http::header::AUTHORIZATION,
+                axum::http::HeaderValue::from_str(&token).unwrap(),
+            );
+            Ok((StatusCode::OK, headers, Json(user)).into_response())
+        }
+        Err(error) => Ok(error.into_response()),
+    }
 }
 // endregion: signup
 
