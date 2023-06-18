@@ -1,17 +1,17 @@
-<div class="container h-screen snap-always snap-center">
+<div class="container h-screen snap-always snap-start">
 	<div class="flex lg:flex-row flex-col-reverse justify-evenly items-center h-5/6">
 		<div class="">
-			<h1 class="lg:text-9xl font h1 font-bold cursor-default">
+			<p class="lg:text-9xl font-serif font-semibold cursor-default">
 				<span class="gradient-header">Designer</span>
-			</h1>
-			<h1 class="lg:text-9xl font h1 font-bold cursor-default">
+			</p>
+			<p class="lg:text-9xl font-serif font-semibold cursor-default">
 				<span class="gradient-header">Developer</span>
-			</h1>
-			<h1 class="lg:text-9xl font h1 font-bold cursor-default">
+			</p>
+			<p class="lg:text-9xl font-serif font-semibold cursor-default">
 				<span class="gradient-header">Human</span><span class="text-neutral-500 text-sm font-normal"
 					>for now...</span
 				>
-			</h1>
+			</p>
 		</div>
 		<div class="motion-safe:animate-float w-4/5 lg:w-auto">
 			<img src="/astronaut.svg" alt="" srcset="" width="400px" />
@@ -20,7 +20,7 @@
 
 	<div class="flex flex-col align-middle text-center">
 		<div>
-			<p class="h6 font-semibold font-sans text-neutral-500">Psst! Scroll down</p>
+			<p class=" font-semibold font-sans text-neutral-500">Psst! <br /> Scroll down</p>
 		</div>
 
 		<div class="mx-auto pt-4">
@@ -41,3 +41,13 @@
 		</div>
 	</div>
 </div>
+
+<style lang="postcss">
+	.gradient-header {
+		@apply bg-clip-text text-transparent box-decoration-clone;
+		/* Direction */
+		@apply bg-gradient-to-br;
+		/* Color Stops */
+		@apply from-primary-800 from-10% via-primary-700 via-40% to-primary-900 to-90%;
+	}
+</style>

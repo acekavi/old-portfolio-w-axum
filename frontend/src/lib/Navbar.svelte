@@ -2,7 +2,7 @@
 	import { LightSwitch } from '@skeletonlabs/skeleton';
 </script>
 
-<div class="lg:sticky lg:top-0 lg:left-0 lg:h-0 lg:p-0">
+<div class="lg:sticky lg:top-0 lg:left-0 lg:h-0 lg:p-0 z-50">
 	<div class="flex justify-between text-zinc-900 dark:text-zinc-100 items-center">
 		<div class="ms-16 lg:mt-8 p-4">
 			<a href="/">

@@ -3,7 +3,7 @@ use uuid::Uuid;
 
 use super::schema::{
     BlogComment, BlogCommentCreatePayload, BlogCommentEditPayload, BlogCommentResponse,
-    BlogCreatePayload, BlogEditPayload, BlogLike, BlogPost,
+    BlogCreatePayload, BlogEditPayload, BlogLike, BlogPost, BlogResponse,
 };
 use crate::utils::{
     error::{Error, Result},
@@ -43,13 +43,16 @@ impl BlogController {
 
         let blog_post = sqlx::query_as::<_, BlogPost>(
             r#"
-                INSERT INTO blog_post (title, content, author_id)
-                VALUES ($1, $2, $3)
-                RETURNING id, title, slug, content, is_draft, created_at, updated_at, author_id
+                INSERT INTO blog_post (title, content, description, category, tags, author_id)
+                VALUES ($1, $2, $3, $4, $5, $6)
+                RETURNING id, title, slug, description, content, views, category, tags, is_draft, created_at, updated_at, author_id
             "#,
         )
         .bind(payload.title)
         .bind(payload.content)
+        .bind(payload.description)
+        .bind(payload.category)
+        .bind(payload.tags)
         .bind(claims.sub)
         .fetch_one(&self.app_state.get_db_conn())
         .await
@@ -67,11 +70,16 @@ impl BlogController {
     // endregion: create post
 
     // region: get all posts
-    pub async fn get_all_posts(&self) -> Result<Vec<BlogPost>> {
-        let blog_posts = sqlx::query_as::<_, BlogPost>(
+    pub async fn get_all_posts(&self) -> Result<Vec<BlogResponse>> {
+        let blog_posts = sqlx::query_as::<_, BlogResponse>(
             r#"
-                Select id, title, slug, content, is_draft, created_at, updated_at, author_id
-                FROM blog_post
+                Select blog_post.id, title, slug, description, content, views, category, tags, is_draft, blog_post.updated_at, COUNT(blog_like.id) as likes, users.username as author
+                FROM blog_post 
+                LEFT JOIN blog_like ON blog_post.id = blog_like.blog_post_id 
+                LEFT JOIN users ON blog_post.author_id = users.id
+                WHERE blog_post.is_draft = false
+                GROUP BY blog_post.id, users.username
+                ORDER BY blog_post.updated_at DESC
             "#,
         )
         .fetch_all(&self.app_state.get_db_conn())
@@ -83,15 +91,18 @@ impl BlogController {
     // endregion: get all posts
 
     // region: view post
-    pub async fn view_post(&self, slug: String) -> Result<BlogPost> {
-        let query_result = sqlx::query_as::<_, BlogPost>(
+    pub async fn view_post(&self, slug: String) -> Result<BlogResponse> {
+        let query_result = sqlx::query_as::<_, BlogResponse>(
             r#"
-                Select id, title, slug, content, is_draft, created_at, updated_at, author_id
-                FROM blog_post
-                WHERE slug = $1;
+                Select blog_post.id, title, slug, description, content, views, category, tags, is_draft, blog_post.updated_at, COUNT(blog_like.id) as likes, users.username as author
+                FROM blog_post 
+                LEFT JOIN blog_like ON blog_post.id = blog_like.blog_post_id 
+                LEFT JOIN users ON blog_post.author_id = users.id
+                WHERE slug = $1
+                GROUP BY blog_post.id, users.username
             "#,
         )
-        .bind(slug)
+        .bind(&slug)
         .fetch_optional(&self.app_state.get_db_conn())
         .await
         .map_err(|e| Error::InvalidQuery(e.to_string()))?;
@@ -100,6 +111,18 @@ impl BlogController {
             Err(Error::InvalidRequest)
         } else {
             let blog_post = query_result.unwrap();
+            let _ = sqlx::query(
+                r#"
+                    UPDATE blog_post
+                    SET views = COALESCE($1, views)
+                    WHERE slug = $2
+                "#,
+            )
+            .bind(blog_post.views + 1)
+            .bind(slug)
+            .execute(&self.app_state.get_db_conn())
+            .await
+            .map_err(|e| Error::InvalidQuery(e.to_string()))?;
             Ok(blog_post)
         }
     }
@@ -119,15 +142,21 @@ impl BlogController {
             r#"
                 UPDATE blog_post
                 SET title = COALESCE($1, title),
-                    content = COALESCE($2, content),
-                    is_draft = COALESCE($3, is_draft),
-                    updated_at = $4
-                WHERE slug = $5
-                RETURNING id, title, slug, content, is_draft, created_at, updated_at, author_id
+                    description = COALESCE($2, description),
+                    content = COALESCE($3, content),
+                    category = COALESCE($4, category),
+                    tags = COALESCE($5, tags),
+                    is_draft = COALESCE($6, is_draft),
+                    updated_at = $7
+                WHERE slug = $8
+                RETURNING id, title, slug, description, content, views, category, tags, is_draft, created_at, updated_at, author_id
             "#,
         )
         .bind(payload.title)
+        .bind(payload.description)
         .bind(payload.content)
+        .bind(payload.category)
+        .bind(payload.tags)
         .bind(payload.is_draft)
         .bind(OffsetDateTime::now_utc())
         .bind(slug)
@@ -180,16 +209,16 @@ impl BlogController {
 
         let blog_comment = sqlx::query_as::<_, BlogComment>(
             r#"
-                INSERT INTO blog_comment (content, blog_post_id, user_id, is_reply, parent_comment_id)
+                INSERT INTO blog_comment (content, blog_post_id, user_id, is_reply, parent_id)
                 VALUES ($1, $2, $3, $4, $5)
-                RETURNING id, content, created_at, blog_post_id, user_id, is_reply, parent_comment_id
+                RETURNING id, content, created_at, blog_post_id, user_id, is_reply, parent_id
             "#,
         )
         .bind(payload.content)
         .bind(blog_id)
         .bind(claims.sub)
         .bind(payload.is_reply)
-        .bind(payload.parent_comment_id)
+        .bind(payload.parent_id)
         .fetch_one(&self.app_state.get_db_conn())
         .await
         .map_err(|e| Error::InvalidQuery(e.to_string()))?;
@@ -203,9 +232,9 @@ impl BlogController {
         let mut all_comments: Vec<BlogCommentResponse> = vec![];
         let main_comments = sqlx::query_as::<_, BlogComment>(
             r#"
-                SELECT id, content, created_at, blog_post_id, user_id, is_reply, parent_comment_id
+                SELECT id, content, created_at, blog_post_id, user_id, is_reply, parent_id
                 FROM blog_comment
-                WHERE blog_post_id = $1 and is_reply = false and parent_comment_id is null
+                WHERE blog_post_id = $1 and is_reply = false and parent_id is null
             "#,
         )
         .bind(blog_id)
@@ -215,7 +244,7 @@ impl BlogController {
 
         let replies = sqlx::query_as::<_, BlogComment>(
             r#"
-                SELECT id, content, created_at, blog_post_id, user_id, is_reply, parent_comment_id
+                SELECT id, content, created_at, blog_post_id, user_id, is_reply, parent_id
                 FROM blog_comment
                 WHERE blog_post_id = $1 and is_reply = true
             "#,
@@ -232,11 +261,11 @@ impl BlogController {
                 created_at: this_comment.created_at,
                 blog_post_id: this_comment.blog_post_id,
                 user_id: this_comment.user_id,
-                parent_comment_id: this_comment.parent_comment_id,
+                parent_id: this_comment.parent_id,
                 replies: Some(
                     replies
                         .iter()
-                        .filter(|reply| reply.parent_comment_id == Some(this_comment.id))
+                        .filter(|reply| reply.parent_id == Some(this_comment.id))
                         .cloned()
                         .collect(),
                 ),
@@ -259,7 +288,7 @@ impl BlogController {
                 UPDATE blog_comment
                 SET content = COALESCE($1, content)
                 WHERE id = $2 and user_id = $3
-                RETURNING id, content, created_at, blog_post_id, user_id, is_reply, parent_comment_id
+                RETURNING id, content, created_at, blog_post_id, user_id, is_reply, parent_id
             "#,
         )
         .bind(payload.content)
@@ -298,37 +327,22 @@ impl BlogController {
     }
     // endregion: delete comment
 
-    // region: get likes
-    pub async fn get_likes(&self, blog_id: Uuid) -> Result<CustomMessage> {
-        let likes = sqlx::query_as::<_, BlogLike>(
-            r#"
-                SELECT id, blog_post_id, user_id
-                FROM blog_like
-                WHERE blog_post_id = $1
-            "#,
-        )
-        .bind(blog_id)
-        .fetch_all(&self.app_state.get_db_conn())
-        .await
-        .map_err(|e| Error::InvalidQuery(e.to_string()))?;
-
-        let custom_message = CustomMessage {
-            message: likes.len().to_string(),
-        };
-        Ok(custom_message)
-    }
-    // endregion: get likes
-
     // region: like post
-    pub async fn like_post(&self, claims: Claims, blog_id: Uuid) -> Result<CustomMessage> {
+    pub async fn like_post(&self, claims: Claims, slug: String) -> Result<CustomMessage> {
         let like_result = sqlx::query_as::<_, BlogLike>(
             r#"
-                INSERT INTO blog_like (blog_post_id, user_id)
-                VALUES ($1, $2)
-                RETURNING id, blog_post_id, user_id
+                WITH post_data AS (
+                    SELECT id
+                    FROM blog_post
+                    WHERE slug = $1
+                  )
+                  INSERT INTO blog_like (blog_post_id, user_id)
+                  SELECT post_data.id, $2
+                  FROM post_data
+                  RETURNING id, blog_post_id, user_id
             "#,
         )
-        .bind(blog_id)
+        .bind(&slug)
         .bind(claims.sub)
         .fetch_one(&self.app_state.get_db_conn())
         .await;
@@ -346,11 +360,17 @@ impl BlogController {
                 {
                     sqlx::query(
                         r#"
-                            DELETE FROM blog_like
-                            WHERE blog_post_id = $1 AND user_id = $2
+                            WITH post_data AS (
+                                SELECT id
+                                FROM blog_post
+                                WHERE slug = $1
+                              )
+                              DELETE FROM blog_like
+                              WHERE blog_post_id = (SELECT id FROM post_data)
+                                AND user_id = $2
                         "#,
                     )
-                    .bind(blog_id)
+                    .bind(slug)
                     .bind(claims.sub)
                     .execute(&self.app_state.get_db_conn())
                     .await

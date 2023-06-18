@@ -10,7 +10,11 @@ pub struct BlogPost {
     pub id: Uuid,
     pub title: String,
     pub slug: String,
+    pub description: String,
     pub content: String,
+    pub views: i32,
+    pub category: String,
+    pub tags: Vec<String>,
     pub is_draft: bool,
     pub created_at: OffsetDateTime,
     pub updated_at: OffsetDateTime,
@@ -28,7 +32,7 @@ pub struct BlogComment {
     #[serde(skip_serializing)]
     pub is_reply: bool,
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub parent_comment_id: Option<Uuid>,
+    pub parent_id: Option<Uuid>,
 }
 
 // Like struct representing the Like table
@@ -40,11 +44,31 @@ pub struct BlogLike {
 }
 // endregion: blog post model
 
+// region: blog post response
+#[derive(Debug, Serialize, Deserialize, FromRow)]
+pub struct BlogResponse {
+    pub id: Uuid,
+    pub title: String,
+    pub slug: String,
+    pub description: String,
+    pub content: String,
+    pub views: i32,
+    pub category: String,
+    pub tags: Vec<String>,
+    pub is_draft: bool,
+    pub updated_at: OffsetDateTime,
+    pub likes: i64,
+    pub author: String,
+}
+
 // region: blog post create payload
 #[derive(Deserialize)]
 pub struct BlogCreatePayload {
     pub title: String,
+    pub description: String,
     pub content: String,
+    pub category: String,
+    pub tags: Vec<String>,
 }
 // endregion: blog post create payload
 
@@ -53,6 +77,9 @@ pub struct BlogCreatePayload {
 pub struct BlogEditPayload {
     pub title: Option<String>,
     pub content: Option<String>,
+    pub description: Option<String>,
+    pub category: Option<String>,
+    pub tags: Option<Vec<String>>,
     pub is_draft: Option<bool>,
 }
 // endregion: blog post edit payload
@@ -62,7 +89,7 @@ pub struct BlogEditPayload {
 pub struct BlogCommentCreatePayload {
     pub content: String,
     pub is_reply: bool,
-    pub parent_comment_id: Option<Uuid>,
+    pub parent_id: Option<Uuid>,
 }
 // endregion: blog comment create payload
 
@@ -82,7 +109,7 @@ pub struct BlogCommentResponse {
     pub blog_post_id: Uuid,
     pub user_id: Uuid,
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub parent_comment_id: Option<Uuid>,
+    pub parent_id: Option<Uuid>,
     pub replies: Option<Vec<BlogComment>>,
 }
 // endregion: blog comment response

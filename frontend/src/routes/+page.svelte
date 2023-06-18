@@ -9,7 +9,7 @@
 
 <svelte:head>
 	<title>Home</title>
-	<meta name="acekavi Portfolio">
+	<meta name="acekavi Portfolio" />
 </svelte:head>
 
 <div
@@ -21,5 +21,4 @@
 	<Projects />
 	<Design />
 	<ContactMe />
-
 </div>

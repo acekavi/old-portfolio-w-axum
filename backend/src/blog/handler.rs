@@ -7,7 +7,7 @@ use uuid::Uuid;
 
 use super::schema::{
     BlogComment, BlogCommentCreatePayload, BlogCommentEditPayload, BlogCommentResponse,
-    BlogEditPayload,
+    BlogEditPayload, BlogResponse,
 };
 use crate::utils::{
     error::Result,
@@ -37,7 +37,7 @@ pub async fn blog_routes(app_state: &AppState) -> Router {
                 .patch(edit_comment)
                 .delete(delete_comment),
         )
-        .route("/like/:blog_id", get(get_likes).post(like_post))
+        .route("/:slug/like", get(like_post))
         .with_state(user_controller)
 }
 // endregion: routes
@@ -57,7 +57,7 @@ async fn create_post(
 // endregion: create post
 
 // region: get all posts
-async fn get_all_posts(State(state): State<BlogController>) -> Result<Json<Vec<BlogPost>>> {
+async fn get_all_posts(State(state): State<BlogController>) -> Result<Json<Vec<BlogResponse>>> {
     let posts = state.get_all_posts().await?;
     println!("--> {:<12} : GET ALL POSTS", "HANDLER");
 
@@ -69,7 +69,7 @@ async fn get_all_posts(State(state): State<BlogController>) -> Result<Json<Vec<B
 async fn view_post(
     State(state): State<BlogController>,
     Path(slug): Path<String>,
-) -> Result<Json<BlogPost>> {
+) -> Result<Json<BlogResponse>> {
     let post = state.view_post(slug).await?;
     println!("--> {:<12} : VIEW POST", "HANDLER");
 
@@ -161,7 +161,7 @@ async fn delete_comment(
 async fn like_post(
     State(state): State<BlogController>,
     claims: Claims,
-    Path(slug): Path<Uuid>,
+    Path(slug): Path<String>,
 ) -> Result<Json<CustomMessage>> {
     let post = state.like_post(claims, slug).await?;
     println!("--> {:<12} : LIKE POST", "HANDLER");
@@ -171,15 +171,4 @@ async fn like_post(
 }
 // endregion: like post
 
-// region: get likes
-async fn get_likes(
-    State(state): State<BlogController>,
-    Path(slug): Path<Uuid>,
-) -> Result<Json<CustomMessage>> {
-    let post = state.get_likes(slug).await?;
-    println!("--> {:<12} : GET LIKES", "HANDLER");
-
-    Ok(Json(post))
-}
-// endregion: get likes
 // endregion: blog handlers

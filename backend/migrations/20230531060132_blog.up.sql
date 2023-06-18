@@ -6,7 +6,11 @@ CREATE TABLE IF NOT EXISTS blog_post (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     title VARCHAR(255) NOT NULL,
     slug VARCHAR(255) NOT NULL UNIQUE,
+    description VARCHAR(520) NOT NULL,
     content TEXT NOT NULL,
+    views INT NOT NULL DEFAULT 0,
+    category VARCHAR(255) NOT NULL,
+    tags VARCHAR(255)[] NOT NULL,
     is_draft BOOLEAN DEFAULT TRUE NOT NULL,
     created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -41,10 +45,8 @@ CREATE TABLE IF NOT EXISTS blog_comment (
     user_id UUID NOT NULL REFERENCES users (id) ON DELETE CASCADE,
     is_reply BOOLEAN DEFAULT FALSE NOT NULL,
     parent_id UUID REFERENCES blog_comment (id) ON DELETE CASCADE,
-
     CONSTRAINT if_reply_make_parent_id_not_null 
         CHECK (NOT (is_reply AND parent_id IS NULL)) 
-
 );
 
 CREATE INDEX idx_blog_comment_blog_post_id ON blog_comment(blog_post_id);
@@ -55,8 +57,7 @@ CREATE TABLE IF NOT EXISTS blog_like (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     blog_post_id UUID NOT NULL REFERENCES blog_post (id) ON DELETE CASCADE,
     user_id UUID NOT NULL REFERENCES users (id) ON DELETE CASCADE,
-
-    CONSTRAINT like_and_dislike UNIQUE (blog_post_id, user_id);
+    CONSTRAINT like_and_dislike UNIQUE (blog_post_id, user_id)
 );
 
 CREATE INDEX idx_blog_like_blog_post_id ON blog_like(blog_post_id);
