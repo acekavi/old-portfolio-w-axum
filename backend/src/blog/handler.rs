@@ -57,8 +57,11 @@ async fn create_post(
 // endregion: create post
 
 // region: get all posts
-async fn get_all_posts(State(state): State<BlogController>) -> Result<Json<Vec<BlogResponse>>> {
-    let posts = state.get_all_posts().await?;
+async fn get_all_posts(
+    State(state): State<BlogController>,
+    claims: Option<Claims>,
+) -> Result<Json<Vec<BlogResponse>>> {
+    let posts = state.get_all_posts(claims).await?;
     println!("--> {:<12} : GET ALL POSTS", "HANDLER");
 
     Ok(Json(posts))
@@ -69,8 +72,9 @@ async fn get_all_posts(State(state): State<BlogController>) -> Result<Json<Vec<B
 async fn view_post(
     State(state): State<BlogController>,
     Path(slug): Path<String>,
+    claims: Option<Claims>,
 ) -> Result<Json<BlogResponse>> {
-    let post = state.view_post(slug).await?;
+    let post = state.view_post(slug, claims).await?;
     println!("--> {:<12} : VIEW POST", "HANDLER");
 
     Ok(Json(post))

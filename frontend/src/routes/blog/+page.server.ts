@@ -3,7 +3,12 @@ import type { PageServerLoad } from './$types';
 
 export const load: PageServerLoad = async ({ cookies, locals }) => {
 	const response = await fetch(`${API_URL}/blog`, {
-		method: 'GET'
+		method: 'GET',
+		credentials: 'same-origin',
+		headers: {
+			'Content-Type': 'application/json',
+			'authorization': cookies.get('token') ?? ''
+		}
 	});
 
 	const json: BlogPost[] = await response.json();

@@ -70,10 +70,16 @@ impl BlogController {
     // endregion: create post
 
     // region: get all posts
-    pub async fn get_all_posts(&self) -> Result<Vec<BlogResponse>> {
+    pub async fn get_all_posts(&self, claims: Option<Claims>) -> Result<Vec<BlogResponse>> {
         let blog_posts = sqlx::query_as::<_, BlogResponse>(
             r#"
-                Select blog_post.id, title, slug, description, content, views, category, tags, is_draft, blog_post.updated_at, COUNT(blog_like.id) as likes, users.username as author
+                Select blog_post.id, title, slug, description, content, views, category, tags, is_draft, blog_post.updated_at, COUNT(blog_like.id) as like_count,
+                EXISTS (
+                    SELECT 1
+                    FROM blog_like
+                    WHERE blog_post_id = blog_post.id
+                      AND user_id = $1
+                        ) AS liked, users.username as author
                 FROM blog_post 
                 LEFT JOIN blog_like ON blog_post.id = blog_like.blog_post_id 
                 LEFT JOIN users ON blog_post.author_id = users.id
@@ -82,6 +88,7 @@ impl BlogController {
                 ORDER BY blog_post.updated_at DESC
             "#,
         )
+        .bind(claims.map_or(Uuid::nil(), |c| c.sub))
         .fetch_all(&self.app_state.get_db_conn())
         .await
         .map_err(|e| Error::InvalidQuery(e.to_string()))?;
@@ -91,17 +98,24 @@ impl BlogController {
     // endregion: get all posts
 
     // region: view post
-    pub async fn view_post(&self, slug: String) -> Result<BlogResponse> {
+    pub async fn view_post(&self, slug: String, claims: Option<Claims>) -> Result<BlogResponse> {
         let query_result = sqlx::query_as::<_, BlogResponse>(
             r#"
-                Select blog_post.id, title, slug, description, content, views, category, tags, is_draft, blog_post.updated_at, COUNT(blog_like.id) as likes, users.username as author
-                FROM blog_post 
-                LEFT JOIN blog_like ON blog_post.id = blog_like.blog_post_id 
-                LEFT JOIN users ON blog_post.author_id = users.id
-                WHERE slug = $1
-                GROUP BY blog_post.id, users.username
+            SELECT blog_post.id, title, slug, description, content, views, category, tags, is_draft, blog_post.updated_at, COUNT(blog_like.id) as like_count,
+            EXISTS (
+                SELECT 1
+                FROM blog_like
+                WHERE blog_post_id = blog_post.id
+                  AND user_id = $1
+                    ) AS liked, users.username as author
+            FROM blog_post 
+            LEFT JOIN blog_like ON blog_post.id = blog_like.blog_post_id 
+            LEFT JOIN users ON blog_post.author_id = users.id
+            WHERE slug = $2
+            GROUP BY blog_post.id, users.username
             "#,
         )
+        .bind(claims.map_or(Uuid::nil(), |c| c.sub))
         .bind(&slug)
         .fetch_optional(&self.app_state.get_db_conn())
         .await

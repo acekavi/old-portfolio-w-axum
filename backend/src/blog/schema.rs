@@ -57,7 +57,8 @@ pub struct BlogResponse {
     pub tags: Vec<String>,
     pub is_draft: bool,
     pub updated_at: OffsetDateTime,
-    pub likes: i64,
+    pub like_count: i64,
+    pub liked: Option<bool>,
     pub author: String,
 }
 

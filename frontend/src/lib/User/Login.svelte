@@ -57,6 +57,8 @@
 	</section>
 
 	<footer class="card-footer flex flex-row justify-evenly">
-		<a href="/forgot-password" class="text-xs"><i class="fa-solid fa-key" /> Forgot Password?</a>
+		<a href="/user/forgot-password" class="text-xs"
+			><i class="fa-solid fa-key" /> Forgot Password?</a
+		>
 	</footer>
 </div>

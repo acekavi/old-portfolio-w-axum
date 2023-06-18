@@ -7,7 +7,18 @@
 	import '../app.postcss';
 	import Navbar from '$lib/Navbar.svelte';
 	import { Toast } from '@skeletonlabs/skeleton';
+	import { computePosition, autoUpdate, offset, shift, flip, arrow } from '@floating-ui/dom';
+	import { storePopup } from '@skeletonlabs/skeleton';
+	storePopup.set({ computePosition, autoUpdate, offset, shift, flip, arrow });
+	import { author, title } from '$lib/config';
 </script>
+
+<svelte:head>
+	<meta name={title} />
+	<meta name="robots" content="index, follow" />
+	<meta name="author" content={author} />
+	<link rel="canonical" href="http://www.acekavi.me" />
+</svelte:head>
 
 <Navbar />
 <Toast />

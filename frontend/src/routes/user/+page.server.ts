@@ -1,12 +1,33 @@
 import { API_URL } from '$env/static/private';
-import { redirect, type Actions } from '@sveltejs/kit';
-import type { PageServerLoad } from './$types';
+import { redirect } from '@sveltejs/kit';
+import type { Actions, PageServerLoad } from './$types';
 
 export const load: PageServerLoad = async ({ cookies }) => {
-	const jwt_token = cookies.get('token');
-	if (jwt_token) {
-		throw redirect(303, '/blog');
+	let jwt_token = cookies.get('token');
+	let user_id = cookies.get('uid');
+
+	if (jwt_token === undefined || user_id === undefined) {
+		return { error: 'Not logged in' };
+	} else {
+		const response = await fetch(`${API_URL}/user/${user_id}`, {
+			method: 'GET',
+			credentials: 'same-origin',
+			headers: {
+				'Content-Type': 'application/json',
+				'authorization': jwt_token ?? ''
+			}
+		});
+	
+		const json: User = await response.json();
+		if (!response.ok) {
+			if (json.error) {
+				return { error: json.error};
+			}
+		} else {
+			return { user: json };
+		}
 	}
+
 };
 
 export const actions = {
@@ -41,12 +62,7 @@ export const actions = {
 				path: '/'
 			});
 			cookies.set('uid', json.id, { httpOnly: true, sameSite: 'strict', secure: true, path: '/' });
-			cookies.set('uname', json.username, {
-				httpOnly: true,
-				sameSite: 'strict',
-				secure: true,
-				path: '/'
-			});
+			return { success: true }
 		}
 	},
 	register: async ({ cookies, request }) => {
@@ -86,12 +102,35 @@ export const actions = {
 				path: '/'
 			});
 			cookies.set('uid', json.id, { httpOnly: true, sameSite: 'strict', secure: true, path: '/' });
-			cookies.set('uname', json.username, {
-				httpOnly: true,
-				sameSite: 'strict',
-				secure: true,
-				path: '/'
-			});
+
+			return { success: true }
+
+		}
+	},
+	logout: async ({ cookies }) => {
+		let jwt_token = cookies.get('token');
+
+		if (jwt_token === undefined) {
+			return { error: 'Not logged in' };
+		}
+
+		const response = await fetch(`${API_URL}/user/logout`, {
+			method: 'GET',
+			credentials: 'same-origin',
+			headers: {
+				'Content-Type': 'application/json',
+				'authorization': jwt_token
+			}
+		});
+		const json: MessageResponse = await response.json();
+		if (!response.ok) {
+			if (json.error) {
+				return { error: json.error };
+			}
+		} else {
+			cookies.delete('token');
+			cookies.delete('uid');
+			throw redirect(302,'/user');
 		}
 	}
 } satisfies Actions;

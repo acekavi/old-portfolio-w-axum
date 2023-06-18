@@ -44,12 +44,29 @@ declare type BlogPost = {
 	tags: string[];
 	is_draft: boolean;
 	updated_at: TimeLike;
-	likes: number;
+	like_count: number;
+	liked: boolean;
 	author: string;
 	error?: string;
 };
 
 declare type LikeResponse = {
+	message: string;
+	error?: string;
+}
+
+declare type User = {
+	id : UUID;
+	username : string;
+	email : string;
+	first_name? : string;
+	last_name? : string;
+	created_at : TimeLike;
+	updated_at : TimeLike;
+	error? : string;
+}
+
+declare type MessageResponse = {
 	message: string;
 	error?: string;
 }

@@ -1,9 +1,14 @@
 import { API_URL } from '$env/static/private';
 import type { Actions, PageServerLoad } from './$types';
 
-export const load: PageServerLoad = async ({ cookies, locals, params }) => {
+export const load: PageServerLoad = async ({ cookies, params }) => {
 	const response = await fetch(`${API_URL}/blog/${params.slug}`, {
-		method: 'GET'
+		method: 'GET',
+		credentials: 'same-origin',
+		headers: {
+			'Content-Type': 'application/json',
+			'authorization': cookies.get('token') ?? ''
+		}
 	});
 
 	const json: BlogPost = await response.json();
@@ -19,6 +24,10 @@ export const load: PageServerLoad = async ({ cookies, locals, params }) => {
 export const actions = {
 	like: async ({ cookies, params }) => {
 
+		if (!cookies.get('token')) {
+			return { error: 'You must be logged in to like a post' };
+		}
+		
 		const response = await fetch(`${API_URL}/blog/${params.slug}/like`, {
 			method: 'GET',
 			credentials: 'same-origin',

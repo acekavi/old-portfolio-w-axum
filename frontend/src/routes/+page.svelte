@@ -5,11 +5,12 @@
 	import Experiences from '$lib/Main/Experiences.svelte';
 	import MainHero from '$lib/Main/MainHero.svelte';
 	import Projects from '$lib/Main/Projects.svelte';
+	import { description } from '$lib/config';
 </script>
 
 <svelte:head>
-	<title>Home</title>
-	<meta name="acekavi Portfolio" />
+	<title>Home Page</title>
+	<meta name="description" content={description} />
 </svelte:head>
 
 <div

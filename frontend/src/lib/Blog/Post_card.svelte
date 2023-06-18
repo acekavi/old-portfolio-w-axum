@@ -17,10 +17,17 @@
 				</p>
 			</div>
 			<div class="flex border-e border-gray-500/50 px-2">
-				<Heart size="1rem" />
-				<p class="ps-1 text-sm leading-4">
-					{post.likes}
-				</p>
+				{#if post.liked}
+					<Heart size="1rem" class="text-secondary-400" />
+					<p class="ps-1 text-sm leading-4 text-secondary-400">
+						{post.like_count}
+					</p>
+				{:else}
+					<Heart size="1rem" />
+					<p class="ps-1 text-sm leading-4">
+						{post.like_count}
+					</p>
+				{/if}
 			</div>
 			<p class="text-sm leading-4 border-e border-gray-500/50 px-2">{date}</p>
 			<p class="text-sm px-2 leading-4">{post.category}</p>
