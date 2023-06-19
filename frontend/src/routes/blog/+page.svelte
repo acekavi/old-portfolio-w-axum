@@ -1,6 +1,5 @@
 <script lang="ts">
 	import PostCard from '$lib/Blog/Post_card.svelte';
-	import { not_equal } from 'svelte/internal';
 	import type { PageData } from './$types';
 
 	export let data: PageData;

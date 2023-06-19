@@ -2,8 +2,8 @@ use time::OffsetDateTime;
 use uuid::Uuid;
 
 use super::schema::{
-    BlogComment, BlogCommentCreatePayload, BlogCommentEditPayload, BlogCommentResponse,
-    BlogCreatePayload, BlogEditPayload, BlogLike, BlogPost, BlogResponse,
+    BlogComment, BlogCommentCreatePayload, BlogCommentEditPayload, BlogCommentFetchPayload,
+    BlogCommentResponse, BlogCreatePayload, BlogEditPayload, BlogLike, BlogPost, BlogResponse,
 };
 use crate::utils::{
     error::{Error, Result},
@@ -214,7 +214,7 @@ impl BlogController {
     pub async fn create_comment(
         &self,
         claims: Claims,
-        blog_id: Uuid,
+        slug: String,
         payload: BlogCommentCreatePayload,
     ) -> Result<BlogComment> {
         if payload.content.is_empty() {
@@ -223,13 +223,19 @@ impl BlogController {
 
         let blog_comment = sqlx::query_as::<_, BlogComment>(
             r#"
+                WITH post_data AS (
+                    SELECT id
+                    FROM blog_post
+                    WHERE slug = $1
+                )
                 INSERT INTO blog_comment (content, blog_post_id, user_id, is_reply, parent_id)
-                VALUES ($1, $2, $3, $4, $5)
+                SELECT $2, post_data.id, $3, $4, $5
+                FROM post_data
                 RETURNING id, content, created_at, blog_post_id, user_id, is_reply, parent_id
             "#,
         )
+        .bind(slug)
         .bind(payload.content)
-        .bind(blog_id)
         .bind(claims.sub)
         .bind(payload.is_reply)
         .bind(payload.parent_id)
@@ -242,28 +248,32 @@ impl BlogController {
     // endregion: create comment
 
     // region: get comments
-    pub async fn get_comments(&self, blog_id: Uuid) -> Result<Vec<BlogCommentResponse>> {
+    pub async fn get_comments(&self, slug: String) -> Result<Vec<BlogCommentResponse>> {
         let mut all_comments: Vec<BlogCommentResponse> = vec![];
-        let main_comments = sqlx::query_as::<_, BlogComment>(
+        let main_comments = sqlx::query_as::<_, BlogCommentFetchPayload>(
             r#"
-                SELECT id, content, created_at, blog_post_id, user_id, is_reply, parent_id
+                SELECT blog_comment.id, blog_comment.content, blog_comment.created_at, blog_comment.blog_post_id, blog_comment.user_id, blog_comment.is_reply, blog_comment.parent_id, (users.username) as author
                 FROM blog_comment
-                WHERE blog_post_id = $1 and is_reply = false and parent_id is null
+                JOIN blog_post ON blog_comment.blog_post_id = blog_post.id
+                JOIN users ON blog_comment.user_id = users.id
+                WHERE blog_post.slug = $1 and is_reply = false and parent_id is null
             "#,
         )
-        .bind(blog_id)
+        .bind(&slug)
         .fetch_all(&self.app_state.get_db_conn())
         .await
         .map_err(|e| Error::InvalidQuery(e.to_string()))?;
 
-        let replies = sqlx::query_as::<_, BlogComment>(
+        let replies = sqlx::query_as::<_, BlogCommentFetchPayload>(
             r#"
-                SELECT id, content, created_at, blog_post_id, user_id, is_reply, parent_id
+                SELECT blog_comment.id, blog_comment.content, blog_comment.created_at, blog_comment.blog_post_id, blog_comment.user_id, blog_comment.is_reply, blog_comment.parent_id,  (users.username) as author
                 FROM blog_comment
-                WHERE blog_post_id = $1 and is_reply = true
+                JOIN blog_post ON blog_comment.blog_post_id = blog_post.id
+                JOIN users ON blog_comment.user_id = users.id
+                WHERE blog_post.slug = $1 and is_reply = true
             "#,
         )
-        .bind(blog_id)
+        .bind(slug)
         .fetch_all(&self.app_state.get_db_conn())
         .await
         .map_err(|e| Error::InvalidQuery(e.to_string()))?;
@@ -273,9 +283,9 @@ impl BlogController {
                 id: this_comment.id,
                 content: this_comment.content,
                 created_at: this_comment.created_at,
-                blog_post_id: this_comment.blog_post_id,
                 user_id: this_comment.user_id,
                 parent_id: this_comment.parent_id,
+                author: this_comment.author,
                 replies: Some(
                     replies
                         .iter()
@@ -294,19 +304,18 @@ impl BlogController {
     pub async fn edit_comment(
         &self,
         claims: Claims,
-        comment_id: Uuid,
         payload: BlogCommentEditPayload,
     ) -> Result<BlogComment> {
         let query_result = sqlx::query_as::<_, BlogComment>(
             r#"
                 UPDATE blog_comment
-                SET content = COALESCE($1, content)
-                WHERE id = $2 and user_id = $3
+                SET content = COALESCE($2, content)
+                WHERE id = $1 and user_id = $3
                 RETURNING id, content, created_at, blog_post_id, user_id, is_reply, parent_id
             "#,
         )
+        .bind(payload.comment_id)
         .bind(payload.content)
-        .bind(comment_id)
         .bind(claims.sub)
         .fetch_one(&self.app_state.get_db_conn())
         .await
@@ -378,10 +387,9 @@ impl BlogController {
                                 SELECT id
                                 FROM blog_post
                                 WHERE slug = $1
-                              )
-                              DELETE FROM blog_like
-                              WHERE blog_post_id = (SELECT id FROM post_data)
-                                AND user_id = $2
+                            )
+                            DELETE FROM blog_like
+                            WHERE blog_post_id = (SELECT id FROM post_data) AND user_id = $2
                         "#,
                     )
                     .bind(slug)
@@ -400,4 +408,23 @@ impl BlogController {
         }
     }
     // endregion: like post
+
+    // region: search posts
+    pub async fn _search_posts(&self, _query: String) -> Result<Vec<BlogPost>> {
+        // let query_result = sqlx::query_as::<_, BlogPost>(
+        //     r#"
+        //         SELECT id, title, slug, content, created_at, user_id
+        //         FROM blog_post
+        //         WHERE title ILIKE $1
+        //     "#,
+        // )
+        // .bind(format!("%{}%", query))
+        // .fetch_all(&self.app_state.get_db_conn())
+        // .await
+        // .map_err(|e| Error::InvalidQuery(e.to_string()))?;
+
+        // Ok(query_result);
+        todo!("search posts");
+    }
+    // endregion: search posts
 }

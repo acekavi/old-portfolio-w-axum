@@ -70,3 +70,30 @@ declare type MessageResponse = {
 	message: string;
 	error?: string;
 }
+
+declare type Comments = {
+	id: UUID;
+	content: string;
+	created_at: TimeLike;
+	user_id: UUID;
+	author: string;
+	parent_id? : UUID;
+	replies: Comments[];
+	error? : string;
+}
+
+declare type CommentPayload = {
+	content: string;
+	is_reply: boolean;
+	parent_id?: UUID;
+}
+
+declare type CommentResponse = {
+	id: UUID;
+	content: string;
+	created_at: TimeLike;
+	blog_post_id: UUID;
+	user_id: UUID;
+	parent_id?: UUID;
+	error?: string;
+}

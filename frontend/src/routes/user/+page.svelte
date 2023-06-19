@@ -19,7 +19,7 @@
 		const toast: ToastSettings = {
 			message: form?.error,
 			timeout: 5000,
-			background: 'variant-ghost-error'
+			background: 'variant-glass-error'
 		};
 		toastStore.trigger(toast);
 	}
@@ -28,7 +28,7 @@
 		const toast: ToastSettings = {
 			message: `Welcome ${user?.username}!`,
 			timeout: 5000,
-			background: 'variant-ghost-success'
+			background: 'variant-glass-success'
 		};
 		toastStore.trigger(toast);
 	}

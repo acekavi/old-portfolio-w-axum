@@ -3,11 +3,10 @@ use axum::{
     routing::{get, post},
     Json, Router,
 };
-use uuid::Uuid;
 
 use super::schema::{
-    BlogComment, BlogCommentCreatePayload, BlogCommentEditPayload, BlogCommentResponse,
-    BlogEditPayload, BlogResponse,
+    BlogComment, BlogCommentCreatePayload, BlogCommentDeletePayload, BlogCommentEditPayload,
+    BlogCommentResponse, BlogEditPayload, BlogResponse,
 };
 use crate::utils::{
     error::Result,
@@ -31,7 +30,7 @@ pub async fn blog_routes(app_state: &AppState) -> Router {
             get(view_post).patch(edit_post).delete(delete_post),
         )
         .route(
-            "/comment/:blog_id",
+            "/:slug/comment",
             post(create_comment)
                 .get(get_comments)
                 .patch(edit_comment)
@@ -112,10 +111,10 @@ async fn delete_post(
 async fn create_comment(
     State(state): State<BlogController>,
     claims: Claims,
-    Path(blog_id): Path<Uuid>,
+    Path(slug): Path<String>,
     Json(payload): Json<BlogCommentCreatePayload>,
 ) -> Result<Json<BlogComment>> {
-    let post = state.create_comment(claims, blog_id, payload).await?;
+    let post = state.create_comment(claims, slug, payload).await?;
     println!("--> {:<12} : CREATE COMMENT", "HANDLER");
 
     Ok(Json(post))
@@ -125,9 +124,9 @@ async fn create_comment(
 // region: get comments
 async fn get_comments(
     State(state): State<BlogController>,
-    Path(blog_id): Path<Uuid>,
+    Path(slug): Path<String>,
 ) -> Result<Json<Vec<BlogCommentResponse>>> {
-    let post = state.get_comments(blog_id).await?;
+    let post = state.get_comments(slug).await?;
     println!("--> {:<12} : GET COMMENTS", "HANDLER");
 
     Ok(Json(post))
@@ -138,10 +137,9 @@ async fn get_comments(
 async fn edit_comment(
     State(state): State<BlogController>,
     claims: Claims,
-    Path(comment_id): Path<Uuid>,
     Json(payload): Json<BlogCommentEditPayload>,
 ) -> Result<Json<BlogComment>> {
-    let post = state.edit_comment(claims, comment_id, payload).await?;
+    let post = state.edit_comment(claims, payload).await?;
     println!("--> {:<12} : EDIT COMMENT", "HANDLER");
 
     Ok(Json(post))
@@ -152,9 +150,9 @@ async fn edit_comment(
 async fn delete_comment(
     State(state): State<BlogController>,
     claims: Claims,
-    Path(comment_id): Path<Uuid>,
+    Json(payload): Json<BlogCommentDeletePayload>,
 ) -> Result<Json<CustomMessage>> {
-    let post = state.delete_comment(claims, comment_id).await?;
+    let post = state.delete_comment(claims, payload.comment_id).await?;
     println!("--> {:<12} : DELETE COMMENT", "HANDLER");
 
     Ok(Json(post))

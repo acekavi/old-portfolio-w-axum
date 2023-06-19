@@ -10,7 +10,7 @@
 				<p class="mb-4 text-sm leading-6 text-neutral-500">
 					This is for spam protection <AlertTriangle
 						stroke-width="1.25"
-						size="0.75rem"
+						size="13px"
 						class="inline leading-6"
 					/>
 				</p>
@@ -48,7 +48,7 @@
 					<div class="col-span-full">
 						<button type="submit" class="btn variant-glass-primary my-4">
 							<span>Login</span>
-							<span><LogIn stroke-width="1.25" size="18" /></span></button
+							<span><LogIn stroke-width="1.25" size="18px" /></span></button
 						>
 					</div>
 				</div>

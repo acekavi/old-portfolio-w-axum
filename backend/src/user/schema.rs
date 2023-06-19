@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 use sqlx::FromRow;
-use time::OffsetDateTime;
+use time::{serde::timestamp, OffsetDateTime};
 use uuid::Uuid;
 
 // region: User model
@@ -19,7 +19,9 @@ pub struct User {
     pub is_active: bool,
     #[serde(skip_serializing)]
     pub is_superuser: bool,
+    #[serde(with = "timestamp")]
     pub created_at: OffsetDateTime,
+    #[serde(with = "timestamp")]
     pub updated_at: OffsetDateTime,
 }
 // endregion: User model

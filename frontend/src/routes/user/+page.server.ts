@@ -1,6 +1,7 @@
 import { API_URL } from '$env/static/private';
 import { redirect } from '@sveltejs/kit';
 import type { Actions, PageServerLoad } from './$types';
+import { readable } from 'svelte/store';
 
 export const load: PageServerLoad = async ({ cookies }) => {
 	let jwt_token = cookies.get('token');
@@ -62,6 +63,7 @@ export const actions = {
 				path: '/'
 			});
 			cookies.set('uid', json.id, { httpOnly: true, sameSite: 'strict', secure: true, path: '/' });
+
 			return { success: true }
 		}
 	},
@@ -102,9 +104,7 @@ export const actions = {
 				path: '/'
 			});
 			cookies.set('uid', json.id, { httpOnly: true, sameSite: 'strict', secure: true, path: '/' });
-
 			return { success: true }
-
 		}
 	},
 	logout: async ({ cookies }) => {
