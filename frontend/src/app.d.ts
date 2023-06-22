@@ -3,13 +3,13 @@
 // and what to do when importing types
 declare namespace App {
 	interface Locals {
-		user: string;
+		user: User;
 	}
-	interface PageData {}
+	interface PageData { }
 	interface Error {
 		error: string;
 	}
-	interface Platform {}
+	interface Platform { }
 	s;
 }
 
@@ -26,10 +26,6 @@ declare type Registerparams = {
 
 declare type LoginResponse = {
 	id: UUID;
-	username: string;
-	email: string;
-	created_at: TimeLike;
-	updated_at: TimeLike;
 	error?: string;
 };
 
@@ -50,26 +46,21 @@ declare type BlogPost = {
 	error?: string;
 };
 
-declare type LikeResponse = {
-	message: string;
-	error?: string;
-}
-
 declare type User = {
-	id : UUID;
-	username : string;
-	email : string;
-	first_name? : string;
-	last_name? : string;
-	created_at : TimeLike;
-	updated_at : TimeLike;
-	error? : string;
-}
+	id: UUID;
+	username: string;
+	email: string;
+	first_name?: string;
+	last_name?: string;
+	is_active: boolean;
+	is_superuser?: boolean;
+	error?: string;
+};
 
 declare type MessageResponse = {
-	message: string;
+	message: boolean;
 	error?: string;
-}
+};
 
 declare type Comments = {
 	id: UUID;
@@ -77,16 +68,16 @@ declare type Comments = {
 	created_at: TimeLike;
 	user_id: UUID;
 	author: string;
-	parent_id? : UUID;
+	parent_id?: UUID;
 	replies: Comments[];
-	error? : string;
-}
+	error?: string;
+};
 
 declare type CommentPayload = {
 	content: string;
 	is_reply: boolean;
 	parent_id?: UUID;
-}
+};
 
 declare type CommentResponse = {
 	id: UUID;
@@ -96,4 +87,4 @@ declare type CommentResponse = {
 	user_id: UUID;
 	parent_id?: UUID;
 	error?: string;
-}
+};

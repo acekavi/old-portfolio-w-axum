@@ -1,12 +1,9 @@
 <script lang="ts">
+	import { formatDate } from '$lib/utils';
 	import { Eye, Heart } from 'lucide-svelte';
 
 	export let post: BlogPost;
 
-	function formatDate(epochTime: number) {
-		const date = new Date(epochTime * 1000);
-		return date.toLocaleDateString('en-GB', { timeZone: 'UTC', dateStyle: 'long' });
-	}
 	const updated_at = formatDate(post.updated_at);
 </script>
 

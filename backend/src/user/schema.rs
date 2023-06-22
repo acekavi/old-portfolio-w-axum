@@ -51,6 +51,7 @@ pub struct UserUpdatePayload {
     pub last_name: Option<String>,
 }
 // endregion: User Update payload
+
 // region: password change payload
 #[derive(Deserialize)]
 pub struct PasswordChangePayload {
@@ -58,3 +59,31 @@ pub struct PasswordChangePayload {
     pub new_password: String,
 }
 // endregion: password change payload
+
+// region: User Login response
+fn is_false(b: &bool) -> bool {
+    !(*b)
+}
+
+#[derive(Serialize)]
+pub struct UserResponse {
+    pub id: Uuid,
+    pub username: String,
+    pub email: String,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub first_name: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub last_name: Option<String>,
+    pub is_active: bool,
+    #[serde(skip_serializing_if = "is_false")]
+    pub is_superuser: bool,
+}
+// endregion: User Login response
+
+// region: Token response
+#[derive(Serialize)]
+pub struct UserID {
+    pub id: Uuid,
+    #[serde(skip_serializing)]
+    pub is_superuser: bool,
+}

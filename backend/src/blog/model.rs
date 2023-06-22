@@ -43,7 +43,7 @@ impl BlogController {
 
         let blog_post = sqlx::query_as::<_, BlogPost>(
             r#"
-                INSERT INTO blog_post (title, content, description, category, tags, author_id)
+                INSERT INTO blog_post (title, content, description, category, tags, author_id, is_draft)
                 VALUES ($1, $2, $3, $4, $5, $6)
                 RETURNING id, title, slug, description, content, views, category, tags, is_draft, created_at, updated_at, author_id
             "#,
@@ -54,6 +54,7 @@ impl BlogController {
         .bind(payload.category)
         .bind(payload.tags)
         .bind(claims.sub)
+        .bind(payload.is_draft)
         .fetch_one(&self.app_state.get_db_conn())
         .await
         .map_err(|e| {
@@ -96,6 +97,27 @@ impl BlogController {
         Ok(blog_posts)
     }
     // endregion: get all posts
+
+    // region: get unpublished posts
+    pub async fn unpublished_posts(&self, claims: Claims) -> Result<Vec<BlogPost>> {
+        if !claims.is_admin {
+            return Err(Error::Unauthorized);
+        }
+
+        let blog_posts = sqlx::query_as::<_, BlogPost>(
+            r#"
+                Select id, title, slug, description, content, views, category, tags, is_draft, created_at, updated_at, author_id
+                FROM blog_post
+                ORDER BY updated_at DESC
+            "#,
+        )
+        .fetch_all(&self.app_state.get_db_conn())
+        .await
+        .map_err(|e| Error::InvalidQuery(e.to_string()))?;
+
+        Ok(blog_posts)
+    }
+    // endregion: get unpublished posts
 
     // region: view post
     pub async fn view_post(&self, slug: String, claims: Option<Claims>) -> Result<BlogResponse> {
@@ -203,9 +225,7 @@ impl BlogController {
             return Err(Error::InvalidRequest);
         }
 
-        let message = CustomMessage {
-            message: "Blog post has been deleted successfully".to_string(),
-        };
+        let message = CustomMessage { message: true };
         Ok(message)
     }
     // endregion: delete post
@@ -216,12 +236,12 @@ impl BlogController {
         claims: Claims,
         slug: String,
         payload: BlogCommentCreatePayload,
-    ) -> Result<BlogComment> {
+    ) -> Result<CustomMessage> {
         if payload.content.is_empty() {
             return Err(Error::InvalidRequest);
         }
 
-        let blog_comment = sqlx::query_as::<_, BlogComment>(
+        let _blog_comment = sqlx::query(
             r#"
                 WITH post_data AS (
                     SELECT id
@@ -231,7 +251,6 @@ impl BlogController {
                 INSERT INTO blog_comment (content, blog_post_id, user_id, is_reply, parent_id)
                 SELECT $2, post_data.id, $3, $4, $5
                 FROM post_data
-                RETURNING id, content, created_at, blog_post_id, user_id, is_reply, parent_id
             "#,
         )
         .bind(slug)
@@ -239,11 +258,12 @@ impl BlogController {
         .bind(claims.sub)
         .bind(payload.is_reply)
         .bind(payload.parent_id)
-        .fetch_one(&self.app_state.get_db_conn())
+        .execute(&self.app_state.get_db_conn())
         .await
         .map_err(|e| Error::InvalidQuery(e.to_string()))?;
 
-        Ok(blog_comment)
+        let message = CustomMessage { message: true };
+        Ok(message)
     }
     // endregion: create comment
 
@@ -343,9 +363,7 @@ impl BlogController {
             return Err(Error::InvalidRequest);
         }
 
-        let message = CustomMessage {
-            message: "Comment has been deleted successfully".to_string(),
-        };
+        let message = CustomMessage { message: true };
         Ok(message)
     }
     // endregion: delete comment
@@ -372,9 +390,7 @@ impl BlogController {
 
         match like_result {
             Ok(_) => {
-                let message = CustomMessage {
-                    message: "You liked the post!".to_string(),
-                };
+                let message = CustomMessage { message: true };
                 Ok(message)
             }
             Err(e) => {
@@ -398,9 +414,7 @@ impl BlogController {
                     .await
                     .map_err(|e| Error::InvalidQuery(e.to_string()))?;
 
-                    let message = CustomMessage {
-                        message: "You unliked the post!".to_string(),
-                    };
+                    let message = CustomMessage { message: false };
                     return Ok(message);
                 }
                 Err(Error::InvalidQuery(e.to_string()))

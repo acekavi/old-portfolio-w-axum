@@ -1,37 +1,16 @@
 import { API_URL } from '$env/static/private';
 import { redirect } from '@sveltejs/kit';
 import type { Actions, PageServerLoad } from './$types';
-import { readable } from 'svelte/store';
+import { fail } from '@sveltejs/kit';
 
-export const load: PageServerLoad = async ({ cookies }) => {
-	let jwt_token = cookies.get('token');
-	let user_id = cookies.get('uid');
-
-	if (jwt_token === undefined || user_id === undefined) {
-		return { error: 'Not logged in' };
-	} else {
-		const response = await fetch(`${API_URL}/user/${user_id}`, {
-			method: 'GET',
-			credentials: 'same-origin',
-			headers: {
-				'Content-Type': 'application/json',
-				'authorization': jwt_token ?? ''
-			}
-		});
-	
-		const json: User = await response.json();
-		if (!response.ok) {
-			if (json.error) {
-				return { error: json.error};
-			}
-		} else {
-			return { user: json };
-		}
+export const load: PageServerLoad = async ({ parent }) => {
+	const { user } = await parent();
+	if (user) {
+		throw redirect(302, '/dashboard');
 	}
-
 };
 
-export const actions = {
+export const actions: Actions = {
 	login: async ({ cookies, request }) => {
 		const data = await request.formData();
 		const username = String(data.get('username'));
@@ -50,21 +29,26 @@ export const actions = {
 
 		if (!response.ok) {
 			if (json.error) {
-				return { error: json.error };
+				return fail(422, {
+					username: data.get('username'),
+					password: data.get('password'),
+					error: json.error
+				});
 			}
 		}
 
 		if (response.headers.get('authorization') !== null) {
 			let jwt_token = response.headers.get('authorization') ?? '';
-			cookies.set('token', jwt_token, {
+			cookies.set('session', jwt_token, {
 				httpOnly: true,
 				sameSite: 'strict',
 				secure: true,
+				maxAge: 60 * 60 * 8,
 				path: '/'
 			});
-			cookies.set('uid', json.id, { httpOnly: true, sameSite: 'strict', secure: true, path: '/' });
+			cookies.set('id', json.id, { httpOnly: true, sameSite: 'strict', secure: true, maxAge: 60 * 60 * 8, path: '/' });
 
-			return { success: true }
+			throw redirect(302, '/dashboard');
 		}
 	},
 	register: async ({ cookies, request }) => {
@@ -75,7 +59,13 @@ export const actions = {
 		const confirm_password = String(data.get('confirm-password'));
 
 		if (password !== confirm_password) {
-			return { error: 'Passwords do not match' };
+			return fail(422, {
+				username: data.get('username'),
+				email: data.get('email'),
+				password: data.get('password'),
+				confirm_password: data.get('confirm-password'),
+				error: 'Passwords do not match'
+			});
 		}
 
 		const registerPayload: Registerparams = { username, email, password };
@@ -91,46 +81,27 @@ export const actions = {
 		const json: LoginResponse = await response.json();
 		if (!response.ok) {
 			if (json.error) {
-				return { error: json.error };
+				return fail(422, {
+					username: data.get('username'),
+					email: data.get('email'),
+					password: data.get('password'),
+					confirm_password: data.get('confirm-password'),
+					error: json.error
+				});
 			}
 		}
 
 		if (response.headers.get('authorization') !== null) {
 			let jwt_token = response.headers.get('authorization') ?? '';
-			cookies.set('token', jwt_token, {
+			cookies.set('session', jwt_token, {
 				httpOnly: true,
 				sameSite: 'strict',
 				secure: true,
+				maxAge: 60 * 60 * 8,
 				path: '/'
 			});
-			cookies.set('uid', json.id, { httpOnly: true, sameSite: 'strict', secure: true, path: '/' });
-			return { success: true }
-		}
-	},
-	logout: async ({ cookies }) => {
-		let jwt_token = cookies.get('token');
-
-		if (jwt_token === undefined) {
-			return { error: 'Not logged in' };
-		}
-
-		const response = await fetch(`${API_URL}/user/logout`, {
-			method: 'GET',
-			credentials: 'same-origin',
-			headers: {
-				'Content-Type': 'application/json',
-				'authorization': jwt_token
-			}
-		});
-		const json: MessageResponse = await response.json();
-		if (!response.ok) {
-			if (json.error) {
-				return { error: json.error };
-			}
-		} else {
-			cookies.delete('token');
-			cookies.delete('uid');
-			throw redirect(302,'/user');
+			cookies.set('id', json.id, { httpOnly: true, sameSite: 'strict', secure: true, maxAge: 60 * 60 * 8, path: '/' });
+			throw redirect(302, '/dashboard');
 		}
 	}
-} satisfies Actions;
+};

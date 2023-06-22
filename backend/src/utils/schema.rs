@@ -17,7 +17,7 @@ pub struct Claims {
 // region: CustomMessage
 #[derive(Serialize)]
 pub struct CustomMessage {
-    pub message: String,
+    pub message: bool,
 }
 // endregion: CustomMessage
 

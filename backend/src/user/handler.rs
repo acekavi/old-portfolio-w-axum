@@ -5,10 +5,10 @@ use crate::utils::{
     token::generate_token,
 };
 
-use super::model::UserController;
 use super::schema::{
     PasswordChangePayload, User, UserCreatePayload, UserLoginPayload, UserUpdatePayload,
 };
+use super::{model::UserController, schema::UserResponse};
 
 use axum::extract::Path;
 use axum::response::{IntoResponse, Response};
@@ -92,7 +92,7 @@ pub async fn get_user(
     Path(user_id): Path<Uuid>,
     claims: Claims,
     State(state): State<UserController>,
-) -> Result<Json<User>> {
+) -> Result<Json<UserResponse>> {
     let user = state.get_user(user_id, claims.sub).await?;
 
     println!("--> {:<12} : GET USER", "HANDLER");
@@ -108,9 +108,7 @@ pub async fn logout(_claims: Claims) -> Result<Response> {
     let mut headers = HeaderMap::new();
     headers.remove(axum::http::header::AUTHORIZATION);
 
-    let message = CustomMessage {
-        message: "User has been logged out successfully".to_string(),
-    };
+    let message = CustomMessage { message: true };
 
     Ok((StatusCode::OK, headers, Json(message)).into_response())
 }

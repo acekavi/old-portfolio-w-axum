@@ -75,6 +75,7 @@ pub struct BlogCreatePayload {
     pub content: String,
     pub category: String,
     pub tags: Vec<String>,
+    pub is_draft: bool,
 }
 // endregion: blog post create payload
 

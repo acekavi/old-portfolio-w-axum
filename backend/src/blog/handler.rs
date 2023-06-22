@@ -37,6 +37,7 @@ pub async fn blog_routes(app_state: &AppState) -> Router {
                 .delete(delete_comment),
         )
         .route("/:slug/like", get(like_post))
+        .route("/all", get(unpublished_post))
         .with_state(user_controller)
 }
 // endregion: routes
@@ -66,6 +67,18 @@ async fn get_all_posts(
     Ok(Json(posts))
 }
 // endregion: get all posts
+
+// region: unpublished post
+async fn unpublished_post(
+    State(state): State<BlogController>,
+    claims: Claims,
+) -> Result<Json<Vec<BlogPost>>> {
+    let post = state.unpublished_posts(claims).await?;
+    println!("--> {:<12} : UNPUBLISHED POSTS", "HANDLER");
+
+    Ok(Json(post))
+}
+// endregion: unpublished post
 
 // region: view post
 async fn view_post(
@@ -113,7 +126,7 @@ async fn create_comment(
     claims: Claims,
     Path(slug): Path<String>,
     Json(payload): Json<BlogCommentCreatePayload>,
-) -> Result<Json<BlogComment>> {
+) -> Result<Json<CustomMessage>> {
     let post = state.create_comment(claims, slug, payload).await?;
     println!("--> {:<12} : CREATE COMMENT", "HANDLER");
 

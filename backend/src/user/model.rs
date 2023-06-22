@@ -9,7 +9,8 @@ use crate::utils::{
 };
 
 use super::schema::{
-    PasswordChangePayload, User, UserCreatePayload, UserLoginPayload, UserUpdatePayload,
+    PasswordChangePayload, User, UserCreatePayload, UserID, UserLoginPayload, UserResponse,
+    UserUpdatePayload,
 };
 
 // region: User Model Controller
@@ -29,8 +30,11 @@ impl UserController {
 // CRUD Implementation
 impl UserController {
     // region: create user
-    pub async fn create(&self, payload: UserCreatePayload) -> Result<User> {
-        if payload.username.is_empty() || payload.email.is_empty() || payload.password.is_empty() {
+    pub async fn create(&self, payload: UserCreatePayload) -> Result<UserID> {
+        if payload.username.to_lowercase().is_empty()
+            || payload.email.is_empty()
+            || payload.password.is_empty()
+        {
             return Err(Error::MissingFields);
         }
         if !payload.email.contains('@') {
@@ -49,30 +53,35 @@ impl UserController {
                 VALUES ($1, $2, $3, $4, $5)
                 RETURNING id, username, password, email, first_name, last_name, is_active, is_superuser, created_at, updated_at
             "#,
-        )
-        .bind(payload.username)
-        .bind(hashed_password)
-        .bind(payload.email)
-        .bind(OffsetDateTime::now_utc())
-        .bind(OffsetDateTime::now_utc())
-        .fetch_one(&self.app_state.get_db_conn())
-        .await
-        .map_err(|e| {
-            let error = e.to_string();
-            if error.contains("duplicate key value violates unique constraint") {
-                Error::AlreadyExists("Username or email".to_owned())
-            } else {
-            Error::InvalidQuery(error)
-        }}
-    )?;
+            )
+            .bind(payload.username.to_lowercase())
+            .bind(hashed_password)
+            .bind(payload.email)
+            .bind(OffsetDateTime::now_utc())
+            .bind(OffsetDateTime::now_utc())
+            .fetch_one(&self.app_state.get_db_conn())
+            .await
+            .map_err(|e| {
+                let error = e.to_string();
+                if error.contains("duplicate key value violates unique constraint") {
+                    Error::AlreadyExists("Username or email".to_owned())
+                } else {
+                Error::InvalidQuery(error)
+            }}
+        )?;
 
-        Ok(user)
+        let user_reponse = UserID {
+            id: user.id,
+            is_superuser: user.is_superuser,
+        };
+
+        Ok(user_reponse)
     }
     // endregion: create user
 
     // region: login user
-    pub async fn login(&self, payload: UserLoginPayload) -> Result<User> {
-        if payload.username.is_empty() || payload.password.is_empty() {
+    pub async fn login(&self, payload: UserLoginPayload) -> Result<UserID> {
+        if payload.username.to_lowercase().is_empty() || payload.password.is_empty() {
             return Err(Error::MissingFields);
         }
 
@@ -83,7 +92,7 @@ impl UserController {
                 WHERE username = $1 OR email = $1
             "#,
         )
-        .bind(payload.username)
+        .bind(payload.username.to_lowercase())
         .fetch_optional(&self.app_state.get_db_conn())
         .await
         .map_err(|e| {
@@ -99,7 +108,11 @@ impl UserController {
         match valid {
             Ok(valid) => {
                 if valid {
-                    Ok(user)
+                    let user_response = UserID {
+                        id: user.id,
+                        is_superuser: user.is_superuser,
+                    };
+                    Ok(user_response)
                 } else {
                     Err(Error::WrongCredentials)
                 }
@@ -110,7 +123,7 @@ impl UserController {
     // endregion: login user
 
     // region: get user
-    pub async fn get_user(&self, user_id: Uuid, token_sub: Uuid) -> Result<User> {
+    pub async fn get_user(&self, user_id: Uuid, token_sub: Uuid) -> Result<UserResponse> {
         if user_id != token_sub {
             return Err(Error::InvalidRequest);
         }
@@ -130,9 +143,20 @@ impl UserController {
         })?;
 
         if user.is_none() {
-            return Err(Error::InvalidRequest);
+            Err(Error::InvalidRequest)
+        } else {
+            let user = user.unwrap();
+            let user_reponse = UserResponse {
+                id: user.id,
+                username: user.username,
+                email: user.email,
+                first_name: user.first_name,
+                last_name: user.last_name,
+                is_active: user.is_active,
+                is_superuser: user.is_superuser,
+            };
+            Ok(user_reponse)
         }
-        Ok(user.unwrap())
     }
     // endregion: get user
 
@@ -196,9 +220,7 @@ impl UserController {
             return Err(Error::InvalidRequest);
         }
 
-        let message = CustomMessage {
-            message: "User has been deleted successfully".to_string(),
-        };
+        let message = CustomMessage { message: true };
         Ok(message)
     }
     // endregion: delete user
@@ -265,9 +287,7 @@ impl UserController {
                 match query_result {
                     Ok(result) => {
                         println!("--> {:<12} : DB - {:?}", "INFO", result);
-                        let message = CustomMessage {
-                            message: "Successfully Changed Password!".to_string(),
-                        };
+                        let message = CustomMessage { message: true };
                         Ok(message)
                     }
                     Err(e) => Err(Error::InvalidQuery(e.to_string())),
@@ -302,9 +322,7 @@ impl UserController {
             return Err(Error::InvalidRequest);
         }
 
-        let message = CustomMessage {
-            message: "User has been verified successfully".to_string(),
-        };
+        let message = CustomMessage { message: true };
         Ok(message)
     }
     // endregion: verify user

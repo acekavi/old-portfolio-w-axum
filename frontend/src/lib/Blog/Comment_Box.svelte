@@ -1,14 +1,24 @@
 <script lang="ts">
+	import { enhance } from '$app/forms';
+	import { formatDate } from '$lib/utils';
 	import { Avatar } from '@skeletonlabs/skeleton';
+	import type { SubmitFunction } from '@sveltejs/kit';
 	import { Trash2 } from 'lucide-svelte';
+	import LoadingSpinner from './LoadingSpinner.svelte';
 
 	export let comment: Comments;
-	export let current_user: string | null;
+	export let current_user: User;
 
-	function formatDate(epochTime: any) {
-		const date = new Date(epochTime * 1000);
-		return date.toLocaleDateString('en-GB', { timeZone: 'UTC', dateStyle: 'long' });
-	}
+	let isLoading = false;
+	const deleteComment: SubmitFunction = (input) => {
+		isLoading = true;
+		return async (options) => {
+			isLoading = false;
+			await options.update();
+		};
+	};
+
+	const current_user_id = current_user != undefined ? current_user.id : '';
 </script>
 
 <div class="my-auto">
@@ -24,11 +34,15 @@
 			{comment.author}
 		</p>
 		<p class="font-sans text-xs ps-2">{formatDate(comment.created_at)}</p>
-		{#if current_user == comment.user_id}
-			<form action="?/delete" method="POST">
-				<input type="text" name="comment_id" id="comment_id" value={comment.id} class="hidden" />
+		{#if current_user_id == comment.user_id}
+			<form action="?/delete_comment" method="POST" use:enhance={deleteComment}>
+				<input type="hidden" name="comment_id" id="comment_id" value={comment.id} />
 				<button type="submit" class="flex text-secondary-400 hover:text-secondary-500 ms-4">
-					<Trash2 size="16px" />
+					{#if isLoading}
+						<LoadingSpinner />
+					{:else}
+						<Trash2 stroke-width="1.25" size="16px" />
+					{/if}
 				</button>
 			</form>
 		{/if}

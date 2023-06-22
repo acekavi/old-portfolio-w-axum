@@ -25,6 +25,7 @@
 		"eslint-config-prettier": "^8.5.0",
 		"eslint-plugin-svelte": "^2.26.0",
 		"highlight.js": "^11.8.0",
+		"mdsvex": "^0.10.6",
 		"postcss": "^8.4.24",
 		"prettier": "^2.8.0",
 		"prettier-plugin-svelte": "^2.8.1",
@@ -41,7 +42,10 @@
 		"@fontsource-variable/manrope": "^5.0.3",
 		"@fontsource-variable/montserrat": "^5.0.4",
 		"@fontsource/zilla-slab": "^5.0.3",
+		"@tinymce/tinymce-svelte": "^1.0.1",
+		"cookie-signature": "^1.2.1",
 		"lucide": "^0.244.0",
-		"lucide-svelte": "^0.244.0"
+		"lucide-svelte": "^0.244.0",
+		"tinymce": "^6.5.1"
 	}
 }

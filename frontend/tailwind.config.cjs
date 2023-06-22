@@ -47,7 +47,7 @@ module.exports = {
 				serif: ['"Montserrat Variable"'],
 				sans: ['"Crimson Pro Variable"'],
 				monospace: ['"Zilla Slab"']
-			},
+			}
 		}
 	},
 	plugins: [forms, typography, ...skeleton()]
