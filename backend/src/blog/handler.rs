@@ -99,7 +99,7 @@ async fn edit_post(
     Path(slug): Path<String>,
     claims: Claims,
     Json(payload): Json<BlogEditPayload>,
-) -> Result<Json<BlogPost>> {
+) -> Result<Json<CustomMessage>> {
     let post = state.edit_post(slug, payload, claims).await?;
     println!("--> {:<12} : EDIT POST", "HANDLER");
 

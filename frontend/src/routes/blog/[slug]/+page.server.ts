@@ -1,6 +1,7 @@
 import { API_URL } from '$env/static/private';
-import { sleep } from '$lib/utils';
 import type { Actions, PageServerLoad } from './$types';
+import { compile } from 'mdsvex';
+import { mdsvexConfig } from '$lib/config';
 
 export const load: PageServerLoad = async ({ cookies, params, parent }) => {
 	const { user } = await parent();
@@ -25,6 +26,15 @@ export const load: PageServerLoad = async ({ cookies, params, parent }) => {
 	const comment_response = await fetch(`${API_URL}/blog/${params.slug}/comment`, options);
 
 	const post: BlogPost = await post_response.json();
+
+	const transformed_code = await compile(
+		post.content,
+		mdsvexConfig
+	)
+
+	if (post.content && transformed_code && transformed_code.code) {
+		post.content = transformed_code.code;
+	}
 
 	const comments: Comments[] = await comment_response.json();
 

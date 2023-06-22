@@ -46,6 +46,8 @@
 		"cookie-signature": "^1.2.1",
 		"lucide": "^0.244.0",
 		"lucide-svelte": "^0.244.0",
+		"rehype-autolink-headings": "^6.1.1",
+		"rehype-slug": "^5.1.0",
 		"tinymce": "^6.5.1"
 	}
 }

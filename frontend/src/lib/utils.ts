@@ -1,3 +1,4 @@
+
 export function formatDate(epochTime: any) {
 	const date = new Date(epochTime * 1000);
 	return date.toLocaleDateString('en-GB', { timeZone: 'UTC', dateStyle: 'long' });
@@ -14,4 +15,4 @@ export async function sleep(ms: number) {
 	return new Promise((resolve) => {
 		setTimeout(resolve, ms);
 	});
-}
+};

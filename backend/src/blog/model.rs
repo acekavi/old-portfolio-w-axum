@@ -44,7 +44,7 @@ impl BlogController {
         let blog_post = sqlx::query_as::<_, BlogPost>(
             r#"
                 INSERT INTO blog_post (title, content, description, category, tags, author_id, is_draft)
-                VALUES ($1, $2, $3, $4, $5, $6)
+                VALUES ($1, $2, $3, $4, $5, $6, $7)
                 RETURNING id, title, slug, description, content, views, category, tags, is_draft, created_at, updated_at, author_id
             "#,
         )
@@ -170,11 +170,11 @@ impl BlogController {
         slug: String,
         payload: BlogEditPayload,
         claims: Claims,
-    ) -> Result<BlogPost> {
+    ) -> Result<CustomMessage> {
         if !claims.is_admin {
             return Err(Error::Unauthorized);
         }
-        let query_result = sqlx::query_as::<_, BlogPost>(
+        let query_result = sqlx::query(
             r#"
                 UPDATE blog_post
                 SET title = COALESCE($1, title),
@@ -185,7 +185,6 @@ impl BlogController {
                     is_draft = COALESCE($6, is_draft),
                     updated_at = $7
                 WHERE slug = $8
-                RETURNING id, title, slug, description, content, views, category, tags, is_draft, created_at, updated_at, author_id
             "#,
         )
         .bind(payload.title)
@@ -196,11 +195,16 @@ impl BlogController {
         .bind(payload.is_draft)
         .bind(OffsetDateTime::now_utc())
         .bind(slug)
-        .fetch_one(&self.app_state.get_db_conn())
+        .execute(&self.app_state.get_db_conn())
         .await
         .map_err(|e| Error::InvalidQuery(e.to_string()))?;
 
-        Ok(query_result)
+        if query_result.rows_affected() == 0 {
+            return Err(Error::InvalidRequest);
+        }
+
+        let message = CustomMessage { message: true };
+        Ok(message)
     }
     // endregion: edit post
 

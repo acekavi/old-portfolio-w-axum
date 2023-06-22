@@ -1,13 +1,16 @@
 <script lang="ts">
 	import { formatDate } from '$lib/utils';
 	import { Eye, Heart } from 'lucide-svelte';
-
+	import { page } from '$app/stores';
 	export let post: BlogPost;
 
+	const url = $page.url.pathname.includes('/admin')
+		? `/admin/post/${post.slug}`
+		: `/blog/${post.slug}`;
 	const updated_at = formatDate(post.updated_at);
 </script>
 
-<a href="/blog/{post.slug}" class="border-b border-gray-500/10" data-sveltekit-preload-data="off">
+<a href={url} class="border-b border-gray-500/10" data-sveltekit-preload-data="off">
 	<div class="h-full w-full hover:bg-primary-500 p-4">
 		<p class="text-4xl font-bold font-serif mb-2">{post.title}</p>
 		<div class="flex flex-wrap gap-2 lg:gap-0">

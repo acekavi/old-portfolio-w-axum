@@ -3,11 +3,9 @@
 	import type { ActionData } from './$types';
 	import Login from '$lib/User/Login.svelte';
 	import Register from '$lib/User/Register.svelte';
-	import { page } from '$app/stores';
 	export let form: ActionData;
 
-	const register = $page.url.href.includes('register');
-	let tabSet = register ? 1 : 0;
+	let tabSet = 0;
 </script>
 
 <svelte:head>

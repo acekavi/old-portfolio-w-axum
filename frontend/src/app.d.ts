@@ -29,6 +29,22 @@ declare type LoginResponse = {
 	error?: string;
 };
 
+declare type BlogPostResponse = {
+	id: UUID;
+	title: string;
+	slug: string;
+	description: string;
+	content: string;
+	views: number;
+	category: string;
+	tags: string[];
+	is_draft: boolean;
+	created_at: TimeLike;
+	updated_at: TimeLike;
+	author_id: UUID;
+	error?: string;
+}
+
 declare type BlogPost = {
 	id: UUID;
 	title: string;
