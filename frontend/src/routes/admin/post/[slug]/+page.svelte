@@ -2,7 +2,6 @@
 	import { InputChip, SlideToggle, toastStore } from '@skeletonlabs/skeleton';
 	import { Edit, XSquare } from 'lucide-svelte';
 	import type { ActionData, PageData } from './$types';
-
 	export let data: PageData;
 	export let form: ActionData;
 </script>
@@ -67,7 +66,7 @@
 							name="content"
 							id="content"
 							value={data.post.content}
-							placeholder="Content for the postin Markdown"
+							placeholder="Content for the post in Markdown"
 							class="focus-ring"
 							cols="100"
 						/>

@@ -3,7 +3,7 @@
 </script>
 
 <div
-	class="container my-auto flex items-center justify-evenly lg:flex-row flex-col-reverse lg:justify-center snap-always snap-start lg:h-screen"
+	class="container my-auto flex items-center justify-evenly lg:flex-row flex-col-reverse lg:justify-center snap-always snap-center lg:h-screen"
 >
 	<div class="card lg:w-2/5 variant-glass w-4/5 lg:rounded-e-none lg:h-[70vh]">
 		<header class="card-header">

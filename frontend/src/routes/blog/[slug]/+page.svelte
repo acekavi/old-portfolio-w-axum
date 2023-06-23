@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Eye, Heart } from 'lucide-svelte';
+	import { Eye, Hash } from 'lucide-svelte';
 	import type { ActionData, PageData } from './$types';
 	import { page } from '$app/stores';
 	import { site_img, title, twitter } from '$lib/config';
@@ -53,7 +53,7 @@
 			})}
 		{/if}
 	</span>
-	<div class="flex flex-col mx-auto w-5/6 lg:w-full">
+	<main class="flex flex-col lg:ms-80">
 		{#if data.post != undefined}
 			<p class="lg:text-9xl text-3xl font-heading-token font-extrabold">
 				{data.post.title}
@@ -67,7 +67,7 @@
 					{#each data.post.tags as tag}
 						<span
 							class="inline-flex items-center rounded-md bg-blue-500/10 px-2 py-1 text-xs font-medium ring-1 ring-inset ring-blue-700/10 mx-1"
-							>{tag}</span
+							><Hash size="12px" />{tag}</span
 						>
 					{/each}
 				</div>
@@ -84,13 +84,28 @@
 				</div>
 			</div>
 
-			<div class="text-xl font-serif">
-				{data.post.description}
+			<div class="text-xl font-serif py-8 border-b border-gray-500/50">
+				<h1 class="h1 mb-2 font-extrabold">Overview</h1>
+				<div class="ms-8 mt-4">{data.post.description}</div>
 			</div>
 
-			<div id="content">
-				<div class="my-8">{@html data.post.content}</div>
-			</div>
+			<article class="prose dark:prose-invert">
+				<script lang="ts">
+					function copyCode(button: HTMLButtonElement) {
+						const codeBlock = button.parentNode?.nextElementSibling as HTMLElement;
+						const code = codeBlock?.textContent;
+						if (code) {
+							navigator.clipboard.writeText(code).then(() => {
+								button.textContent = 'Copied!';
+								setTimeout(() => {
+									button.textContent = 'Copy';
+								}, 500);
+							});
+						}
+					}
+				</script>
+				{@html data.post.content}
+			</article>
 
 			<Comment_Section comments={data.comments} current_user={data.user} />
 		{:else}
@@ -100,5 +115,5 @@
 				</p>
 			</div>
 		{/if}
-	</div>
+	</main>
 </div>

@@ -1,4 +1,4 @@
-<div class="container h-screen snap-always snap-start">
+<div class="container h-screen snap-always snap-center">
 	<div class="flex lg:flex-row flex-col-reverse justify-evenly items-center h-5/6">
 		<div class="">
 			<p class="lg:text-9xl font-serif font-semibold cursor-default">

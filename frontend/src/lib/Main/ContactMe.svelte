@@ -3,7 +3,7 @@
 </script>
 
 <div
-	class="container my-auto flex items-center justify-evenly lg:flex-row flex-col-reverse lg:justify-center snap-always snap-start lg:h-screen gap-x-32 gap-y-16"
+	class="container my-auto flex items-center justify-evenly lg:flex-row flex-col-reverse lg:justify-center snap-always snap-center lg:h-screen gap-x-32 gap-y-16"
 >
 	<div class="flex flex-col justify-center items-center">
 		<p class="text-8xl font-serif gradient-connect font-semibold border-b border-gray-500/10 pb-12">

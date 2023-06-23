@@ -4,7 +4,7 @@
 </script>
 
 <div
-	class="container my-auto flex items-center justify-evenly flex-col lg:justify-center gap-x-32 gap-y-16 lg:p-0 snap-always snap-start lg:h-screen"
+	class="container my-auto flex items-center justify-evenly flex-col lg:justify-center gap-x-32 gap-y-16 lg:p-0 snap-always snap-center lg:h-screen"
 >
 	<div class="card variant-glass w-4/5 rounded-none mt-8">
 		<header class="card-header text-center">

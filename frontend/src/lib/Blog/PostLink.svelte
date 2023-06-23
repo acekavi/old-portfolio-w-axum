@@ -11,7 +11,7 @@
 </script>
 
 <a href={url} class="border-b border-gray-500/10" data-sveltekit-preload-data="off">
-	<div class="h-full w-full hover:bg-primary-500 p-4">
+	<div class=" w-full hover:bg-primary-500 p-4">
 		<p class="text-4xl font-bold font-serif mb-2">{post.title}</p>
 		<div class="flex flex-wrap gap-2 lg:gap-0">
 			<div class="flex border-e border-gray-500/50 pe-2">

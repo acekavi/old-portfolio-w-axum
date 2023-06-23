@@ -28,7 +28,7 @@ export const actions: Actions = {
                 authorization: session
             };
         } else {
-            return { error: 'Please log in to comment on this post' };
+            return { error: 'Please log in to add a new post' };
         }
 
 

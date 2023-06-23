@@ -2,7 +2,7 @@
 	import { Accordion, AccordionItem } from '@skeletonlabs/skeleton';
 </script>
 
-<div class="container lg:h-screen snap-always snap-start gap-x-32 gap-y-16 lg:p-0">
+<div class="container lg:h-screen snap-always snap-center gap-x-32 gap-y-16 lg:p-0">
 	<div
 		class="flex flex-col lg:flex-row justify-evenly items-center h-full my-auto overflow-y-scroll"
 	>

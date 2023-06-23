@@ -1,6 +1,5 @@
 <script lang="ts">
-	import { toastStore } from '@skeletonlabs/skeleton';
-	import type { ActionData, SubmitFunction } from '../../routes/blog/[slug]/$types';
+	import type { SubmitFunction } from '../../routes/blog/[slug]/$types';
 	import CommentBox from './Comment_Box.svelte';
 	import { enhance } from '$app/forms';
 	import { MessageSquare, MessagesSquare } from 'lucide-svelte';
@@ -31,7 +30,7 @@
 <div class="mb-4">
 	<p class="text-3xl pt-8 border-t border-gray-500/50 mb-2">Leave a comment...</p>
 	<form action="?/comment" method="post" use:enhance={addComment}>
-		<div class="input-ring">
+		<div class="input-ring w-96">
 			<textarea
 				rows="1"
 				name="content"
@@ -63,7 +62,7 @@
 		{#if current_user != undefined}
 			<div class="ms-8 mt-2">
 				<form action="?/comment" method="post" use:enhance={addReply}>
-					<div class="input-ring">
+					<div class="input-ring w-96">
 						<textarea
 							rows="1"
 							name="content"

@@ -1,14 +1,10 @@
 import { API_URL } from '$env/static/private';
-import { capitalize, formatDate } from '$lib/utils';
 import { redirect, type Handle } from '@sveltejs/kit';
-
-const protectedRoutes: string[] = ['/dashboard'];
-
-const adminRoutes: string[] = ['/admin'];
 
 export const handle = (async ({ event, resolve }) => {
 	const session = String(event.cookies.get('session'));
 	const id = String(event.cookies.get('id'));
+	const current_url = event.url.pathname;
 
 	let options: RequestInit = {
 		method: 'GET',
@@ -41,13 +37,12 @@ export const handle = (async ({ event, resolve }) => {
 				is_active: currentUser.is_active,
 			};
 		}
-
-		if (adminRoutes.includes(event.url.pathname) && !currentUser.is_superuser) {
+		if (current_url.includes('/admin') && !currentUser.is_superuser) {
 			throw redirect(302, '/dashboard');
 		}
 
 	} else {
-		if (protectedRoutes.includes(event.url.pathname) || adminRoutes.includes(event.url.pathname)) {
+		if (current_url.includes('/dashboard') || current_url.includes('/admin')) {
 			throw redirect(302, '/user');
 		}
 	}

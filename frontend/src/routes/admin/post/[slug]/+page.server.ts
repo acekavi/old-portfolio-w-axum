@@ -52,7 +52,7 @@ export const actions: Actions = {
                 authorization: session
             };
         } else {
-            return { error: 'Please log in to edit post' };
+            return { error: 'Please log in to update this post' };
         }
 
         options.body = JSON.stringify({
