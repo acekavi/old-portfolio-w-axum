@@ -24,44 +24,6 @@
 	}
 }
 
-html {
-	scroll-behavior: smooth;
-}
-
-.code-header {
-	display: flex;
-	justify-content: space-between;
-	align-items: center;
-	margin-bottom: 0.5rem;
-}
-
-.language {
-	font-weight: bold;
-	color: #fff;
-	background-color: #333;
-	padding: 0.25rem 0.5rem;
-	border-radius: 0.25rem;
-}
-
-.copy-button {
-	border: none;
-	background-color: #333;
-	color: #fff;
-	padding: 0.25rem 0.5rem;
-	border-radius: 0.25rem;
-	cursor: pointer;
-}
-
-.copy-button:hover {
-	background-color: #555;
-}
-
-.code-block {
-	background-color: #f7f7f7;
-	padding: 1rem;
-	border-radius: 0.25rem;
-}
-
 body {
 	min-width: fit-content;
 }
@@ -149,9 +111,17 @@ body {
 .icon-link {
 	position: relative;
 }
+
 .icon-link::before {
 	content: '#';
 	position: absolute;
 	top: 0;
 	margin-left: -30px;
+}
+
+.table-of-content::before {
+	content: 'Table of Content';
+	font-size: xx-large;
+	position: absolute;
+	top: -35px;
 }

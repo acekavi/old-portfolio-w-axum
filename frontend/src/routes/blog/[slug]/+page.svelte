@@ -34,9 +34,15 @@
 	<meta name="twitter:image" content={site_img} />
 	<meta name="twitter:site" content={$page.url.href} />
 	<meta name="twitter:creator" content={twitter} />
+
+	<style>
+		html {
+			scroll-behavior: smooth;
+		}
+	</style>
 </svelte:head>
 
-<div class="min-h-full">
+<div class="lg:min-h-full w-4/5 lg:w-full mx-auto">
 	<span class="hidden">
 		{#if form?.error}
 			{toastStore.trigger({
@@ -86,10 +92,10 @@
 
 			<div class="text-xl font-serif py-8 border-b border-gray-500/50">
 				<h1 class="h1 mb-2 font-extrabold">Overview</h1>
-				<div class="ms-8 mt-4">{data.post.description}</div>
+				<div class="lg:ms-8 mt-4">{data.post.description}</div>
 			</div>
 
-			<article class="prose dark:prose-invert">
+			<article class="prose dark:prose-invert min-w-full my-8">
 				<script lang="ts">
 					function copyCode(button: HTMLButtonElement) {
 						const codeBlock = button.parentNode?.nextElementSibling as HTMLElement;
@@ -99,7 +105,7 @@
 								button.textContent = 'Copied!';
 								setTimeout(() => {
 									button.textContent = 'Copy';
-								}, 500);
+								}, 1000);
 							});
 						}
 					}

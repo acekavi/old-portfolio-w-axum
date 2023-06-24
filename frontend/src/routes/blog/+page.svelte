@@ -14,7 +14,7 @@
 
 <div class="min-h-full">
 	<div class="flex flex-col mx-auto">
-		<p class="lg:text-9xl text-3xl font-heading-token font-extrabold ms-4 lg:ms-0">
+		<p class="lg:text-9xl text-3xl font-heading-token font-extrabold ms-4 lg:mx-auto">
 			Blog. Share. Connect
 		</p>
 

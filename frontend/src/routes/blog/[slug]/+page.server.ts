@@ -39,7 +39,7 @@ const mdsvexOption: MdsvexOptions = {
 		[rehypeExternalLinks, { rel: ['nofollow'], target: ['_blank'] }],
 		[toc, {
 			cssClasses: {
-				toc: 'fixed left-0 my-auto w-80 lg:block hidden',
+				toc: 'fixed left-5 mx-auto my-auto w-80 lg:block hidden table-of-content',
 				listItem: 'font-semibold text-base',
 				link: 'hover:text-primary-300 no-underline',
 			},
@@ -54,10 +54,10 @@ const mdsvexOption: MdsvexOptions = {
 			const escapedHtml = escapeSvelte(html);
 			const language = lang;
 			const codeWithHeader = `
-				<div class="relative">
+				<div class="relative lg:w-2/5">
 					<span class="absolute top-0 right-0 py-1 px-2 text-xs font-serif uppercase text-primary-500">${language}</span>
 					<span class="absolute top-5 right-0">
-						<button class="btn variant-glass-primary rounded-md py-1 px-2 me-2 text-xs font-serif uppercase" onclick="copyCode(this)">Copy</button>
+						<button class="btn variant-glass-primary rounded-md py-1 px-2 me-2 text-xs font-serif uppercase text-slate-200" onclick="copyCode(this)">Copy</button>
 					</span>
 				${escapedHtml}</div>`;
 

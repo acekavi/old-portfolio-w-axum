@@ -122,7 +122,7 @@
 							to my proficiency in Kotlin, machine learning, and mobile app development, showcasing
 							my ability to leverage emerging technologies for practical and impactful solutions.
 						</p>
-						<button class="accordian-btn"
+						<button class="accordian-btn btn btn-sm"
 							><a href="https://github.com/acekavi/SnakeEyes">Github</a></button
 						>
 					</svelte:fragment>
@@ -143,7 +143,7 @@
 							programming skills and demonstrate my ability to create user-friendly applications for
 							real-world scenarios.
 						</p>
-						<button class="accordian-btn"
+						<button class="accordian-btn btn btn-sm"
 							><a href="https://github.com/acekavi/coursework_oop">Github</a></button
 						>
 					</svelte:fragment>
@@ -164,10 +164,10 @@
 							ability to create visually appealing and functional e-commerce platforms for
 							real-world applications.
 						</p>
-						<button class="accordian-btn"
+						<button class="accordian-btn btn btn-sm"
 							><a href="https://acekavi.github.io/clarkslk/">Demo</a></button
 						>
-						<button class="accordian-btn ms-4"
+						<button class="accordian-btn btn btn-sm ms-4"
 							><a href="https://github.com/acekavi/clarkslk">Github</a></button
 						>
 					</svelte:fragment>
@@ -186,10 +186,10 @@
 							visually appealing and user-friendly platform for music enthusiasts to indulge in
 							their passion for music.
 						</p>
-						<button class="accordian-btn"
+						<button class="accordian-btn btn btn-sm"
 							><a href="https://acekavi.github.io/music-player/">Demo</a></button
 						>
-						<button class="accordian-btn ms-4"
+						<button class="accordian-btn btn btn-sm ms-4"
 							><a href="https://github.com/acekavi/music-player/">Github</a></button
 						>
 					</svelte:fragment>
@@ -212,7 +212,7 @@
 							for users to improve their math skills while exploring the fundamentals of
 							programming.
 						</p>
-						<button class="accordian-btn">
+						<button class="accordian-btn btn btn-sm">
 							<a href="https://github.com/acekavi/Mathtrix">Github</a></button
 						>
 					</svelte:fragment>
@@ -233,7 +233,7 @@
 							iOS users to leverage the benefits of hybrid app development for PDF templating and
 							document generation.
 						</p>
-						<button class="accordian-btn"
+						<button class="accordian-btn btn btn-sm"
 							><a href="https://github.com/acekavi/pdf-template">Github</a></button
 						>
 					</svelte:fragment>
@@ -253,7 +253,7 @@
 							develop and deploy dynamic web applications using Django, while leveraging various AWS
 							services for a reliable and scalable hosting solution.
 						</p>
-						<button class="accordian-btn"
+						<button class="accordian-btn btn btn-sm"
 							><a href="https://github.com/acekavi/django-portfo">Github</a></button
 						>
 					</svelte:fragment>
@@ -265,7 +265,7 @@
 
 <style lang="postcss">
 	.accordian-btn {
-		@apply btn btn-sm mt-4 bg-secondary-300 rounded-full dark:bg-secondary-600/40;
+		@apply mt-4 bg-secondary-300 rounded-full dark:bg-secondary-600/40;
 	}
 	.tech_stack {
 		@apply py-1 px-3 text-sm bg-secondary-300 rounded-lg dark:bg-secondary-600/40;
