@@ -29,6 +29,7 @@ pub struct User {
 // region: User Create payload
 #[derive(Deserialize)]
 pub struct UserCreatePayload {
+    #[serde(rename(deserialize = "lowercase"))]
     pub username: String,
     pub password: String,
     pub email: String,
@@ -46,8 +47,11 @@ pub struct UserLoginPayload {
 // region: User Update payload
 #[derive(Deserialize)]
 pub struct UserUpdatePayload {
+    #[serde(rename(deserialize = "lowercase"))]
     pub email: Option<String>,
+    #[serde(rename(deserialize = "lowercase"))]
     pub first_name: Option<String>,
+    #[serde(rename(deserialize = "lowercase"))]
     pub last_name: Option<String>,
 }
 // endregion: User Update payload

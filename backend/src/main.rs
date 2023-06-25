@@ -21,7 +21,6 @@ async fn main() {
     let cors = CorsLayer::new()
         .allow_methods([Method::GET, Method::POST, Method::PUT, Method::DELETE])
         .allow_credentials(true);
-    // .allow_credentials(true);
 
     let app = Router::new()
         .route("/post", axum::routing::post(health_checker))

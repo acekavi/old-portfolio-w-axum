@@ -73,7 +73,9 @@ pub struct BlogCreatePayload {
     pub title: String,
     pub description: String,
     pub content: String,
+    #[serde(rename(deserialize = "lowercase"))]
     pub category: String,
+    #[serde(rename(deserialize = "lowercase"))]
     pub tags: Vec<String>,
     pub is_draft: bool,
 }
