@@ -47,79 +47,69 @@
 					</p>
 
 					<div class="grid grid-cols-1 gap-y-4 sm:grid-cols-6">
-						<div class="col-span-full">
-							<label for="subject" class="block mb-1 text-sm font-medium leading-6">Name</label>
-							<div class="">
-								<div class="input-ring">
-									<input
-										type="text"
-										name="subject"
-										id="subject"
-										placeholder="Garry Host"
-										autocomplete="name"
-										class="focus-ring"
-									/>
-								</div>
-							</div>
-						</div>
+						<label class="label col-span-full">
+							<span>Name</span>
+							<input
+								class="input variant-form-material leading-5"
+								title="Name"
+								name="name"
+								type="text"
+								placeholder="g.host"
+								autocomplete="off"
+							/>
+						</label>
 
-						<div class="col-span-full">
-							<label for="subject" class="block mb-1 text-sm font-medium leading-6">Subject</label>
-							<div class="">
-								<div class="input-ring">
-									<input
-										type="text"
-										name="subject"
-										id="subject"
-										placeholder="Work with me"
-										class="focus-ring"
-									/>
-								</div>
-							</div>
-						</div>
+						<label class="label col-span-full">
+							<span>Subject</span>
+							<input
+								class="input variant-form-material leading-5"
+								title="Subject"
+								name="subject"
+								type="text"
+								placeholder="Work with me"
+								autocomplete="off"
+							/>
+						</label>
 
-						<div class="col-span-full">
-							<label for="email" class="block mb-1 text-sm font-medium leading-6"
-								>Email address</label
+						<label class="label col-span-full">
+							<span>Email address</span>
+							<input
+								class="input variant-form-material leading-5"
+								title="Email address"
+								name="email"
+								type="email"
+								placeholder="g.host@gmail.com"
+								autocomplete="off"
+							/>
+						</label>
+
+						<label class="label col-span-full">
+							<span>Linkedin</span>
+							<div
+								class="input-group input-group-divider grid-cols-[auto_1fr_auto] variant-form-material leading-5"
 							>
-							<div class="input-ring">
+								<div class="input-group-shim">https://www.linkedin.com/in/</div>
 								<input
-									id="email"
-									name="email"
-									type="email"
-									placeholder="ghost@gmail.com"
-									autocomplete="email"
-									class="focus-ring"
+									class="input rounded-none leading-5"
+									title="Linkedin username"
+									name="linkedin"
+									type="text"
+									placeholder="g.host"
+									autocomplete="off"
 								/>
 							</div>
-						</div>
+						</label>
+
+						<label class="label col-span-full">
+							<span>Message</span>
+							<textarea
+								class="textarea variant-form-material leading-5 resize-none"
+								rows="4"
+								placeholder="Let's work together on ..."
+							/>
+						</label>
 
 						<div class="col-span-full">
-							<label for="username" class="block mb-1 text-sm font-medium leading-6">Linkedin</label
-							>
-							<div class="">
-								<div class="input-ring">
-									<span
-										class="flex select-none items-center pl-3 text-gray-900 dark:text-gray-300 sm:text-sm"
-										>www.linkedin.com/in/</span
-									>
-									<input
-										type="text"
-										name="username"
-										id="username"
-										autocomplete="username"
-										class="focus-ring pl-1"
-										placeholder="g.host"
-									/>
-								</div>
-							</div>
-						</div>
-
-						<div class="col-span-full">
-							<label for="message" class="block mb-1 text-sm font-medium leading-6">Message</label>
-							<div class="input-ring">
-								<textarea id="message" name="message" rows="3" class="focus-ring" />
-							</div>
 							<a
 								href="/avishka_kavinda.pdf"
 								download="Avishka.pdf"
@@ -133,7 +123,7 @@
 		</section>
 
 		<footer class="card-footer flex flex-row justify-evenly">
-			<a href="https://www.behance.net/acekavi" class="btn btn-sm variant-glass-tertiary w-5/6">
+			<a href="https://www.behance.net/acekavi" class="btn btn-sm variant-soft-tertiary w-5/6">
 				<span>Send</span>
 				<span><Send stroke-width="1.25" size="15" /></span></a
 			>

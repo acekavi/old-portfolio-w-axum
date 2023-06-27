@@ -2,8 +2,7 @@
 	import type { SubmitFunction } from '../../routes/blog/[slug]/$types';
 	import CommentBox from './Comment_Box.svelte';
 	import { enhance } from '$app/forms';
-	import { MessageSquare, MessagesSquare } from 'lucide-svelte';
-	import LoadingSpinner from './LoadingSpinner.svelte';
+	import { Loader2, MessageSquare, MessagesSquare } from 'lucide-svelte';
 
 	export let comments: Comments[];
 	export let current_user: User;
@@ -30,19 +29,18 @@
 <div class="mb-4">
 	<p class="text-3xl pt-8 border-t border-gray-500/50 mb-2">Leave a comment...</p>
 	<form action="?/comment" method="post" use:enhance={addComment}>
-		<div class="input-ring lg:w-96">
+		<label class="label">
 			<textarea
-				rows="1"
-				name="content"
-				id="content"
+				class="textarea variant-form-material leading-5 resize-none"
+				rows="4"
 				placeholder="Write your comment here..."
-				class="focus-ring resize-none"
+				name="content"
 			/>
-		</div>
+		</label>
 		<button type="submit" class="btn variant-glass-primary mt-2 btn-sm font-semibold">
 			<span>Comment</span>
 			{#if commentLoading}
-				<LoadingSpinner />
+				<Loader2 class="animate-spin" />
 			{:else}
 				<span><MessageSquare stroke-width="1.25" size="16px" /></span>
 			{/if}
@@ -60,22 +58,21 @@
 			</div>
 		{/each}
 		{#if current_user != undefined}
-			<div class="ms-8 mt-2">
+			<div class="ms-14 mt-2">
 				<form action="?/comment" method="post" use:enhance={addReply}>
-					<div class="input-ring lg:w-96">
+					<label class="label">
 						<textarea
-							rows="1"
-							name="content"
-							id="content"
+							class="textarea variant-form-material leading-5 resize-none"
+							rows="2"
 							placeholder="Write your reply here..."
-							class="focus-ring resize-none"
+							name="content"
 						/>
-					</div>
+					</label>
 					<input type="hidden" name="parent_id" id="parent_id" value={comment.id} />
 					<button type="submit" class="btn variant-glass-primary mt-2 btn-sm font-semibold">
 						<span>Reply</span>
 						{#if replyLoading}
-							<LoadingSpinner />
+							<Loader2 class="animate-spin" />
 						{:else}
 							<span><MessagesSquare stroke-width="1.25" size="16px" /></span>
 						{/if}

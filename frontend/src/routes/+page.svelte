@@ -5,7 +5,7 @@
 	import Experiences from '$lib/Main/Experiences.svelte';
 	import MainHero from '$lib/Main/MainHero.svelte';
 	import Projects from '$lib/Main/Projects.svelte';
-	import { description } from '$lib/config';
+	import { description } from '$lib/utils/config';
 </script>
 
 <svelte:head>

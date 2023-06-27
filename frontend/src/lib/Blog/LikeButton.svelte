@@ -1,8 +1,7 @@
 <script lang="ts">
-	import { Heart } from 'lucide-svelte';
+	import { Heart, Loader2 } from 'lucide-svelte';
 	import { enhance } from '$app/forms';
 	import type { SubmitFunction } from '@sveltejs/kit';
-	import LoadingSpinner from './LoadingSpinner.svelte';
 	export let post: BlogPost;
 
 	let isLoading = false;
@@ -30,7 +29,7 @@
 	<form method="POST" action="?/like" use:enhance={likePost}>
 		<button type="submit" class="flex">
 			{#if isLoading}
-				<LoadingSpinner />
+				<Loader2 class="animate-spin" />
 			{:else}
 				<Heart stroke-width="1.25" size="16px" />
 			{/if}

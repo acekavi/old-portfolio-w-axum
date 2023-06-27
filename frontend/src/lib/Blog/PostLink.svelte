@@ -1,7 +1,7 @@
 <script lang="ts">
-	import { formatDate } from '$lib/utils';
 	import { Eye, Heart } from 'lucide-svelte';
 	import { page } from '$app/stores';
+	import { formatDate } from '$lib/utils/utilities';
 	export let post: BlogPost;
 
 	const url = $page.url.pathname.includes('/admin')

@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
-	import { capitalize } from '$lib/utils';
+	import { capitalize } from '$lib/utils/utilities';
 	import type { PageData } from './$types';
 
 	export let data: PageData;

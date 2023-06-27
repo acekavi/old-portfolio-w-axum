@@ -2,11 +2,12 @@
 	import { Eye, Hash } from 'lucide-svelte';
 	import type { ActionData, PageData } from './$types';
 	import { page } from '$app/stores';
-	import { site_img, title, twitter } from '$lib/config';
 	import Comment_Section from '$lib/Blog/Comment_Section.svelte';
 	import LikeButton from '$lib/Blog/LikeButton.svelte';
-	import { capitalize, formatDate } from '$lib/utils';
 	import { toastStore } from '@skeletonlabs/skeleton';
+	import { capitalize, formatDate } from '$lib/utils/utilities';
+	import { site_img, title, twitter } from '$lib/utils/config';
+	import { CodeBlock as codeblock } from '@skeletonlabs/skeleton';
 
 	export let data: PageData;
 	export let form: ActionData;
@@ -96,20 +97,6 @@
 			</div>
 
 			<article class="prose dark:prose-invert min-w-full my-8">
-				<script lang="ts">
-					function copyCode(button: HTMLButtonElement) {
-						const codeBlock = button.parentNode?.nextElementSibling as HTMLElement;
-						const code = codeBlock?.textContent;
-						if (code) {
-							navigator.clipboard.writeText(code).then(() => {
-								button.textContent = 'Copied!';
-								setTimeout(() => {
-									button.textContent = 'Copy';
-								}, 1000);
-							});
-						}
-					}
-				</script>
 				{@html data.post.content}
 			</article>
 

@@ -1,7 +1,3 @@
-<script>
-	import { fade } from 'svelte/transition';
-</script>
-
 <div
 	class="container my-auto flex items-center justify-evenly lg:flex-row flex-col-reverse lg:justify-center snap-always snap-center lg:h-screen gap-x-32 gap-y-16"
 >
@@ -32,7 +28,7 @@
 			</section>
 
 			<footer class="card-footer flex flex-row justify-evenly pb-8 pt-8">
-				<a href="https://www.behance.net/acekavi" class="btn variant-glass-primary">
+				<a href="https://www.behance.net/acekavi" class="btn variant-soft-primary">
 					<span
 						><svg
 							xmlns="http://www.w3.org/2000/svg"

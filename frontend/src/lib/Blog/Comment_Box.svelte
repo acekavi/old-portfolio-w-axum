@@ -1,10 +1,9 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
-	import { formatDate } from '$lib/utils';
 	import { Avatar } from '@skeletonlabs/skeleton';
 	import type { SubmitFunction } from '@sveltejs/kit';
-	import { Trash2 } from 'lucide-svelte';
-	import LoadingSpinner from './LoadingSpinner.svelte';
+	import { Loader2, Trash2 } from 'lucide-svelte';
+	import { formatDate } from '$lib/utils/utilities';
 
 	export let comment: Comments;
 	export let current_user: User;
@@ -39,7 +38,7 @@
 				<input type="hidden" name="comment_id" id="comment_id" value={comment.id} />
 				<button type="submit" class="flex text-secondary-400 hover:text-secondary-500 ms-4">
 					{#if isLoading}
-						<LoadingSpinner />
+						<Loader2 class="animate-spin" />
 					{:else}
 						<Trash2 stroke-width="1.25" size="16px" />
 					{/if}

@@ -35,6 +35,7 @@ export const handle = (async ({ event, resolve }) => {
 				first_name: currentUser.first_name,
 				last_name: currentUser.last_name,
 				is_active: currentUser.is_active,
+				is_superuser: currentUser.is_superuser ? currentUser.is_superuser : false,
 			};
 		}
 		if (current_url.includes('/admin') && !currentUser.is_superuser) {
@@ -43,7 +44,7 @@ export const handle = (async ({ event, resolve }) => {
 
 	} else {
 		if (current_url.includes('/dashboard') || current_url.includes('/admin')) {
-			throw redirect(302, '/user');
+			throw redirect(302, '/');
 		}
 	}
 
