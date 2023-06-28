@@ -1,12 +1,12 @@
 <script lang="ts">
-	import { LogIn, AlertTriangle, Loader2, XSquare } from 'lucide-svelte';
+	import { LogIn, AlertTriangle, Loader2 } from 'lucide-svelte';
 	import { enhance } from '$app/forms';
 	import type { SubmitFunction } from '@sveltejs/kit';
 	import { modalStore, toastStore } from '@skeletonlabs/skeleton';
 	import { focusTrap } from '@skeletonlabs/skeleton';
 
-	let isFocused: boolean = true;
-	let isLoading = false;
+	$: isFocused = true;
+	$: isLoading = false;
 
 	function onClose(): void {
 		modalStore.close();
@@ -17,12 +17,14 @@
 		return async (options) => {
 			if (options.result.status !== 200) {
 				toastStore.trigger({
+					// @ts-ignore
 					message: options.result.data.error,
 					timeout: 5000,
 					background: 'variant-glass-error'
 				});
 			} else {
 				toastStore.trigger({
+					// @ts-ignore
 					message: options.result.data.message,
 					timeout: 5000,
 					background: 'variant-glass-success'
@@ -73,11 +75,10 @@
 				</label>
 
 				<div class="col-span-full">
-					<button on:click={onClose} class="btn variant-soft-error my-4 float-left">
+					<button on:click={onClose} class="btn variant-ghost-surface my-4 float-left">
 						<span>Cancel</span>
-						<span><XSquare stroke-width="1.25" size="18px" /></span>
 					</button>
-					<button type="submit" class="btn variant-soft-success my-4 float-right">
+					<button type="submit" class="btn variant-filled my-4 float-right">
 						<span>Login</span>
 						{#if isLoading}
 							<Loader2 class="animate-spin" />

@@ -7,8 +7,8 @@
 	export let comments: Comments[];
 	export let current_user: User;
 
-	let commentLoading = false;
-	let replyLoading = false;
+	$: commentLoading = false;
+	$: replyLoading = false;
 
 	const addComment: SubmitFunction = (input) => {
 		commentLoading = true;

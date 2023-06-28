@@ -1,11 +1,54 @@
 <script lang="ts">
-	import { LightSwitch, modalStore, popup, type PopupSettings } from '@skeletonlabs/skeleton';
+	import { enhance } from '$app/forms';
+	import {
+		LightSwitch,
+		modalStore,
+		popup,
+		type ModalSettings,
+		type PopupSettings,
+		toastStore
+	} from '@skeletonlabs/skeleton';
+	import type { SubmitFunction } from '@sveltejs/kit';
 	import { UserCircle2 } from 'lucide-svelte';
 
 	const popupClick: PopupSettings = {
 		event: 'click',
 		target: 'popupClick',
 		placement: 'top'
+	};
+
+	let logoutButton: HTMLButtonElement;
+	const logoutModal: ModalSettings = {
+		type: 'confirm',
+		title: 'Please Confirm',
+		body: 'Are you sure you want to logout?',
+		response: (r: boolean) => {
+			if (r) {
+				logoutButton.click();
+			}
+		}
+	};
+
+	const logoutHandler: SubmitFunction = (input) => {
+		return async (options) => {
+			if (options.result.status !== 200) {
+				toastStore.trigger({
+					// @ts-ignore
+					message: options.result.data.error,
+					timeout: 5000,
+					background: 'variant-glass-error'
+				});
+			} else {
+				toastStore.trigger({
+					// @ts-ignore
+					message: options.result.data.message,
+					timeout: 5000,
+					background: 'variant-glass-success'
+				});
+				modalStore.close();
+			}
+			await options.update();
+		};
 	};
 
 	function loginModal() {
@@ -16,8 +59,8 @@
 		modalStore.trigger({ type: 'component', component: 'SignupModal' });
 	}
 
-	function logoutModal() {
-		modalStore.trigger({ type: 'component', component: 'LogoutModal' });
+	function logoutModalTrigger(): void {
+		modalStore.trigger(logoutModal);
 	}
 
 	export let user: User;
@@ -54,14 +97,18 @@
 	</div>
 </div>
 
-<div class="card p-4 variant-glass-surface rounded-md" data-popup="popupClick">
+<div class="card p-4 variant-glass-surface rounded-md z-50" data-popup="popupClick">
 	<p class="leading-6 border-b border-gray-500/50 pb-4 mb-4">User Authentication</p>
 	{#if user}
 		<button
-			on:click={logoutModal}
+			on:click|preventDefault={logoutModalTrigger}
 			class="btn-sm font-semibold variant-soft block mx-auto mb-2 w-full rounded-md uppercase"
-			>Logout</button
 		>
+			<span>Logout</span>
+		</button>
+		<form method="POST" use:enhance={logoutHandler}>
+			<button class="hidden" formaction="/auth?/logout" bind:this={logoutButton} />
+		</form>
 		{#if user.is_superuser}
 			<a
 				href="/admin"

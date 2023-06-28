@@ -1,5 +1,6 @@
 import { API_URL } from '$env/static/private';
 import { markdownToHtml } from '$lib/utils/markdown';
+import { TableOfContents } from '@skeletonlabs/skeleton';
 import type { Actions, PageServerLoad } from './$types';
 
 export const load: PageServerLoad = async ({ cookies, params, parent }) => {
@@ -25,7 +26,11 @@ export const load: PageServerLoad = async ({ cookies, params, parent }) => {
 	const comment_response = await fetch(`${API_URL}/blog/${params.slug}/comment`, options);
 
 	const post: BlogPost = await post_response.json();
-	// post.content = markdownToHtml(post.content).content;
+
+	// Converting markdown to html
+	const transformed_post = (await markdownToHtml(post.content)).content;
+	post.content = transformed_post ? transformed_post : post.content;
+
 	const comments: Comments[] = await comment_response.json();
 
 	if (!post_response.ok || !comment_response.ok) {
@@ -62,7 +67,7 @@ export const actions: Actions = {
 				return { error: json.error };
 			}
 		}
-		return { message: json.message ? 'Glad you liked it!' : 'Oh! What changed your mind?' };
+		return { message: json.message ? 'Glad you liked it!' : 'Successfully unliked the post!' };
 	},
 	comment: async ({ cookies, params, request }) => {
 		const data = await request.formData();

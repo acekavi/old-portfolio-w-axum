@@ -1,23 +1,15 @@
 <script lang="ts">
-	import { AlertTriangle, Loader2, XSquare, UserPlus, View, EyeOff } from 'lucide-svelte';
+	import { AlertTriangle, Loader2, UserPlus, Eye } from 'lucide-svelte';
 	import { enhance } from '$app/forms';
 	import type { SubmitFunction } from '@sveltejs/kit';
 	import { modalStore, toastStore } from '@skeletonlabs/skeleton';
 	import { focusTrap } from '@skeletonlabs/skeleton';
 
-	let isFocused: boolean = true;
-	let isLoading = false;
-	let password: HTMLInputElement;
-	let confirmPassword: HTMLInputElement;
+	$: isFocused = true;
+	$: isLoading = false;
 
 	function onClose(): void {
 		modalStore.close();
-	}
-	function showPassword(): void {
-		password.type = password.type === 'password' ? 'text' : 'password';
-	}
-	function showConPassword(): void {
-		confirmPassword.type = confirmPassword.type === 'password' ? 'text' : 'password';
 	}
 
 	const loader: SubmitFunction = (input) => {
@@ -25,12 +17,14 @@
 		return async (options) => {
 			if (options.result.status !== 200) {
 				toastStore.trigger({
+					// @ts-ignore
 					message: options.result.data.error,
 					timeout: 5000,
 					background: 'variant-glass-error'
 				});
 			} else {
 				toastStore.trigger({
+					// @ts-ignore
 					message: options.result.data.message,
 					timeout: 5000,
 					background: 'variant-glass-success'
@@ -84,7 +78,6 @@
 					<span>Password</span>
 					<div class="input-group input-group-divider grid-cols-[1fr_auto] variant-form-material">
 						<input
-							bind:this={password}
 							class="input variant-form-material leading-5"
 							title="Password"
 							name="password"
@@ -92,8 +85,20 @@
 							placeholder="●●●●●●●●●●●●"
 							autocomplete="off"
 						/>
-						<button title="Show Password" on:click={showPassword} type="button">
-							<EyeOff class="hover:text-success-600" />
+						<button
+							title="Show Password"
+							on:click={(event) => {
+								// @ts-ignore
+								const closestInput = event.target?.closest('div').querySelector('input');
+								if (closestInput.type === 'password') {
+									closestInput.type = 'text';
+								} else {
+									closestInput.type = 'password';
+								}
+							}}
+							type="button"
+						>
+							<Eye class="hover:text-success-600" />
 						</button>
 					</div>
 				</label>
@@ -102,7 +107,6 @@
 					<span>Confirm Password</span>
 					<div class="input-group input-group-divider grid-cols-[1fr_auto] variant-form-material">
 						<input
-							bind:this={confirmPassword}
 							class="input variant-form-material leading-5"
 							title="Confirm Password"
 							name="confirm-password"
@@ -110,18 +114,29 @@
 							placeholder="●●●●●●●●●●●●"
 							autocomplete="off"
 						/>
-						<button title="Show Password" on:click={showConPassword} type="button">
-							<EyeOff class="hover:text-success-600" />
+						<button
+							title="Show Password"
+							on:click={(event) => {
+								// @ts-ignore
+								const closestInput = event.target?.closest('div').querySelector('input');
+								if (closestInput.type === 'password') {
+									closestInput.type = 'text';
+								} else {
+									closestInput.type = 'password';
+								}
+							}}
+							type="button"
+						>
+							<Eye class="hover:text-success-600" />
 						</button>
 					</div>
 				</label>
 
 				<div class="col-span-full">
-					<button on:click={onClose} class="btn variant-soft-error my-4 float-left">
+					<button on:click={onClose} class="btn variant-ghost-surface my-4 float-left">
 						<span>Cancel</span>
-						<span><XSquare stroke-width="1.25" size="18px" /></span>
 					</button>
-					<button type="submit" class="btn variant-soft-success my-4 float-right">
+					<button type="submit" class="btn variant-filled my-4 float-right">
 						<span>Register</span>
 						{#if isLoading}
 							<Loader2 class="animate-spin " />

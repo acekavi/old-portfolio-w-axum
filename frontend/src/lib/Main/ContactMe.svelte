@@ -104,6 +104,7 @@
 							<span>Message</span>
 							<textarea
 								class="textarea variant-form-material leading-5 resize-none"
+								name="message"
 								rows="4"
 								placeholder="Let's work together on ..."
 							/>

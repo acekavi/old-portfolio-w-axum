@@ -1,17 +1,17 @@
 // See https://kit.svelte.dev/docs/types#app
 // for information about these interfaces
-declare global {
-	namespace App {
-		interface Error {
-			error: string,
-		}
-		interface Locals {
-			user: User,
-		}
-		// interface PageData {}
-		// interface Platform {}
+// declare global {
+declare namespace App {
+	interface Error {
+		error: string,
 	}
+	interface Locals {
+		user: User,
+	}
+	// interface PageData {}
+	// interface Platform {}
 }
+// }
 
 
 declare type Loginparams = {
@@ -60,6 +60,7 @@ declare type BlogPost = {
 	like_count: number;
 	liked: boolean;
 	author: string;
+	searchTerms?: string;
 	error?: string;
 };
 

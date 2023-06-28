@@ -1,6 +1,10 @@
 {
 	"name": "frontend",
 	"version": "0.0.1",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/acekavi/acekavi.me.git"
+	},
 	"private": true,
 	"scripts": {
 		"dev": "vite dev",
@@ -44,15 +48,10 @@
 		"@fontsource-variable/manrope": "^5.0.3",
 		"@fontsource-variable/montserrat": "^5.0.4",
 		"@fontsource/zilla-slab": "^5.0.3",
-		"@types/mdast": "^3.0.11",
-		"@types/unist": "^2.0.6",
-		"highlight.js": "^11.8.0",
 		"lucide-svelte": "^0.252.0",
-		"rehype-slug": "^5.1.0",
-		"rehype-stringify": "^9.0.3",
+		"rehype-external-links": "^2.1.0",
 		"remark-gfm": "^3.0.1",
-		"remark-parse": "^10.0.2",
-		"remark-rehype": "^10.1.0",
-		"unified": "^10.1.2"
+		"remark-github": "^11.2.4",
+		"shiki": "^0.14.3"
 	}
 }

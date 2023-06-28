@@ -47,7 +47,7 @@ export const actions: Actions = {
             });
             cookies.set('id', json.id, { httpOnly: true, sameSite: 'strict', secure: true, maxAge: 60 * 60 * 8, path: '/' });
 
-            return {message: 'Successfully logged in!'};
+            return { message: 'Successfully logged in!' };
         }
     },
     register: async ({ cookies, request }) => {
@@ -100,40 +100,40 @@ export const actions: Actions = {
                 path: '/'
             });
             cookies.set('id', json.id, { httpOnly: true, sameSite: 'strict', secure: true, maxAge: 60 * 60 * 8, path: '/' });
-            return {message: 'Successfully signed up!'};
+            return { message: 'Successfully signed up!' };
         }
     },
     logout: async ({ cookies, request }) => {
-		const data = await request.formData();
-		const session = cookies.get('session');
-		let options: RequestInit = {
-			method: 'GET',
-			credentials: 'same-origin',
-			headers: {
-				'Content-Type': 'application/json'
-			}
-		};
+        const data = await request.formData();
+        const session = cookies.get('session');
+        let options: RequestInit = {
+            method: 'GET',
+            credentials: 'same-origin',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        };
 
-		if (session) {
-			options.headers = {
-				...options.headers,
-				authorization: session
-			};
-		}
-		const response = await fetch(`${API_URL}/user/logout`, options);
+        if (session) {
+            options.headers = {
+                ...options.headers,
+                authorization: session
+            };
+        }
+        const response = await fetch(`${API_URL}/user/logout`, options);
 
-		const json: MessageResponse = await response.json();
+        const json: MessageResponse = await response.json();
 
-		if (!response.ok) {
-			if (json.error) {
-				return fail(422, {
-					error: json.error
-				});
-			}
-		} else {
-			cookies.delete('session');
-			cookies.delete('id');
-            return {message: 'Successfully logged out!'};
-		}
-	}
+        if (!response.ok) {
+            if (json.error) {
+                return fail(422, {
+                    error: json.error
+                });
+            }
+        } else {
+            cookies.delete('session');
+            cookies.delete('id');
+            return { message: 'Successfully logged out!' };
+        }
+    }
 };

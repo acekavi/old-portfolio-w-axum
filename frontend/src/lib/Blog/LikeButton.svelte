@@ -4,7 +4,7 @@
 	import type { SubmitFunction } from '@sveltejs/kit';
 	export let post: BlogPost;
 
-	let isLoading = false;
+	$: isLoading = false;
 	const likePost: SubmitFunction = (input) => {
 		isLoading = true;
 		return async (options) => {

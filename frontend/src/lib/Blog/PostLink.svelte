@@ -1,16 +1,16 @@
 <script lang="ts">
-	import { Eye, Heart } from 'lucide-svelte';
-	import { page } from '$app/stores';
+	import { Eye, Hash, Heart } from 'lucide-svelte';
 	import { formatDate } from '$lib/utils/utilities';
 	export let post: BlogPost;
 
-	const url = $page.url.pathname.includes('/admin')
-		? `/admin/post/${post.slug}`
-		: `/blog/${post.slug}`;
-	const updated_at = formatDate(post.updated_at);
+	$: updated_at = formatDate(post.updated_at);
 </script>
 
-<a href={url} class="border-b border-gray-500/10" data-sveltekit-preload-data="off">
+<a
+	href={`/blog/${post.slug}`}
+	class="border-b border-gray-500/10"
+	data-sveltekit-preload-data="off"
+>
 	<div class=" w-full hover:bg-primary-500 p-4">
 		<p class="text-4xl font-bold font-serif mb-2">{post.title}</p>
 		<div class="flex flex-wrap gap-2 lg:gap-0">
@@ -32,7 +32,11 @@
 		<p class="text-xl font-monospace line-clamp-3 my-2">{post.description}</p>
 		<div class="flex">
 			{#each post.tags as tag}
-				<p class="text-xs font-semibold variant-glass-surface leading-4 me-2 py-1 px-2">{tag}</p>
+				<span
+					class="inline-flex items-center rounded-md bg-blue-500/10 px-2 py-1 text-xs font-medium ring-1 ring-inset ring-blue-700/10 mx-1"
+				>
+					<Hash size="12px" />{tag}</span
+				>
 			{/each}
 		</div>
 	</div>

@@ -4,15 +4,14 @@
 	import { page } from '$app/stores';
 	import Comment_Section from '$lib/Blog/Comment_Section.svelte';
 	import LikeButton from '$lib/Blog/LikeButton.svelte';
-	import { toastStore } from '@skeletonlabs/skeleton';
+	import { TableOfContents, toastStore } from '@skeletonlabs/skeleton';
 	import { capitalize, formatDate } from '$lib/utils/utilities';
 	import { site_img, title, twitter } from '$lib/utils/config';
-	import { CodeBlock as codeblock } from '@skeletonlabs/skeleton';
 
 	export let data: PageData;
 	export let form: ActionData;
 
-	const updated_at = formatDate(data?.post?.updated_at);
+	$: updated_at = formatDate(data?.post?.updated_at);
 
 	if (data.post?.author != undefined) {
 		data.post.author = capitalize(data.post.author);
@@ -43,7 +42,20 @@
 	</style>
 </svelte:head>
 
-<div class="lg:min-h-full w-4/5 lg:w-full mx-auto">
+<div class="flex lg:flex-row">
+	<aside
+		class="lg:w-80 lg:fixed lg:top-1/2 lg:bottom-1/2 lg:translate-y-1/2 lg:ms-6 hidden lg:block"
+	>
+		<TableOfContents
+			target="#postContent"
+			allowedHeadings="h1, h2, h3"
+			regionLabel="text-2xl uppercase font-semibold"
+			rounded="rounded-none"
+			active=""
+			scrollParent="#postContent"
+		/>
+	</aside>
+
 	<span class="hidden">
 		{#if form?.error}
 			{toastStore.trigger({
@@ -60,12 +72,15 @@
 			})}
 		{/if}
 	</span>
-	<main class="flex flex-col lg:ms-80">
+	<main class="flex flex-col lg:w-full w-4/5 mx-auto">
 		{#if data.post != undefined}
-			<p class="lg:text-9xl text-3xl font-heading-token font-extrabold">
+			<p class="lg:text-9xl text-3xl font-heading-token font-extrabold lg:text-center">
 				{data.post.title}
 			</p>
-			<div class="flex lg:flex-row flex-col gap-2 lg:gap-0 justify-between mb-2 mt-6">
+
+			<div
+				class="flex lg:flex-row flex-col gap-2 lg:gap-0 justify-between mb-2 mt-6 lg:w-4/5 lg:mx-auto"
+			>
 				<p class="text-sm px-2 leading-4 my-2">
 					Published by {data.post.author} on {updated_at}
 				</p>
@@ -74,7 +89,8 @@
 					{#each data.post.tags as tag}
 						<span
 							class="inline-flex items-center rounded-md bg-blue-500/10 px-2 py-1 text-xs font-medium ring-1 ring-inset ring-blue-700/10 mx-1"
-							><Hash size="12px" />{tag}</span
+						>
+							<Hash size="12px" />{tag}</span
 						>
 					{/each}
 				</div>
@@ -92,15 +108,38 @@
 			</div>
 
 			<div class="text-xl font-serif py-8 border-b border-gray-500/50">
-				<h1 class="h1 mb-2 font-extrabold">Overview</h1>
-				<div class="lg:ms-8 mt-4">{data.post.description}</div>
+				<h1 class="h1 mb-2 font-extrabold lg:mx-16">Overview</h1>
+				<div class=" mt-4 lg:mx-16">{data.post.description}</div>
 			</div>
 
-			<article class="prose dark:prose-invert min-w-full my-8">
-				{@html data.post.content}
-			</article>
+			<article
+				class="prose md:prose-lg lg:prose-xl dark:prose-invert my-8 min-w-full"
+				id="postContent"
+			>
+				<script lang="ts">
+					function copyCode(button: HTMLButtonElement) {
+						const codeBlock = button.parentNode?.nextElementSibling as HTMLElement;
+						const code = codeBlock?.textContent;
+						if (code) {
+							navigator.clipboard.writeText(code).then(() => {
+								button.textContent = 'Copied!';
+								setTimeout(() => {
+									button.textContent = 'Copy';
+								}, 1000);
+							});
+						}
+					}
+				</script>
 
-			<Comment_Section comments={data.comments} current_user={data.user} />
+				<div
+					class="lg:ms-80 lg:w-5/6 prose-pre:m-0 prose-a:no-underline lg:prose-pre:w-full prose-pre:rounded-none prose-pre:bg-neutral-900/70"
+				>
+					{@html data.post.content}
+				</div>
+			</article>
+			<div class="lg:ms-80 lg:w-5/6">
+				<Comment_Section comments={data.comments} current_user={data.user} />
+			</div>
 		{:else}
 			<div class="flex flex-row h-screen justify-center text-center">
 				<p class="text-5xl font-sans my-auto">

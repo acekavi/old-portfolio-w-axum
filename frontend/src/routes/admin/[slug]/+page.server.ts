@@ -90,7 +90,7 @@ export const actions: Actions = {
                 authorization: session
             };
         } else {
-            return { error: 'Please log in to delete this post' };
+            return { error: 'You aint me bitch!' };
         }
 
         const response = await fetch(`${API_URL}/blog/${params.slug}`, options);
