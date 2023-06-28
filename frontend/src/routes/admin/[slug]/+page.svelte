@@ -1,8 +1,15 @@
 <script async script lang="ts">
-	import { InputChip, SlideToggle, modalStore, type ModalSettings } from '@skeletonlabs/skeleton';
-	import { Edit, Loader2, MousePointerClick, XSquare } from 'lucide-svelte';
+	import {
+		InputChip,
+		SlideToggle,
+		modalStore,
+		type ModalSettings,
+		toastStore
+	} from '@skeletonlabs/skeleton';
+	import { Edit, Loader2, XSquare } from 'lucide-svelte';
 	import type { ActionData, PageData, SubmitFunction } from './$types';
 	import { enhance } from '$app/forms';
+	import { title } from '$lib/utils/config';
 	export let data: PageData;
 
 	$: isLoading = false;
@@ -11,6 +18,21 @@
 	const loader: SubmitFunction = (input) => {
 		isLoading = true;
 		return async (options) => {
+			if (options.result.status !== 200) {
+				toastStore.trigger({
+					// @ts-ignore
+					message: options.result.data.error,
+					timeout: 5000,
+					background: 'variant-glass-error'
+				});
+			} else {
+				toastStore.trigger({
+					// @ts-ignore
+					message: options.result.data.message,
+					timeout: 5000,
+					background: 'variant-glass-success'
+				});
+			}
 			isLoading = false;
 			await options.update();
 		};
@@ -18,10 +40,8 @@
 
 	const modal: ModalSettings = {
 		type: 'confirm',
-		// Data
 		title: 'Please Confirm',
 		body: 'Are you sure you want to delete this post?',
-		// TRUE if confirm pressed, FALSE if cancel pressed
 		response: (r: boolean) => {
 			if (r) {
 				deleteButton.click();

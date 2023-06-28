@@ -9,11 +9,10 @@
 	import { site_img, title, twitter } from '$lib/utils/config';
 
 	export let data: PageData;
-	export let form: ActionData;
 
 	$: updated_at = formatDate(data?.post?.updated_at);
 
-	if (data.post?.author != undefined) {
+	if (data.post?.author) {
 		data.post.author = capitalize(data.post.author);
 	}
 </script>
@@ -55,25 +54,8 @@
 			scrollParent="#postContent"
 		/>
 	</aside>
-
-	<span class="hidden">
-		{#if form?.error}
-			{toastStore.trigger({
-				message: form?.error,
-				timeout: 5000,
-				background: 'variant-glass-error'
-			})}
-		{/if}
-		{#if form?.message}
-			{toastStore.trigger({
-				message: form?.message,
-				timeout: 5000,
-				background: 'variant-glass-success'
-			})}
-		{/if}
-	</span>
 	<main class="flex flex-col lg:w-full w-4/5 mx-auto">
-		{#if data.post != undefined}
+		{#if data.post}
 			<p class="lg:text-9xl text-3xl font-heading-token font-extrabold lg:text-center">
 				{data.post.title}
 			</p>

@@ -7,9 +7,9 @@
 	export let data: PageData;
 
 	// @ts-ignore
-	const searchStore = createSearchStore(data.posts);
+	$: searchStore = createSearchStore(data.posts);
 
-	const unsubscribe = searchStore.subscribe((model) => searchHandler(model));
+	$: unsubscribe = searchStore.subscribe((model) => searchHandler(model));
 
 	onDestroy(() => {
 		unsubscribe();

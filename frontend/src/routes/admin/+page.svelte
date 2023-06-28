@@ -14,6 +14,21 @@
 	const loader: SubmitFunction = (input) => {
 		isLoading = true;
 		return async (options) => {
+			if (options.result.status !== 200) {
+				toastStore.trigger({
+					// @ts-ignore
+					message: options.result.data.error,
+					timeout: 5000,
+					background: 'variant-glass-error'
+				});
+			} else {
+				toastStore.trigger({
+					// @ts-ignore
+					message: options.result.data.message,
+					timeout: 5000,
+					background: 'variant-glass-success'
+				});
+			}
 			isLoading = false;
 			await options.update();
 		};
@@ -42,22 +57,6 @@
 </p>
 <div class="lg:grid lg:grid-flow-col lg:grid-rows-1 lg:grid-cols-2 flex flex-col gap-8 my-8">
 	<main class="w-4/5 mx-auto overflow-y-scroll">
-		<span class="hidden">
-			{#if form?.error}
-				{toastStore.trigger({
-					message: form?.error,
-					timeout: 5000,
-					background: 'variant-glass-error'
-				})}
-			{/if}
-			{#if form?.message}
-				{toastStore.trigger({
-					message: form?.message,
-					timeout: 5000,
-					background: 'variant-glass-success'
-				})}
-			{/if}
-		</span>
 		<div class="my-auto flex-col justify-center align-middle">
 			<p class="text-5xl font-bold h1 mb-4">Add a new Post!</p>
 
@@ -71,7 +70,7 @@
 							name="title"
 							type="text"
 							placeholder="Title for the post"
-							value={form?.values?.title || ''}
+							value={form?.title || ''}
 							autocomplete="off"
 						/>
 					</label>
@@ -83,7 +82,7 @@
 							name="description"
 							rows="2"
 							placeholder="Description for the post"
-							value={form?.values?.description || ''}
+							value={form?.description || ''}
 						/>
 					</label>
 
@@ -94,7 +93,7 @@
 							name="content"
 							rows="20"
 							placeholder="Content for the post in Markdown"
-							value={form?.values?.content || ''}
+							value={form?.content || ''}
 						/>
 					</label>
 
@@ -106,7 +105,7 @@
 							name="category"
 							type="text"
 							placeholder="Category of the post"
-							value={form?.values?.category || ''}
+							value={form?.category || ''}
 							autocomplete="off"
 						/>
 					</label>
@@ -118,7 +117,7 @@
 							placeholder="Tags for the post"
 							rounded="rounded-none"
 							padding="py-1 px-2"
-							value={form?.values?.tags || []}
+							value={form?.tags || []}
 						/>
 					</div>
 
@@ -130,7 +129,7 @@
 							name="is_draft"
 							label="Draft"
 							size="sm"
-							checked={form?.values?.is_draft || false}
+							checked={form?.is_draft || false}
 						/>
 					</div>
 

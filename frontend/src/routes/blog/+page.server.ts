@@ -14,7 +14,7 @@ export const load: PageServerLoad = async ({ cookies, locals }) => {
 	if (session) {
 		options.headers = {
 			...options.headers,
-			authorization: session
+			authorization: session.toString()
 		};
 	}
 

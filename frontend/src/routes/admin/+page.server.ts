@@ -1,5 +1,6 @@
 import { API_URL } from '$env/static/private';
 import type { Actions, PageServerLoad } from './$types';
+import { fail } from '@sveltejs/kit';
 
 export const load: PageServerLoad = async ({ cookies, locals }) => {
     const session = cookies.get('session');
@@ -14,7 +15,7 @@ export const load: PageServerLoad = async ({ cookies, locals }) => {
     if (session) {
         options.headers = {
             ...options.headers,
-            authorization: session
+            authorization: session.toString()
         };
     }
 
@@ -56,10 +57,10 @@ export const actions: Actions = {
             },
         };
 
-        if (session !== undefined) {
+        if (session) {
             options.headers = {
                 ...options.headers,
-                authorization: session
+                authorization: session.toString()
             };
         } else {
             return { error: 'You aint me bitch!' };
@@ -68,24 +69,23 @@ export const actions: Actions = {
 
         if (title && content && description && category && tags) {
             options.body = JSON.stringify({
-                title,
-                description,
-                content,
-                category,
-                tags,
-                is_draft,
+                title: title.toString(),
+                description: description.toString(),
+                content: content.toString(),
+                category: category.toString(),
+                tags: tags,
+                is_draft: is_draft,
             });
         } else {
-            return {
-                error: 'You missed some fields', values: {
-                    title: title ? title.toString() : '',
-                    description: description ? description.toString() : '',
-                    content: content ? content.toString() : '',
-                    category: category ? category.toString() : '',
-                    tags: tags ? tags : [],
-                    is_draft: is_draft ? true : false
-                }
-            };
+            return fail(422, {
+                title: title.toString() || '',
+                description: description.toString() || '',
+                content: content.toString() || '',
+                category: category.toString() || '',
+                tags: tags || [],
+                is_draft: is_draft ? true : false,
+                error: "Please fill all the fields!"
+            });
         }
 
         const response = await fetch(`${API_URL}/blog`, options);
@@ -93,7 +93,15 @@ export const actions: Actions = {
 
         if (!response.ok) {
             if (json.error) {
-                return { error: json.error };
+                return fail(422, {
+                    title: title.toString() || '',
+                    description: description.toString() || '',
+                    content: content.toString() || '',
+                    category: category.toString() || '',
+                    tags: tags || [],
+                    is_draft: is_draft ? true : false,
+                    error: json.error
+                });
             }
         }
         return { message: 'Your post has been added!' };

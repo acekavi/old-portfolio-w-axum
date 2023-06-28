@@ -5,7 +5,7 @@ import type { Actions, PageServerLoad } from './$types';
 
 export const load: PageServerLoad = async ({ cookies, params, parent }) => {
 	const { user } = await parent();
-	const session = String(cookies.get('session'));
+	const session = cookies.get('session');
 	let options: RequestInit = {
 		method: 'GET',
 		credentials: 'same-origin',
@@ -14,10 +14,10 @@ export const load: PageServerLoad = async ({ cookies, params, parent }) => {
 		}
 	};
 
-	if (session !== 'undefined') {
+	if (session) {
 		options.headers = {
 			...options.headers,
-			authorization: session
+			authorization: session.toString()
 		};
 	}
 
@@ -29,7 +29,7 @@ export const load: PageServerLoad = async ({ cookies, params, parent }) => {
 
 	// Converting markdown to html
 	const transformed_post = (await markdownToHtml(post.content)).content;
-	post.content = transformed_post ? transformed_post : post.content;
+	post.content = transformed_post || post.content;
 
 	const comments: Comments[] = await comment_response.json();
 
@@ -42,7 +42,7 @@ export const load: PageServerLoad = async ({ cookies, params, parent }) => {
 
 export const actions: Actions = {
 	like: async ({ cookies, params }) => {
-		const session = String(cookies.get('session'));
+		const session = cookies.get('session');
 		let options: RequestInit = {
 			method: 'GET',
 			credentials: 'same-origin',
@@ -51,10 +51,10 @@ export const actions: Actions = {
 			}
 		};
 
-		if (session !== 'undefined') {
+		if (session) {
 			options.headers = {
 				...options.headers,
-				authorization: session
+				authorization: session.toString()
 			};
 		}
 
@@ -67,11 +67,14 @@ export const actions: Actions = {
 				return { error: json.error };
 			}
 		}
-		return { message: json.message ? 'Glad you liked it!' : 'Successfully unliked the post!' };
+		return { message: json.message ? 'Glad you liked it!' : 'You unliked the post' };
 	},
 	comment: async ({ cookies, params, request }) => {
 		const data = await request.formData();
-		const session = String(cookies.get('session'));
+		const content = data.get('content');
+		const parent_id = data.get('parent_id');
+
+		const session = cookies.get('session');
 		let options: RequestInit = {
 			method: 'POST',
 			credentials: 'same-origin',
@@ -80,24 +83,24 @@ export const actions: Actions = {
 			}
 		};
 
-		if (session !== 'undefined') {
+		if (session) {
 			options.headers = {
 				...options.headers,
-				authorization: session
+				authorization: session.toString()
 			};
 		} else {
 			return { error: 'Please log in to comment on this post' };
 		}
 
-		if (data.get('content') && data.get('parent_id')) {
+		if (content && parent_id) {
 			options.body = JSON.stringify({
-				content: data.get('content'),
+				content: content.toString(),
 				is_reply: true,
-				parent_id: data.get('parent_id')
+				parent_id: parent_id.toString(),
 			});
-		} else if (data.get('content') && !data.get('parent_id')) {
+		} else if (content && !parent_id) {
 			options.body = JSON.stringify({
-				content: data.get('content'),
+				content: content.toString(),
 				is_reply: false
 			});
 		} else {
@@ -116,7 +119,8 @@ export const actions: Actions = {
 	},
 	delete_comment: async ({ cookies, params, request }) => {
 		const data = await request.formData();
-		const session = String(cookies.get('session'));
+		const session = cookies.get('session');
+		const comment_id = data.get('comment_id');
 		let options: RequestInit = {
 			method: 'DELETE',
 			credentials: 'same-origin',
@@ -125,19 +129,19 @@ export const actions: Actions = {
 			}
 		};
 
-		if (session !== 'undefined') {
+		if (session) {
 			options.headers = {
 				...options.headers,
-				authorization: session
+				authorization: session.toString()
 			};
 		} else {
 			return { error: 'Please log in to delete this comment' };
 		}
 
-		if (!data.get('comment_id')) {
+		if (!comment_id) {
 			return { error: 'Cannot delete comment' };
 		} else {
-			options.body = JSON.stringify({ comment_id: data.get('comment_id') });
+			options.body = JSON.stringify({ comment_id: comment_id.toString() });
 		}
 
 		const response = await fetch(`${API_URL}/blog/${params.slug}/comment`, options);

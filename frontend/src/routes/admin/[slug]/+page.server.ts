@@ -3,7 +3,7 @@ import { redirect } from '@sveltejs/kit';
 import type { Actions, PageServerLoad } from './$types';
 
 export const load: PageServerLoad = async ({ cookies, params, parent }) => {
-    const session = String(cookies.get('session'));
+    const session = cookies.get('session');
     let options: RequestInit = {
         method: 'GET',
         credentials: 'same-origin',
@@ -12,10 +12,10 @@ export const load: PageServerLoad = async ({ cookies, params, parent }) => {
         }
     };
 
-    if (session !== 'undefined') {
+    if (session) {
         options.headers = {
             ...options.headers,
-            authorization: session
+            authorization: session.toString()
         };
     }
 
@@ -46,7 +46,7 @@ export const actions: Actions = {
             },
         };
 
-        if (session !== undefined) {
+        if (session) {
             options.headers = {
                 ...options.headers,
                 authorization: session
@@ -56,12 +56,12 @@ export const actions: Actions = {
         }
 
         options.body = JSON.stringify({
-            title,
-            description,
-            content,
-            category,
-            tags,
-            is_draft,
+            title: title.toString(),
+            description: description.toString(),
+            content: content.toString(),
+            category: category.toString(),
+            tags: tags,
+            is_draft: is_draft,
         });
 
         const response = await fetch(`${API_URL}/blog/${params.slug}`, options);
@@ -87,7 +87,7 @@ export const actions: Actions = {
         if (session) {
             options.headers = {
                 ...options.headers,
-                authorization: session
+                authorization: session.toString()
             };
         } else {
             return { error: 'You aint me bitch!' };

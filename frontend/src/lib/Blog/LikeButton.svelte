@@ -2,12 +2,28 @@
 	import { Heart, Loader2 } from 'lucide-svelte';
 	import { enhance } from '$app/forms';
 	import type { SubmitFunction } from '@sveltejs/kit';
+	import { toastStore } from '@skeletonlabs/skeleton';
 	export let post: BlogPost;
 
 	$: isLoading = false;
 	const likePost: SubmitFunction = (input) => {
 		isLoading = true;
 		return async (options) => {
+			if (options.result.status !== 200) {
+				toastStore.trigger({
+					// @ts-ignore
+					message: options.result.data.error,
+					timeout: 5000,
+					background: 'variant-glass-error'
+				});
+			} else {
+				toastStore.trigger({
+					// @ts-ignore
+					message: options.result.data.message,
+					timeout: 5000,
+					background: 'variant-glass-success'
+				});
+			}
 			isLoading = false;
 			await options.update();
 		};

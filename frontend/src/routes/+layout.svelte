@@ -12,6 +12,7 @@
 	import { computePosition, autoUpdate, offset, shift, flip, arrow } from '@floating-ui/dom';
 	import { author, title } from '$lib/utils/config';
 	import type { LayoutData } from './$types';
+	export let data: LayoutData;
 
 	const modalComponentRegistry: Record<string, ModalComponent> = {
 		LoginModal: {
@@ -22,8 +23,6 @@
 		}
 	};
 	storePopup.set({ computePosition, autoUpdate, offset, shift, flip, arrow });
-
-	export let data: LayoutData;
 </script>
 
 <svelte:head>

@@ -3,6 +3,7 @@
 	import CommentBox from './Comment_Box.svelte';
 	import { enhance } from '$app/forms';
 	import { Loader2, MessageSquare, MessagesSquare } from 'lucide-svelte';
+	import { toastStore } from '@skeletonlabs/skeleton';
 
 	export let comments: Comments[];
 	export let current_user: User;
@@ -13,6 +14,21 @@
 	const addComment: SubmitFunction = (input) => {
 		commentLoading = true;
 		return async (options) => {
+			if (options.result.status !== 200) {
+				toastStore.trigger({
+					// @ts-ignore
+					message: options.result.data.error,
+					timeout: 5000,
+					background: 'variant-glass-error'
+				});
+			} else {
+				toastStore.trigger({
+					// @ts-ignore
+					message: options.result.data.message,
+					timeout: 5000,
+					background: 'variant-glass-success'
+				});
+			}
 			commentLoading = false;
 			await options.update();
 		};
@@ -20,6 +36,21 @@
 	const addReply: SubmitFunction = (input) => {
 		replyLoading = true;
 		return async (options) => {
+			if (options.result.status !== 200) {
+				toastStore.trigger({
+					// @ts-ignore
+					message: options.result.data.error,
+					timeout: 5000,
+					background: 'variant-glass-error'
+				});
+			} else {
+				toastStore.trigger({
+					// @ts-ignore
+					message: options.result.data.message,
+					timeout: 5000,
+					background: 'variant-glass-success'
+				});
+			}
 			replyLoading = false;
 			await options.update();
 		};

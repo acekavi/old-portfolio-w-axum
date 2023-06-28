@@ -59,10 +59,10 @@ export const actions: Actions = {
 
         if (password !== confirm_password) {
             return fail(422, {
-                username: data.get('username'),
-                email: data.get('email'),
-                password: data.get('password'),
-                confirm_password: data.get('confirm-password'),
+                username,
+                email,
+                password,
+                confirm_password,
                 error: 'Passwords do not match'
             });
         }
@@ -81,10 +81,10 @@ export const actions: Actions = {
         if (!response.ok) {
             if (json.error) {
                 return fail(422, {
-                    username: data.get('username'),
-                    email: data.get('email'),
-                    password: data.get('password'),
-                    confirm_password: data.get('confirm-password'),
+                    username,
+                    email,
+                    password,
+                    confirm_password,
                     error: json.error
                 });
             }

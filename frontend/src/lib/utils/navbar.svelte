@@ -45,7 +45,6 @@
 					timeout: 5000,
 					background: 'variant-glass-success'
 				});
-				modalStore.close();
 			}
 			await options.update();
 		};
