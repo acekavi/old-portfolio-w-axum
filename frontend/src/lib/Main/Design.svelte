@@ -28,7 +28,7 @@
 			</section>
 
 			<footer class="card-footer flex flex-row justify-evenly pb-8 pt-8">
-				<a href="https://www.behance.net/acekavi" class="btn variant-soft-primary">
+				<a href="https://www.behance.net/acekavi" class="btn variant-soft-primary" target="_blank">
 					<span
 						><svg
 							xmlns="http://www.w3.org/2000/svg"

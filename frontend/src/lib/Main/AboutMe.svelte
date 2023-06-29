@@ -1,5 +1,14 @@
 <script>
-	import { Linkedin, Github, PenTool, Instagram } from 'lucide-svelte';
+	import { Linkedin, Github, Instagram, FileHeart } from 'lucide-svelte';
+
+	function downloadFile() {
+		const link = document.createElement('a');
+		link.href = '/avishka_kavinda.pdf';
+		link.download = 'Avishka Kavinda.pdf';
+		document.body.appendChild(link);
+		link.click();
+		document.body.removeChild(link);
+	}
 </script>
 
 <div
@@ -13,39 +22,46 @@
 				Who am I?
 			</p>
 		</header>
-		<section class="pb-8 flex">
+		<section class="pb-8">
 			<p class="lg:text-l text-justify px-8">
-				Hello! I'm Avishka Kavinda, A fullstack developer based here in <span
-					class="skew-text before:-skew-y-2 before:bg-[#9ed6ad]"
+				Hello! I'm Avishka Kavinda, A fullstack developer based here in
+				<a
+					href="https://www.google.com/search?client=firefox-b-d&q=colombo+google+map#"
+					class="skew-text"
+					target="_blank">📍Colombo, Sri Lanka.</a
 				>
-					<a
-						href="https://www.google.com/search?client=firefox-b-d&q=colombo+google+map#"
-						class="relative">📍Colombo, Sri Lanka.</a
-					>
-				</span>
 
 				I have a passion for creating beautiful, intuitive and highly functional websites and
 				applications. I have a strong interest in learning new technologies and frameworks and I'm
 				always looking for new challenges. <br /> <br />The site you're currently seeing was created
 				using
-				<span class="skew-text before:-skew-y-6 before:bg-[#a674e5]">
-					<a href="https://tokio.rs/blog/2021-07-announcing-axum" class="relative">Axum</a>
-				</span>
+				<a href="https://tokio.rs/blog/2021-07-announcing-axum" class="skew-text" target="_blank"
+					>Axum</a
+				>
 				a rust backend framework and
-				<span class="skew-text before:skew-y-3 before:bg-[#ff3e00]">
-					<a href="https://kit.svelte.dev/" class="relative">SvelteKit</a>
-				</span> a javascript frontend framework. I'm currently working on a few projects and I'm always
-				looking for new opportunities. If you have a project you'd like to discuss, feel free to contact
-				me.
+				<a href="https://kit.svelte.dev/" class="skew-text" target="_blank">SvelteKit</a>
+				a javascript frontend framework. I'm currently working on a few projects and I'm always looking
+				for new opportunities. If you have a project you'd like to discuss, feel free to contact me.
 			</p>
+			<div class="w-full">
+				<button
+					class="btn btn-sm variant-glass-surface w-full mt-8 rounded-none font-serif"
+					on:click|preventDefault={downloadFile}
+				>
+					<span>View my resume</span>
+					<span><FileHeart stroke-width="1.25" size="18px" /></span>
+				</button>
+			</div>
 		</section>
 
-		<footer class="card-footer mx-8 pt-8 border-t border-gray-500/10">
+		<footer class="card-footer">
 			<div class=" flex flex-row justify-evenly">
-				<a href="https://www.linkedin.com/in/acekavi" class="btn-icon variant-ringed"
-					><Linkedin stroke-width="1.25" size="18" /></a
+				<a
+					target="_blank"
+					href="https://www.linkedin.com/in/acekavi"
+					class="btn-icon variant-ringed"><Linkedin stroke-width="1.25" size="18" /></a
 				>
-				<a href="https://www.behance.net/acekavi" class="btn-icon variant-ringed"
+				<a target="_blank" href="https://www.behance.net/acekavi" class="btn-icon variant-ringed"
 					><svg
 						xmlns="http://www.w3.org/2000/svg"
 						height="1em"
@@ -57,10 +73,10 @@
 						/></svg
 					></a
 				>
-				<a href="https://www.instagram.com/acekavi" class="btn-icon variant-ringed"
+				<a target="_blank" href="https://www.instagram.com/acekavi" class="btn-icon variant-ringed"
 					><Instagram stroke-width="1.25" size="18" /></a
 				>
-				<a href="https://github.com/acekavi" class="btn-icon variant-ringed"
+				<a target="_blank" href="https://github.com/acekavi" class="btn-icon variant-ringed"
 					><Github stroke-width="1.25" size="18" /></a
 				>
 			</div>

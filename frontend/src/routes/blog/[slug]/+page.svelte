@@ -12,7 +12,7 @@
 
 	$: updated_at = formatDate(data?.post?.updated_at);
 
-	if (data.post?.author) {
+	if (data.post?.author != undefined) {
 		data.post.author = capitalize(data.post.author);
 	}
 </script>
@@ -55,7 +55,7 @@
 		/>
 	</aside>
 	<main class="flex flex-col lg:w-full w-4/5 mx-auto">
-		{#if data.post}
+		{#if data.post != undefined}
 			<p class="lg:text-9xl text-3xl font-heading-token font-extrabold lg:text-center">
 				{data.post.title}
 			</p>

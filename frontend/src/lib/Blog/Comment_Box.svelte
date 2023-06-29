@@ -6,7 +6,7 @@
 	import { formatDate } from '$lib/utils/utilities';
 
 	export let comment: Comments;
-	export let current_user: User;
+	export let current_user: User | null;
 
 	let deleteButton: HTMLButtonElement;
 	const deleteModal: ModalSettings = {
@@ -45,7 +45,7 @@
 		};
 	};
 
-	const current_user_id = current_user.id || '';
+	const current_user_id = current_user?.id || '';
 </script>
 
 <div class="my-auto">

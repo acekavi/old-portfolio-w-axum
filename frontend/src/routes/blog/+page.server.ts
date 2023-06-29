@@ -1,5 +1,6 @@
 import { API_URL } from '$env/static/private';
 import type { PageServerLoad } from './$types';
+import { fail, error } from '@sveltejs/kit';
 
 export const load: PageServerLoad = async ({ cookies, locals }) => {
 	const session = cookies.get('session');
@@ -27,9 +28,8 @@ export const load: PageServerLoad = async ({ cookies, locals }) => {
 	}));
 
 	if (!response.ok) {
-		if (json[0].error) {
-			return { error: json[0].error };
-		}
+		console.log(json[0].error);
+		throw error(500, "Internal Server Error");
 	} else {
 		return { posts: json };
 	}

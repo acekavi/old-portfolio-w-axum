@@ -3,13 +3,14 @@ module.exports = {
 	darkMode: 'class',
 	content: [
 		'./src/**/*.{html,js,svelte,ts}',
-		require('path').join(require.resolve(
-			'@skeletonlabs/skeleton'),
-			'../**/*.{html,js,svelte,ts}'
-		)
+		require('path').join(require.resolve('@skeletonlabs/skeleton'), '../**/*.{html,js,svelte,ts}')
 	],
 	theme: {
 		extend: {
+			backgroundImage: {
+				'scales-light': "url('/light-dragon-scales.svg')",
+				'scales-dark': "url('/dark-dragon-scales.svg')"
+			},
 			animation: {
 				float: 'float 5s ease-in-out infinite',
 				shuffle: 'shuffle 6s ease-in-out infinite',
@@ -48,9 +49,12 @@ module.exports = {
 			}
 		}
 	},
+	variants: {
+		extend: { backgroundImage: ['dark'] }
+	},
 	plugins: [
 		require('@tailwindcss/forms'),
 		require('@tailwindcss/typography'),
 		...require('@skeletonlabs/skeleton/tailwind/skeleton.cjs')()
 	]
-}
+};

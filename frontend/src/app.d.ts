@@ -107,5 +107,20 @@ declare type CommentResponse = {
 	error?: string;
 };
 
+declare type email = {
+	email: string;
+}
+
+declare type emailContent = {
+	type: string;
+	value: string;
+}
+
+declare type sendMailParams = {
+	personalizations: [{ to: email }];
+	from: email;
+	subject: string;
+	content: emailContent;
+}
 
 // export { };

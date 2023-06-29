@@ -9,10 +9,34 @@
 	import { Edit, Loader2, XSquare } from 'lucide-svelte';
 	import type { ActionData, PageData, SubmitFunction } from './$types';
 	import { enhance } from '$app/forms';
-	import { title } from '$lib/utils/config';
 	export let data: PageData;
 
+	type Post = {
+		title: string;
+		description: string;
+		content: string;
+		category: string;
+		tags: string[];
+		is_draft: boolean;
+	};
+
+	let current_post: Post = {
+		// @ts-ignore
+		title: data.post.title,
+		// @ts-ignore
+		description: data.post.description,
+		// @ts-ignore
+		content: data.post.content,
+		// @ts-ignore
+		category: data.post.category,
+		// @ts-ignore
+		tags: data.post.tags,
+		// @ts-ignore
+		is_draft: data.post.is_draft
+	};
+
 	$: isLoading = false;
+
 	let deleteButton: HTMLButtonElement;
 
 	const loader: SubmitFunction = (input) => {
@@ -55,7 +79,7 @@
 </script>
 
 <svelte:head>
-	<title>Admin : {data.post.title}</title>
+	<title>Admin : {current_post.title}</title>
 	<meta
 		name="description"
 		content="Avishka Kavinda's Personal Blog Site: Exploring My Career Journey and Sharing Insights"
@@ -79,7 +103,7 @@
 						name="title"
 						type="text"
 						placeholder="Title for the post"
-						value={data.post.title || ''}
+						value={current_post.title}
 						autocomplete="off"
 					/>
 				</label>
@@ -91,7 +115,7 @@
 						name="description"
 						rows="2"
 						placeholder="Description for the post"
-						value={data.post.description || ''}
+						value={current_post.description}
 					/>
 				</label>
 
@@ -102,7 +126,7 @@
 						name="content"
 						rows="20"
 						placeholder="Content for the post in Markdown"
-						value={data.post.content || ''}
+						value={current_post.content}
 					/>
 				</label>
 
@@ -114,7 +138,7 @@
 						name="category"
 						type="text"
 						placeholder="Category of the post"
-						value={data.post.category || ''}
+						value={current_post.category}
 						autocomplete="off"
 					/>
 				</label>
@@ -126,24 +150,19 @@
 						placeholder="Tags for the post"
 						rounded="rounded-none"
 						padding="py-1 px-2"
-						value={data.post.tags || []}
+						value={current_post.tags}
 					/>
 				</div>
 
 				<div class="col-span-full flex">
 					<label for="is_draft" class="block mb-1 text-sm font-semibold leading-6 me-4">Draft</label
 					>
-					<SlideToggle
-						name="is_draft"
-						label="Draft"
-						size="sm"
-						checked={data.post.is_draft || false}
-					/>
+					<SlideToggle name="is_draft" label="Draft" size="sm" checked={current_post.is_draft} />
 				</div>
 
 				<div class="col-span-full mb-8">
 					<button type="submit" class="btn variant-glass-success mt-4">
-						<span>Edit Post</span>
+						<span>Edit current_post</span>
 						{#if isLoading}
 							<Loader2 class="animate-spin" />
 						{:else}
@@ -151,10 +170,10 @@
 						{/if}
 					</button>
 					<button on:click|preventDefault={modalTrigger} class="btn variant-glass-error mt-4">
-						<span>Delete Post</span>
+						<span>Delete current_post</span>
 						<span><XSquare stroke-width="1.25" size="18px" /></span>
 					</button>
-					<button class="hidden" formaction="?/delete_post" bind:this={deleteButton} />
+					<button class="hidden" formaction="?/delete_current_post" bind:this={deleteButton} />
 				</div>
 			</div>
 		</form>

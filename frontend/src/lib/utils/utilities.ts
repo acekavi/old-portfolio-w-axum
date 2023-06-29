@@ -17,3 +17,26 @@ export async function sleep(ms: number) {
 		setTimeout(resolve, ms);
 	});
 };
+
+type Options = {
+	message: string;
+	error: string;
+};
+
+export function toastTrigger(status: number, data: Options) {
+	if (status !== 200) {
+		toastStore.trigger({
+			// @ts-ignore
+			message: data.error,
+			timeout: 5000,
+			background: 'variant-glass-error'
+		});
+	} else {
+		toastStore.trigger({
+			// @ts-ignore
+			message: data.message,
+			timeout: 5000,
+			background: 'variant-glass-success'
+		});
+	}
+}

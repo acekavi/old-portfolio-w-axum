@@ -1,6 +1,7 @@
 import { API_URL } from '$env/static/private';
 import { redirect } from '@sveltejs/kit';
 import type { Actions, PageServerLoad } from './$types';
+import { fail, error } from '@sveltejs/kit';
 
 export const load: PageServerLoad = async ({ cookies, params, parent }) => {
     const session = cookies.get('session');
@@ -22,6 +23,10 @@ export const load: PageServerLoad = async ({ cookies, params, parent }) => {
     const post_response = await fetch(`${API_URL}/blog/${params.slug}`, options);
     const post: BlogPost = await post_response.json();
 
+    if (!post_response.ok) {
+        console.log(post.error);
+        throw error(404, "Are you lost baby girl?");
+    }
     return { post };
 };
 
@@ -52,27 +57,38 @@ export const actions: Actions = {
                 authorization: session
             };
         } else {
-            return { error: 'Please log in to update this post' };
+            return fail(422, {
+                post: body,
+                error: "Please log in to update this post!"
+            });
         }
 
-        options.body = JSON.stringify({
+        let body = {
             title: title.toString(),
             description: description.toString(),
             content: content.toString(),
             category: category.toString(),
             tags: tags,
-            is_draft: is_draft,
-        });
+            is_draft: is_draft
+        };
+
+        options.body = JSON.stringify(body);
 
         const response = await fetch(`${API_URL}/blog/${params.slug}`, options);
         const json: MessageResponse = await response.json();
 
         if (!response.ok) {
             if (json.error) {
-                return { error: json.error };
+                return fail(422, {
+                    post: body,
+                    error: json.error
+                });
             }
         }
-        return { message: 'Your post has been updated!' };
+        return {
+            post: body,
+            message: 'Your post has been updated!'
+        };
     },
     delete_post: async ({ cookies, params, request }) => {
         const session = cookies.get('session');
@@ -90,7 +106,9 @@ export const actions: Actions = {
                 authorization: session.toString()
             };
         } else {
-            return { error: 'You aint me bitch!' };
+            return fail(422, {
+                error: 'Nice try Bitch!'
+            });
         }
 
         const response = await fetch(`${API_URL}/blog/${params.slug}`, options);
@@ -99,7 +117,9 @@ export const actions: Actions = {
 
         if (!response.ok) {
             if (json.error) {
-                return { error: json.error };
+                return fail(422, {
+                    error: json.error
+                });
             }
         }
         throw redirect(302, '/admin');

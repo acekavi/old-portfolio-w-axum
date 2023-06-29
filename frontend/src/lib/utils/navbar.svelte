@@ -67,7 +67,7 @@
 
 <div class="lg:sticky lg:top-0 lg:left-0 lg:h-0 lg:p-0 z-50">
 	<div class="flex justify-between text-zinc-900 dark:text-zinc-100 items-center">
-		<div class="ms-16 lg:mt-8 p-4">
+		<div class="lg:ms-16 lg:mt-8 p-4">
 			<a href="/">
 				<!-- <img
 					src="https://ace-in-bucket2.s3.amazonaws.com/static/images/logo/Sign.png"
@@ -83,7 +83,7 @@
 			</a>
 		</div>
 
-		<div class="me-16 flex justify-between gap-4 uppercase items-center lg:mt-8">
+		<div class="lg:me-16 flex justify-between gap-4 uppercase items-center lg:mt-8 p-4">
 			<button
 				class="hover:text-neutral-600 dark:hover:text-neutral-300 [&>*]:pointer-events-none"
 				use:popup={popupClick}

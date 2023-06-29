@@ -74,6 +74,18 @@
 					/>
 				</label>
 
+				<button
+					class="col-span-full text-right"
+					on:click|preventDefault={() => {
+						toastStore.trigger({
+							// @ts-ignore
+							message: 'Please try to remember it 😂',
+							timeout: 4000,
+							background: 'variant-glass-primary'
+						});
+					}}>Forgot password?</button
+				>
+
 				<div class="col-span-full">
 					<button on:click={onClose} class="btn variant-ghost-surface my-4 float-left">
 						<span>Cancel</span>

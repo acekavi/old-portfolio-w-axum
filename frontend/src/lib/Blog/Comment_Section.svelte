@@ -6,7 +6,7 @@
 	import { toastStore } from '@skeletonlabs/skeleton';
 
 	export let comments: Comments[];
-	export let current_user: User;
+	export let current_user: User | null;
 
 	$: commentLoading = false;
 	$: replyLoading = false;

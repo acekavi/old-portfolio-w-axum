@@ -48,6 +48,7 @@
 		"@fontsource-variable/manrope": "^5.0.3",
 		"@fontsource-variable/montserrat": "^5.0.4",
 		"@fontsource/zilla-slab": "^5.0.3",
+		"@sendgrid/mail": "^7.7.0",
 		"lucide-svelte": "^0.252.0",
 		"rehype-external-links": "^2.1.0",
 		"remark-gfm": "^3.0.1",

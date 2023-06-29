@@ -12,6 +12,8 @@
 	import { computePosition, autoUpdate, offset, shift, flip, arrow } from '@floating-ui/dom';
 	import { author, title } from '$lib/utils/config';
 	import type { LayoutData } from './$types';
+	import { fade, fly } from 'svelte/transition';
+	import { quintIn, quintOut } from 'svelte/easing';
 	export let data: LayoutData;
 
 	const modalComponentRegistry: Record<string, ModalComponent> = {
@@ -36,4 +38,11 @@
 <Toast rounded="rounded-md" zIndex="z-50" />
 <Navbar user={data.user} />
 
-<slot />
+{#key data.url}
+	<div
+		in:fade={{ delay: 300, duration: 300, easing: quintIn }}
+		out:fade={{ duration: 300, easing: quintOut }}
+	>
+		<slot />
+	</div>
+{/key}

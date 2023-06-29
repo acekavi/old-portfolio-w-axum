@@ -1,5 +1,50 @@
-<script>
-	import { Linkedin, Github, Instagram, Twitter, FileHeart, Mail, Send } from 'lucide-svelte';
+<script lang="ts">
+	import { enhance } from '$app/forms';
+	import { toastStore } from '@skeletonlabs/skeleton';
+	import type { SubmitFunction } from '@sveltejs/kit';
+	import {
+		Linkedin,
+		Github,
+		Instagram,
+		Twitter,
+		FileHeart,
+		Mail,
+		Send,
+		Loader2
+	} from 'lucide-svelte';
+
+	let isLoading = false;
+	const loader: SubmitFunction = (input) => {
+		isLoading = true;
+		return async (options) => {
+			if (options.result.status !== 200) {
+				toastStore.trigger({
+					// @ts-ignore
+					message: options.result.data.error,
+					timeout: 5000,
+					background: 'variant-glass-error'
+				});
+			} else {
+				toastStore.trigger({
+					// @ts-ignore
+					message: options.result.data.message,
+					timeout: 5000,
+					background: 'variant-glass-success'
+				});
+			}
+			isLoading = false;
+			await options.update();
+		};
+	};
+
+	function downloadFile() {
+		const link = document.createElement('a');
+		link.href = '/avishka_kavinda.pdf';
+		link.download = 'Avishka Kavinda.pdf';
+		document.body.appendChild(link);
+		link.click();
+		document.body.removeChild(link);
+	}
 </script>
 
 <div
@@ -10,13 +55,13 @@
 			Let's Connect!
 		</p>
 		<div class="flex flex-row justify-evenly pb-8 pt-16 gap-8">
-			<a href="https://www.twitter.com/acekavi" class="btn-icon variant-ringed"
+			<a target="_blank" href="https://www.twitter.com/acekavi" class="btn-icon variant-ringed"
 				><Twitter stroke-width="1.25" size="18" /></a
 			>
-			<a href="https://www.linkedin.com/in/acekavi" class="btn-icon variant-ringed"
+			<a target="_blank" href="https://www.linkedin.com/in/acekavi" class="btn-icon variant-ringed"
 				><Linkedin stroke-width="1.25" size="18" /></a
 			>
-			<a href="https://www.behance.net/acekavi" class="btn-icon variant-ringed"
+			<a target="_blank" href="https://www.behance.net/acekavi" class="btn-icon variant-ringed"
 				><svg
 					xmlns="http://www.w3.org/2000/svg"
 					height="1em"
@@ -28,107 +73,109 @@
 					/></svg
 				></a
 			>
-			<a href="https://www.instagram.com/acekavi" class="btn-icon variant-ringed"
+			<a target="_blank" href="https://www.instagram.com/acekavi" class="btn-icon variant-ringed"
 				><Instagram stroke-width="1.25" size="18" /></a
 			>
-			<a href="https://github.com/acekavi" class="btn-icon variant-ringed"
+			<a target="_blank" href="https://github.com/acekavi" class="btn-icon variant-ringed"
 				><Github stroke-width="1.25" size="18" /></a
 			>
 		</div>
 	</div>
 
 	<div class="card variant-glass py-4 lg:w-auto w-4/5">
-		<section class="m-8">
-			<form>
-				<div class="border-b border-gray-500/10">
-					<p class="font-sans text-2xl font-semibold leading-7">Lets work together!</p>
-					<p class="mb-4 text-sm leading-6 text-neutral-500">
-						Send me an email <Mail stroke-width="1.25" size="0.75rem" class="inline leading-6" />
-					</p>
+		<section class="mx-8 my-4">
+			<form method="POST" action="?/reachOut" use:enhance={loader}>
+				<p class="font-sans text-2xl font-semibold leading-7">Lets work together!</p>
+				<p class="mb-4 text-sm leading-6 text-neutral-500">
+					Reach out to me <Mail stroke-width="1.25" size="0.75rem" class="inline leading-6" />
+				</p>
 
-					<div class="grid grid-cols-1 gap-y-4 sm:grid-cols-6">
-						<label class="label col-span-full">
-							<span>Name</span>
+				<div class="grid grid-cols-1 gap-y-4 sm:grid-cols-6">
+					<label class="label col-span-full">
+						<span>Name</span>
+						<input
+							class="input variant-form-material leading-5"
+							title="Name"
+							name="name"
+							type="text"
+							placeholder="g.host"
+							autocomplete="off"
+						/>
+					</label>
+
+					<label class="label col-span-full">
+						<span>Subject</span>
+						<input
+							class="input variant-form-material leading-5"
+							title="Subject"
+							name="subject"
+							type="text"
+							placeholder="Work with me"
+							autocomplete="off"
+						/>
+					</label>
+
+					<label class="label col-span-full">
+						<span>Email address</span>
+						<input
+							class="input variant-form-material leading-5"
+							title="Email address"
+							name="email"
+							type="email"
+							placeholder="g.host@gmail.com"
+							autocomplete="off"
+						/>
+					</label>
+
+					<label class="label col-span-full">
+						<span>Linkedin</span>
+						<div
+							class="input-group input-group-divider grid-cols-[auto_1fr_auto] variant-form-material leading-5"
+						>
+							<div class="input-group-shim">https://www.linkedin.com/in/</div>
 							<input
-								class="input variant-form-material leading-5"
-								title="Name"
-								name="name"
+								class="input rounded-none leading-5"
+								title="Linkedin username"
+								name="linkedin"
 								type="text"
 								placeholder="g.host"
 								autocomplete="off"
 							/>
-						</label>
-
-						<label class="label col-span-full">
-							<span>Subject</span>
-							<input
-								class="input variant-form-material leading-5"
-								title="Subject"
-								name="subject"
-								type="text"
-								placeholder="Work with me"
-								autocomplete="off"
-							/>
-						</label>
-
-						<label class="label col-span-full">
-							<span>Email address</span>
-							<input
-								class="input variant-form-material leading-5"
-								title="Email address"
-								name="email"
-								type="email"
-								placeholder="g.host@gmail.com"
-								autocomplete="off"
-							/>
-						</label>
-
-						<label class="label col-span-full">
-							<span>Linkedin</span>
-							<div
-								class="input-group input-group-divider grid-cols-[auto_1fr_auto] variant-form-material leading-5"
-							>
-								<div class="input-group-shim">https://www.linkedin.com/in/</div>
-								<input
-									class="input rounded-none leading-5"
-									title="Linkedin username"
-									name="linkedin"
-									type="text"
-									placeholder="g.host"
-									autocomplete="off"
-								/>
-							</div>
-						</label>
-
-						<label class="label col-span-full">
-							<span>Message</span>
-							<textarea
-								class="textarea variant-form-material leading-5 resize-none"
-								name="message"
-								rows="4"
-								placeholder="Let's work together on ..."
-							/>
-						</label>
-
-						<div class="col-span-full">
-							<a
-								href="/avishka_kavinda.pdf"
-								download="Avishka.pdf"
-								class="mt-2 text-sm leading-10 text-gray-600 hover:text-gray-800 dark:text-gray-400 dark:hover:text-gray-300"
-								><FileHeart stroke-width="1.25" size="15" class="inline me-2" />View my Resume</a
-							>
 						</div>
+					</label>
+
+					<label class="label col-span-full">
+						<span>Message</span>
+						<textarea
+							class="textarea variant-form-material leading-5 resize-none"
+							name="message"
+							rows="4"
+							placeholder="Let's work together on ..."
+						/>
+					</label>
+
+					<div class="col-span-full">
+						<button
+							type="submit"
+							class="btn btn-sm variant-ghost-surface my-4 float-left"
+							on:click|preventDefault={downloadFile}
+						>
+							<span>Resume</span>
+							<span><FileHeart stroke-width="1.25" size="18px" /></span>
+						</button>
+
+						<button type="submit" class="btn btn-sm variant-filled my-4 float-right">
+							<span>Send</span>
+							{#if isLoading}
+								<Loader2 class="animate-spin" />
+							{:else}
+								<span><Send stroke-width="1.25" size="18px" /></span>
+							{/if}
+						</button>
 					</div>
 				</div>
 			</form>
 		</section>
-
-		<footer class="card-footer flex flex-row justify-evenly">
-			<a href="https://www.behance.net/acekavi" class="btn btn-sm variant-soft-tertiary w-5/6">
-				<span>Send</span>
-				<span><Send stroke-width="1.25" size="15" /></span></a
-			>
-		</footer>
 	</div>
 </div>
 

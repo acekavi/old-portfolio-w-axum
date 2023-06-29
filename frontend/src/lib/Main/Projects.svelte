@@ -123,7 +123,7 @@
 							my ability to leverage emerging technologies for practical and impactful solutions.
 						</p>
 						<button class="accordian-btn btn btn-sm"
-							><a href="https://github.com/acekavi/SnakeEyes">Github</a></button
+							><a target="_blank" href="https://github.com/acekavi/SnakeEyes">Github</a></button
 						>
 					</svelte:fragment>
 				</AccordionItem>
@@ -144,7 +144,8 @@
 							real-world scenarios.
 						</p>
 						<button class="accordian-btn btn btn-sm"
-							><a href="https://github.com/acekavi/coursework_oop">Github</a></button
+							><a target="_blank" href="https://github.com/acekavi/coursework_oop">Github</a
+							></button
 						>
 					</svelte:fragment>
 				</AccordionItem>
@@ -165,10 +166,10 @@
 							real-world applications.
 						</p>
 						<button class="accordian-btn btn btn-sm"
-							><a href="https://acekavi.github.io/clarkslk/">Demo</a></button
+							><a target="_blank" href="https://acekavi.github.io/clarkslk/">Demo</a></button
 						>
 						<button class="accordian-btn btn btn-sm ms-4"
-							><a href="https://github.com/acekavi/clarkslk">Github</a></button
+							><a target="_blank" href="https://github.com/acekavi/clarkslk">Github</a></button
 						>
 					</svelte:fragment>
 				</AccordionItem>
@@ -187,10 +188,10 @@
 							their passion for music.
 						</p>
 						<button class="accordian-btn btn btn-sm"
-							><a href="https://acekavi.github.io/music-player/">Demo</a></button
+							><a target="_blank" href="https://acekavi.github.io/music-player/">Demo</a></button
 						>
 						<button class="accordian-btn btn btn-sm ms-4"
-							><a href="https://github.com/acekavi/music-player/">Github</a></button
+							><a target="_blank" href="https://github.com/acekavi/music-player/">Github</a></button
 						>
 					</svelte:fragment>
 				</AccordionItem>
@@ -213,7 +214,7 @@
 							programming.
 						</p>
 						<button class="accordian-btn btn btn-sm">
-							<a href="https://github.com/acekavi/Mathtrix">Github</a></button
+							<a target="_blank" href="https://github.com/acekavi/Mathtrix">Github</a></button
 						>
 					</svelte:fragment>
 				</AccordionItem>
@@ -234,7 +235,7 @@
 							document generation.
 						</p>
 						<button class="accordian-btn btn btn-sm"
-							><a href="https://github.com/acekavi/pdf-template">Github</a></button
+							><a target="_blank" href="https://github.com/acekavi/pdf-template">Github</a></button
 						>
 					</svelte:fragment>
 				</AccordionItem>
@@ -254,7 +255,7 @@
 							services for a reliable and scalable hosting solution.
 						</p>
 						<button class="accordian-btn btn btn-sm"
-							><a href="https://github.com/acekavi/django-portfo">Github</a></button
+							><a target="_blank" href="https://github.com/acekavi/django-portfo">Github</a></button
 						>
 					</svelte:fragment>
 				</AccordionItem>

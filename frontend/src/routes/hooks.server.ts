@@ -39,11 +39,11 @@ export const handle = (async ({ event, resolve }) => {
 		}
 
 		if (current_url.includes('/admin') && !currentUser.is_superuser) {
-			throw redirect(302, '/dashboard');
+			throw redirect(302, '/user');
 		}
 
 	} else {
-		if (current_url.includes('/dashboard') || current_url.includes('/admin')) {
+		if (current_url.includes('/user') || current_url.includes('/admin')) {
 			throw redirect(302, '/');
 		}
 	}

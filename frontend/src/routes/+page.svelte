@@ -14,7 +14,7 @@
 </svelte:head>
 
 <div
-	class="lg:max-h-screen overflow-y-scroll snap snap-y snap-mandatory scroll-smooth main-container"
+	class="lg:max-h-screen overflow-y-scroll snap snap-y snap-mandatory scroll-smooth bg-scales-light dark:bg-scales-dark bg-contain bg-center bg-fixed"
 >
 	<MainHero />
 	<AboutMe />

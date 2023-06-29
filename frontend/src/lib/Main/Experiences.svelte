@@ -21,13 +21,12 @@
             first-letter:mr-2 first-letter:float-left"
 			>
 				I have been a freelance graphic designer since 2015. As I pursue my university studies in
-				Computer Science at <span class="skew-text before:-skew-y-2 before:bg-[#108480]">
-					<a href="https://www.westminster.ac.uk/" class="relative">University of Westminster,</a>
-				</span>
+				Computer Science at
+				<a href="https://www.westminster.ac.uk/" class="skew-text" target="_blank"
+					>University of Westminster,</a
+				>
 				my passion has evolved into full-stack development. My internship at
-				<span class="skew-text before:skew-y-6 before:bg-red-400">
-					<a href="https://www.infor.com/" class="relative">Infor</a>
-				</span>
+				<a href="https://www.infor.com/" class="skew-text" target="_blank">Infor</a>
 				in 2022-2023 provided me with valuable industrial experience, fostering team collaboration and
 				business etiquettes. <br /> <br />With a keen eye for aesthetics and a drive for immersive
 				user experiences, I strive to blend creativity and technical expertise. Excited for the
