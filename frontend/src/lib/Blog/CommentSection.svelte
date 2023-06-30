@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { SubmitFunction } from '../../routes/blog/[slug]/$types';
-	import CommentBox from './Comment_Box.svelte';
+	import CommentBox from './CommentBox.svelte';
 	import { enhance } from '$app/forms';
 	import { Loader2, MessageSquare, MessagesSquare } from 'lucide-svelte';
 	import { toastStore } from '@skeletonlabs/skeleton';

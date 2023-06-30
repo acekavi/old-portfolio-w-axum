@@ -1,6 +1,5 @@
 import { API_URL } from '$env/static/private';
-import { markdownToHtml } from '$lib/utils/markdown';
-import { TableOfContents } from '@skeletonlabs/skeleton';
+import { markdownToHtml } from '$lib/utils/markdownToHtml';
 import type { Actions, PageServerLoad } from './$types';
 import { fail, error } from '@sveltejs/kit';
 
@@ -27,24 +26,27 @@ export const load: PageServerLoad = async ({ cookies, params, parent }) => {
 
 	const comment_response = await fetch(`${API_URL}/blog/${params.slug}/comment`, options);
 
-	const post: BlogPost = await post_response.json();
+	const post: BlogPost = await post_response.json().then((post: BlogPost) => {
+		post.html = markdownToHtml(post.content);
+		return post;
+	});
 	const comments: Comments[] = await comment_response.json();
 
-	// Converting markdown to html
-	const transformed_post = (await markdownToHtml(post.content)).content;
-	post.content = transformed_post.toString() || post.content;
-
 	if (!post_response.ok) {
-		console.log(post.error);
-		throw error(404, "Are you lost baby girl?");
+		console.log("Post Response Error: " + post.error);
+		throw error(404);
 	}
 
 	if (!comment_response.ok) {
-		console.log(comments[0].error);
-		throw error(500, "Internal Server Error");
+		console.log("Comment Response Error: " + comments[0].error);
+		throw error(500);
 	}
 
-	return { post, comments, user: user ?? null };
+	return {
+		props: {
+			post, comments, user: user ?? null
+		}
+	};
 };
 
 export const actions: Actions = {

@@ -1,6 +1,5 @@
 import { compile } from 'mdsvex';
 import type { MdsvexOptions } from 'mdsvex';
-// import { unified } from 'unified'
 import remarkGfm from 'remark-gfm'
 import rehypeExternalLinks from 'rehype-external-links';
 import remarkGithub from 'remark-github/lib';
@@ -45,7 +44,9 @@ export async function markdownToHtml(markdown: string) {
         ]
     }
 
-    const transformed_code = await compile(markdown, options);
+    let transformed_code = await compile(markdown, options).then((result) => {
+        return result?.code
+    });
 
-    return { content: transformed_code?.code, toc: [] }
+    return transformed_code;
 }

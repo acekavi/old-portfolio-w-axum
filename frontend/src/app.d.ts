@@ -61,6 +61,7 @@ declare type BlogPost = {
 	liked: boolean;
 	author: string;
 	searchTerms?: string;
+	html?: Promise<string | undefined>;
 	error?: string;
 };
 

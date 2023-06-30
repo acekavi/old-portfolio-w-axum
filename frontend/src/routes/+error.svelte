@@ -2,6 +2,11 @@
 	import { page } from '$app/stores';
 </script>
 
+<svelte:head>
+	<title>Error : {$page.status}</title>
+	<meta name="description" content={$page.error?.message} />
+</svelte:head>
+
 <div
 	class="bg-scales-light dark:bg-scales-dark bg-contain bg-center bg-fixed h-screen w-screen flex flex-col justify-center overflow-hidden"
 >
@@ -17,10 +22,10 @@
 		{/if}
 	</div>
 	<div class="flex flex-row justify-center pt-8">
-		<a href="/" target="_self" class="btn rounded variant-ghost-surface m-4 uppercase"
+		<a href="/" target="_self" class="btn btn-sm rounded variant-ghost-surface m-4 uppercase"
 			>Let's get you home</a
 		>
-		<a href="/blog" target="_self" class="btn rounded variant-ghost-surface m-4 uppercase"
+		<a href="/blog" target="_self" class="btn btn-sm rounded variant-ghost-surface m-4 uppercase"
 			>Or read my blog</a
 		>
 	</div>

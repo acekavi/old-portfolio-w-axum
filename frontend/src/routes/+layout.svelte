@@ -13,7 +13,7 @@
 	import { author, title } from '$lib/utils/config';
 	import type { LayoutData } from './$types';
 	import { fade, fly } from 'svelte/transition';
-	import { quintIn, quintOut } from 'svelte/easing';
+	import { cubicIn, quintIn, quintOut } from 'svelte/easing';
 	export let data: LayoutData;
 
 	const modalComponentRegistry: Record<string, ModalComponent> = {
@@ -39,10 +39,7 @@
 <Navbar user={data.user} />
 
 {#key data.url}
-	<div
-		in:fade={{ delay: 300, duration: 300, easing: quintIn }}
-		out:fade={{ duration: 300, easing: quintOut }}
-	>
+	<div in:fade={{ duration: 300, easing: cubicIn }} out:fade={{ duration: 300, easing: quintOut }}>
 		<slot />
 	</div>
 {/key}
