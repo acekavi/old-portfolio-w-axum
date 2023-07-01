@@ -6,61 +6,35 @@
 		type ModalSettings,
 		toastStore
 	} from '@skeletonlabs/skeleton';
-	import { Edit, Loader2, XSquare } from 'lucide-svelte';
-	import type { ActionData, PageData, SubmitFunction } from './$types';
-	import { enhance } from '$app/forms';
+	import { Edit, XSquare } from 'lucide-svelte';
+	import type { ActionData, PageData } from './$types';
 	export let data: PageData;
+	export let form: ActionData;
 
-	type Post = {
-		title: string;
-		description: string;
-		content: string;
-		category: string;
-		tags: string[];
-		is_draft: boolean;
-	};
+	let current_post: Post;
 
-	let current_post: Post = {
-		// @ts-ignore
-		title: data.post.title,
-		// @ts-ignore
-		description: data.post.description,
-		// @ts-ignore
-		content: data.post.content,
-		// @ts-ignore
-		category: data.post.category,
-		// @ts-ignore
-		tags: data.post.tags,
-		// @ts-ignore
-		is_draft: data.post.is_draft
-	};
-
-	$: isLoading = false;
+	if (data) {
+		current_post = {
+			title: data.post.title,
+			description: data.post.description,
+			content: data.post.content,
+			category: data.post.category,
+			tags: data.post.tags,
+			is_draft: data.post.is_draft
+		};
+	}
+	if (form) {
+		current_post = {
+			title: form.post?.title ?? '',
+			description: form.post?.description ?? '',
+			content: form.post?.content ?? '',
+			category: form.post?.category ?? '',
+			tags: form.post?.tags ?? [],
+			is_draft: form.post?.is_draft ?? false
+		};
+	}
 
 	let deleteButton: HTMLButtonElement;
-
-	const loader: SubmitFunction = (input) => {
-		isLoading = true;
-		return async (options) => {
-			if (options.result.status !== 200) {
-				toastStore.trigger({
-					// @ts-ignore
-					message: options.result.data.error,
-					timeout: 5000,
-					background: 'variant-glass-error'
-				});
-			} else {
-				toastStore.trigger({
-					// @ts-ignore
-					message: options.result.data.message,
-					timeout: 5000,
-					background: 'variant-glass-success'
-				});
-			}
-			isLoading = false;
-			await options.update();
-		};
-	};
 
 	const modal: ModalSettings = {
 		type: 'confirm',
@@ -75,6 +49,23 @@
 
 	function modalTrigger(): void {
 		modalStore.trigger(modal);
+	}
+	if (form) {
+		if (form?.message) {
+			toastStore.trigger({
+				// @ts-ignore
+				message: form.message,
+				timeout: 5000,
+				background: 'variant-glass-success'
+			});
+		} else {
+			toastStore.trigger({
+				// @ts-ignore
+				message: form.error,
+				timeout: 5000,
+				background: 'variant-glass-error'
+			});
+		}
 	}
 </script>
 
@@ -93,7 +84,7 @@
 	<div class="my-auto flex-col justify-center align-middle">
 		<p class="text-5xl font-bold h1 mb-4">Edit Post!</p>
 
-		<form method="POST" action="?/edit_post" use:enhance={loader}>
+		<form method="POST" action="?/edit_post">
 			<div class="grid grid-cols-1 gap-y-4 sm:grid-cols-6">
 				<label class="label col-span-full">
 					<span class="font-semibold">Title</span>
@@ -163,17 +154,15 @@
 				<div class="col-span-full mb-8">
 					<button type="submit" class="btn variant-glass-success mt-4">
 						<span>Edit current_post</span>
-						{#if isLoading}
-							<Loader2 class="animate-spin" />
-						{:else}
-							<span><Edit stroke-width="1.25" size="18px" /></span>
-						{/if}
+						<span><Edit stroke-width="1.25" size="18px" /></span>
 					</button>
 					<button on:click|preventDefault={modalTrigger} class="btn variant-glass-error mt-4">
 						<span>Delete current_post</span>
 						<span><XSquare stroke-width="1.25" size="18px" /></span>
 					</button>
-					<button class="hidden" formaction="?/delete_current_post" bind:this={deleteButton} />
+					<form action="?/delete_post" method="post">
+						<button class="hidden" type="submit" bind:this={deleteButton} />
+					</form>
 				</div>
 			</div>
 		</form>

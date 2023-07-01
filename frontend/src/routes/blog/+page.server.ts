@@ -29,7 +29,7 @@ export const load: PageServerLoad = async ({ cookies, locals }) => {
 
 	if (!response.ok) {
 		console.log(json[0].error);
-		throw error(500, "Internal Server Error");
+		throw error(500);
 	} else {
 		return { posts: json };
 	}

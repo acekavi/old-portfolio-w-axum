@@ -13,6 +13,14 @@ declare namespace App {
 }
 // }
 
+declare type Post = {
+	title: string;
+	description: string;
+	content: string;
+	category: string;
+	tags: string[];
+	is_draft: boolean;
+};
 
 declare type Loginparams = {
 	username: string;

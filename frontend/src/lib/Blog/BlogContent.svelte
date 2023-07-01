@@ -37,7 +37,7 @@
 			</div>
 		{:then value}
 			<aside
-				class="lg:w-80 lg:fixed lg:top-1/2 lg:bottom-1/2 lg:translate-y-1/2 lg:ms-6 hidden lg:block"
+				class="lg:w-80 lg:fixed lg:top-1/2 lg:bottom-1/2 lg:translate-y-1/2 lg:ms-6 mb-8 lg:m-0"
 			>
 				<TableOfContents
 					target="#postContent"

@@ -17,11 +17,11 @@ export const actions: Actions = {
 
         if (!name || !email || !message || !linkedin || !subject) {
             return fail(422, {
-                name: name.toString() || '',
-                email: email.toString() || '',
-                message: message.toString() || '',
-                linkedin: linkedin.toString() || '',
-                subject: subject || '',
+                name: name?.toString() || '',
+                email: email?.toString() || '',
+                message: message?.toString() || '',
+                linkedin: linkedin?.toString() || '',
+                subject: subject?.toString() || '',
                 error: "Please fill all the fields!"
             });
         }

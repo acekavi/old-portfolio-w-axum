@@ -29,7 +29,7 @@ export const load: PageServerLoad = async ({ cookies, locals }) => {
 
     if (!response.ok) {
         console.log(json[0].error);
-        throw error(500, "Internal Server Error");
+        throw error(500);
     } else {
         return { posts: json };
     }
@@ -79,10 +79,10 @@ export const actions: Actions = {
             });
         } else {
             return fail(422, {
-                title: title.toString() || '',
-                description: description.toString() || '',
-                content: content.toString() || '',
-                category: category.toString() || '',
+                title: title?.toString() || '',
+                description: description?.toString() || '',
+                content: content?.toString() || '',
+                category: category?.toString() || '',
                 tags: tags || [],
                 is_draft: is_draft ? true : false,
                 error: "Please fill all the fields!"
