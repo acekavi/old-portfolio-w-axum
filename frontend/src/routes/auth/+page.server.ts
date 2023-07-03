@@ -5,7 +5,7 @@ import type { Actions, PageServerLoad } from './$types';
 export const load: PageServerLoad = async ({ parent }) => {
     const { user } = await parent();
     if (user) {
-        throw redirect(302, '/dashboard');
+        throw redirect(302, '/blog');
     }
 };
 
