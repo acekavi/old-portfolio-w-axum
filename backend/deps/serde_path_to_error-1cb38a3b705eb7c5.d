@@ -1,0 +1,11 @@
+/home/ghost/rust/acekavi.me/backend/target/release/deps/serde_path_to_error-1cb38a3b705eb7c5.rmeta: /home/ghost/.cargo/registry/src/github.com-1ecc6299db9ec823/serde_path_to_error-0.1.11/src/lib.rs /home/ghost/.cargo/registry/src/github.com-1ecc6299db9ec823/serde_path_to_error-0.1.11/src/de.rs /home/ghost/.cargo/registry/src/github.com-1ecc6299db9ec823/serde_path_to_error-0.1.11/src/path.rs /home/ghost/.cargo/registry/src/github.com-1ecc6299db9ec823/serde_path_to_error-0.1.11/src/ser.rs /home/ghost/.cargo/registry/src/github.com-1ecc6299db9ec823/serde_path_to_error-0.1.11/src/wrap.rs
+
+/home/ghost/rust/acekavi.me/backend/target/release/deps/libserde_path_to_error-1cb38a3b705eb7c5.rlib: /home/ghost/.cargo/registry/src/github.com-1ecc6299db9ec823/serde_path_to_error-0.1.11/src/lib.rs /home/ghost/.cargo/registry/src/github.com-1ecc6299db9ec823/serde_path_to_error-0.1.11/src/de.rs /home/ghost/.cargo/registry/src/github.com-1ecc6299db9ec823/serde_path_to_error-0.1.11/src/path.rs /home/ghost/.cargo/registry/src/github.com-1ecc6299db9ec823/serde_path_to_error-0.1.11/src/ser.rs /home/ghost/.cargo/registry/src/github.com-1ecc6299db9ec823/serde_path_to_error-0.1.11/src/wrap.rs
+
+/home/ghost/rust/acekavi.me/backend/target/release/deps/serde_path_to_error-1cb38a3b705eb7c5.d: /home/ghost/.cargo/registry/src/github.com-1ecc6299db9ec823/serde_path_to_error-0.1.11/src/lib.rs /home/ghost/.cargo/registry/src/github.com-1ecc6299db9ec823/serde_path_to_error-0.1.11/src/de.rs /home/ghost/.cargo/registry/src/github.com-1ecc6299db9ec823/serde_path_to_error-0.1.11/src/path.rs /home/ghost/.cargo/registry/src/github.com-1ecc6299db9ec823/serde_path_to_error-0.1.11/src/ser.rs /home/ghost/.cargo/registry/src/github.com-1ecc6299db9ec823/serde_path_to_error-0.1.11/src/wrap.rs
+
+/home/ghost/.cargo/registry/src/github.com-1ecc6299db9ec823/serde_path_to_error-0.1.11/src/lib.rs:
+/home/ghost/.cargo/registry/src/github.com-1ecc6299db9ec823/serde_path_to_error-0.1.11/src/de.rs:
+/home/ghost/.cargo/registry/src/github.com-1ecc6299db9ec823/serde_path_to_error-0.1.11/src/path.rs:
+/home/ghost/.cargo/registry/src/github.com-1ecc6299db9ec823/serde_path_to_error-0.1.11/src/ser.rs:
+/home/ghost/.cargo/registry/src/github.com-1ecc6299db9ec823/serde_path_to_error-0.1.11/src/wrap.rs:

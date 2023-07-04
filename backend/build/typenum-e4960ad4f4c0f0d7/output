@@ -1,0 +1,3 @@
+cargo:rerun-if-changed=build/main.rs
+cargo:rustc-env=TYPENUM_BUILD_CONSTS=/home/ghost/rust/acekavi.me/backend/target/release/build/typenum-e4960ad4f4c0f0d7/out/consts.rs
+cargo:rustc-env=TYPENUM_BUILD_OP=/home/ghost/rust/acekavi.me/backend/target/release/build/typenum-e4960ad4f4c0f0d7/out/op.rs

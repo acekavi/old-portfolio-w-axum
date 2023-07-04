@@ -1,0 +1,12 @@
+/home/ghost/rust/acekavi.me/backend/target/release/deps/sqlformat-948d41878717a9af.rmeta: /home/ghost/.cargo/registry/src/github.com-1ecc6299db9ec823/sqlformat-0.2.1/src/lib.rs /home/ghost/.cargo/registry/src/github.com-1ecc6299db9ec823/sqlformat-0.2.1/src/formatter.rs /home/ghost/.cargo/registry/src/github.com-1ecc6299db9ec823/sqlformat-0.2.1/src/indentation.rs /home/ghost/.cargo/registry/src/github.com-1ecc6299db9ec823/sqlformat-0.2.1/src/inline_block.rs /home/ghost/.cargo/registry/src/github.com-1ecc6299db9ec823/sqlformat-0.2.1/src/params.rs /home/ghost/.cargo/registry/src/github.com-1ecc6299db9ec823/sqlformat-0.2.1/src/tokenizer.rs
+
+/home/ghost/rust/acekavi.me/backend/target/release/deps/libsqlformat-948d41878717a9af.rlib: /home/ghost/.cargo/registry/src/github.com-1ecc6299db9ec823/sqlformat-0.2.1/src/lib.rs /home/ghost/.cargo/registry/src/github.com-1ecc6299db9ec823/sqlformat-0.2.1/src/formatter.rs /home/ghost/.cargo/registry/src/github.com-1ecc6299db9ec823/sqlformat-0.2.1/src/indentation.rs /home/ghost/.cargo/registry/src/github.com-1ecc6299db9ec823/sqlformat-0.2.1/src/inline_block.rs /home/ghost/.cargo/registry/src/github.com-1ecc6299db9ec823/sqlformat-0.2.1/src/params.rs /home/ghost/.cargo/registry/src/github.com-1ecc6299db9ec823/sqlformat-0.2.1/src/tokenizer.rs
+
+/home/ghost/rust/acekavi.me/backend/target/release/deps/sqlformat-948d41878717a9af.d: /home/ghost/.cargo/registry/src/github.com-1ecc6299db9ec823/sqlformat-0.2.1/src/lib.rs /home/ghost/.cargo/registry/src/github.com-1ecc6299db9ec823/sqlformat-0.2.1/src/formatter.rs /home/ghost/.cargo/registry/src/github.com-1ecc6299db9ec823/sqlformat-0.2.1/src/indentation.rs /home/ghost/.cargo/registry/src/github.com-1ecc6299db9ec823/sqlformat-0.2.1/src/inline_block.rs /home/ghost/.cargo/registry/src/github.com-1ecc6299db9ec823/sqlformat-0.2.1/src/params.rs /home/ghost/.cargo/registry/src/github.com-1ecc6299db9ec823/sqlformat-0.2.1/src/tokenizer.rs
+
+/home/ghost/.cargo/registry/src/github.com-1ecc6299db9ec823/sqlformat-0.2.1/src/lib.rs:
+/home/ghost/.cargo/registry/src/github.com-1ecc6299db9ec823/sqlformat-0.2.1/src/formatter.rs:
+/home/ghost/.cargo/registry/src/github.com-1ecc6299db9ec823/sqlformat-0.2.1/src/indentation.rs:
+/home/ghost/.cargo/registry/src/github.com-1ecc6299db9ec823/sqlformat-0.2.1/src/inline_block.rs:
+/home/ghost/.cargo/registry/src/github.com-1ecc6299db9ec823/sqlformat-0.2.1/src/params.rs:
+/home/ghost/.cargo/registry/src/github.com-1ecc6299db9ec823/sqlformat-0.2.1/src/tokenizer.rs:

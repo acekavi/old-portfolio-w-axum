@@ -1,0 +1,13 @@
+/home/ghost/rust/acekavi.me/backend/target/release/deps/cookie-b0dfb83af7f113c4.rmeta: /home/ghost/.cargo/registry/src/github.com-1ecc6299db9ec823/cookie-0.17.0/src/lib.rs /home/ghost/.cargo/registry/src/github.com-1ecc6299db9ec823/cookie-0.17.0/src/builder.rs /home/ghost/.cargo/registry/src/github.com-1ecc6299db9ec823/cookie-0.17.0/src/parse.rs /home/ghost/.cargo/registry/src/github.com-1ecc6299db9ec823/cookie-0.17.0/src/jar.rs /home/ghost/.cargo/registry/src/github.com-1ecc6299db9ec823/cookie-0.17.0/src/delta.rs /home/ghost/.cargo/registry/src/github.com-1ecc6299db9ec823/cookie-0.17.0/src/draft.rs /home/ghost/.cargo/registry/src/github.com-1ecc6299db9ec823/cookie-0.17.0/src/expiration.rs
+
+/home/ghost/rust/acekavi.me/backend/target/release/deps/libcookie-b0dfb83af7f113c4.rlib: /home/ghost/.cargo/registry/src/github.com-1ecc6299db9ec823/cookie-0.17.0/src/lib.rs /home/ghost/.cargo/registry/src/github.com-1ecc6299db9ec823/cookie-0.17.0/src/builder.rs /home/ghost/.cargo/registry/src/github.com-1ecc6299db9ec823/cookie-0.17.0/src/parse.rs /home/ghost/.cargo/registry/src/github.com-1ecc6299db9ec823/cookie-0.17.0/src/jar.rs /home/ghost/.cargo/registry/src/github.com-1ecc6299db9ec823/cookie-0.17.0/src/delta.rs /home/ghost/.cargo/registry/src/github.com-1ecc6299db9ec823/cookie-0.17.0/src/draft.rs /home/ghost/.cargo/registry/src/github.com-1ecc6299db9ec823/cookie-0.17.0/src/expiration.rs
+
+/home/ghost/rust/acekavi.me/backend/target/release/deps/cookie-b0dfb83af7f113c4.d: /home/ghost/.cargo/registry/src/github.com-1ecc6299db9ec823/cookie-0.17.0/src/lib.rs /home/ghost/.cargo/registry/src/github.com-1ecc6299db9ec823/cookie-0.17.0/src/builder.rs /home/ghost/.cargo/registry/src/github.com-1ecc6299db9ec823/cookie-0.17.0/src/parse.rs /home/ghost/.cargo/registry/src/github.com-1ecc6299db9ec823/cookie-0.17.0/src/jar.rs /home/ghost/.cargo/registry/src/github.com-1ecc6299db9ec823/cookie-0.17.0/src/delta.rs /home/ghost/.cargo/registry/src/github.com-1ecc6299db9ec823/cookie-0.17.0/src/draft.rs /home/ghost/.cargo/registry/src/github.com-1ecc6299db9ec823/cookie-0.17.0/src/expiration.rs
+
+/home/ghost/.cargo/registry/src/github.com-1ecc6299db9ec823/cookie-0.17.0/src/lib.rs:
+/home/ghost/.cargo/registry/src/github.com-1ecc6299db9ec823/cookie-0.17.0/src/builder.rs:
+/home/ghost/.cargo/registry/src/github.com-1ecc6299db9ec823/cookie-0.17.0/src/parse.rs:
+/home/ghost/.cargo/registry/src/github.com-1ecc6299db9ec823/cookie-0.17.0/src/jar.rs:
+/home/ghost/.cargo/registry/src/github.com-1ecc6299db9ec823/cookie-0.17.0/src/delta.rs:
+/home/ghost/.cargo/registry/src/github.com-1ecc6299db9ec823/cookie-0.17.0/src/draft.rs:
+/home/ghost/.cargo/registry/src/github.com-1ecc6299db9ec823/cookie-0.17.0/src/expiration.rs:

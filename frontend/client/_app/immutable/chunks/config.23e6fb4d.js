@@ -1,0 +1,1 @@
+const a="acekavi.me",s="Avishka Kavinda - Personal Website: Explore My Portfolio, Blog, and Career Journey",t="@acekaviftw",o="Avishka Kavinda",e="https://unsplash.com/photos/TamMbr4okv4";export{t as a,o as b,s as d,e as s,a as t};

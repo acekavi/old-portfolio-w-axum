@@ -1,0 +1,12 @@
+/home/ghost/rust/acekavi.me/backend/target/release/deps/libaxum_macros-04368a9dfc217a12.so: /home/ghost/.cargo/registry/src/github.com-1ecc6299db9ec823/axum-macros-0.3.7/src/lib.rs /home/ghost/.cargo/registry/src/github.com-1ecc6299db9ec823/axum-macros-0.3.7/src/attr_parsing.rs /home/ghost/.cargo/registry/src/github.com-1ecc6299db9ec823/axum-macros-0.3.7/src/debug_handler.rs /home/ghost/.cargo/registry/src/github.com-1ecc6299db9ec823/axum-macros-0.3.7/src/from_ref.rs /home/ghost/.cargo/registry/src/github.com-1ecc6299db9ec823/axum-macros-0.3.7/src/from_request.rs /home/ghost/.cargo/registry/src/github.com-1ecc6299db9ec823/axum-macros-0.3.7/src/from_request/attr.rs /home/ghost/.cargo/registry/src/github.com-1ecc6299db9ec823/axum-macros-0.3.7/src/typed_path.rs /home/ghost/.cargo/registry/src/github.com-1ecc6299db9ec823/axum-macros-0.3.7/src/with_position.rs
+
+/home/ghost/rust/acekavi.me/backend/target/release/deps/axum_macros-04368a9dfc217a12.d: /home/ghost/.cargo/registry/src/github.com-1ecc6299db9ec823/axum-macros-0.3.7/src/lib.rs /home/ghost/.cargo/registry/src/github.com-1ecc6299db9ec823/axum-macros-0.3.7/src/attr_parsing.rs /home/ghost/.cargo/registry/src/github.com-1ecc6299db9ec823/axum-macros-0.3.7/src/debug_handler.rs /home/ghost/.cargo/registry/src/github.com-1ecc6299db9ec823/axum-macros-0.3.7/src/from_ref.rs /home/ghost/.cargo/registry/src/github.com-1ecc6299db9ec823/axum-macros-0.3.7/src/from_request.rs /home/ghost/.cargo/registry/src/github.com-1ecc6299db9ec823/axum-macros-0.3.7/src/from_request/attr.rs /home/ghost/.cargo/registry/src/github.com-1ecc6299db9ec823/axum-macros-0.3.7/src/typed_path.rs /home/ghost/.cargo/registry/src/github.com-1ecc6299db9ec823/axum-macros-0.3.7/src/with_position.rs
+
+/home/ghost/.cargo/registry/src/github.com-1ecc6299db9ec823/axum-macros-0.3.7/src/lib.rs:
+/home/ghost/.cargo/registry/src/github.com-1ecc6299db9ec823/axum-macros-0.3.7/src/attr_parsing.rs:
+/home/ghost/.cargo/registry/src/github.com-1ecc6299db9ec823/axum-macros-0.3.7/src/debug_handler.rs:
+/home/ghost/.cargo/registry/src/github.com-1ecc6299db9ec823/axum-macros-0.3.7/src/from_ref.rs:
+/home/ghost/.cargo/registry/src/github.com-1ecc6299db9ec823/axum-macros-0.3.7/src/from_request.rs:
+/home/ghost/.cargo/registry/src/github.com-1ecc6299db9ec823/axum-macros-0.3.7/src/from_request/attr.rs:
+/home/ghost/.cargo/registry/src/github.com-1ecc6299db9ec823/axum-macros-0.3.7/src/typed_path.rs:
+/home/ghost/.cargo/registry/src/github.com-1ecc6299db9ec823/axum-macros-0.3.7/src/with_position.rs:

@@ -1,0 +1,13 @@
+/home/ghost/rust/acekavi.me/backend/target/release/deps/quote-55165c9a6d6b0cf4.rmeta: /home/ghost/.cargo/registry/src/github.com-1ecc6299db9ec823/quote-1.0.28/src/lib.rs /home/ghost/.cargo/registry/src/github.com-1ecc6299db9ec823/quote-1.0.28/src/ext.rs /home/ghost/.cargo/registry/src/github.com-1ecc6299db9ec823/quote-1.0.28/src/format.rs /home/ghost/.cargo/registry/src/github.com-1ecc6299db9ec823/quote-1.0.28/src/ident_fragment.rs /home/ghost/.cargo/registry/src/github.com-1ecc6299db9ec823/quote-1.0.28/src/to_tokens.rs /home/ghost/.cargo/registry/src/github.com-1ecc6299db9ec823/quote-1.0.28/src/runtime.rs /home/ghost/.cargo/registry/src/github.com-1ecc6299db9ec823/quote-1.0.28/src/spanned.rs
+
+/home/ghost/rust/acekavi.me/backend/target/release/deps/libquote-55165c9a6d6b0cf4.rlib: /home/ghost/.cargo/registry/src/github.com-1ecc6299db9ec823/quote-1.0.28/src/lib.rs /home/ghost/.cargo/registry/src/github.com-1ecc6299db9ec823/quote-1.0.28/src/ext.rs /home/ghost/.cargo/registry/src/github.com-1ecc6299db9ec823/quote-1.0.28/src/format.rs /home/ghost/.cargo/registry/src/github.com-1ecc6299db9ec823/quote-1.0.28/src/ident_fragment.rs /home/ghost/.cargo/registry/src/github.com-1ecc6299db9ec823/quote-1.0.28/src/to_tokens.rs /home/ghost/.cargo/registry/src/github.com-1ecc6299db9ec823/quote-1.0.28/src/runtime.rs /home/ghost/.cargo/registry/src/github.com-1ecc6299db9ec823/quote-1.0.28/src/spanned.rs
+
+/home/ghost/rust/acekavi.me/backend/target/release/deps/quote-55165c9a6d6b0cf4.d: /home/ghost/.cargo/registry/src/github.com-1ecc6299db9ec823/quote-1.0.28/src/lib.rs /home/ghost/.cargo/registry/src/github.com-1ecc6299db9ec823/quote-1.0.28/src/ext.rs /home/ghost/.cargo/registry/src/github.com-1ecc6299db9ec823/quote-1.0.28/src/format.rs /home/ghost/.cargo/registry/src/github.com-1ecc6299db9ec823/quote-1.0.28/src/ident_fragment.rs /home/ghost/.cargo/registry/src/github.com-1ecc6299db9ec823/quote-1.0.28/src/to_tokens.rs /home/ghost/.cargo/registry/src/github.com-1ecc6299db9ec823/quote-1.0.28/src/runtime.rs /home/ghost/.cargo/registry/src/github.com-1ecc6299db9ec823/quote-1.0.28/src/spanned.rs
+
+/home/ghost/.cargo/registry/src/github.com-1ecc6299db9ec823/quote-1.0.28/src/lib.rs:
+/home/ghost/.cargo/registry/src/github.com-1ecc6299db9ec823/quote-1.0.28/src/ext.rs:
+/home/ghost/.cargo/registry/src/github.com-1ecc6299db9ec823/quote-1.0.28/src/format.rs:
+/home/ghost/.cargo/registry/src/github.com-1ecc6299db9ec823/quote-1.0.28/src/ident_fragment.rs:
+/home/ghost/.cargo/registry/src/github.com-1ecc6299db9ec823/quote-1.0.28/src/to_tokens.rs:
+/home/ghost/.cargo/registry/src/github.com-1ecc6299db9ec823/quote-1.0.28/src/runtime.rs:
+/home/ghost/.cargo/registry/src/github.com-1ecc6299db9ec823/quote-1.0.28/src/spanned.rs:
